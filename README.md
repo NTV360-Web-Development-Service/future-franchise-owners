@@ -2,10 +2,10 @@
 
 > A comprehensive franchise discovery platform connecting aspiring entrepreneurs with franchise opportunities.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Payload CMS](https://img.shields.io/badge/Payload-3.0-000000?style=flat-square)](https://payloadcms.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.4-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.13-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![Payload CMS](https://img.shields.io/badge/Payload-3.56.0-000000?style=flat-square)](https://payloadcms.com/)
 
 ---
 
@@ -27,12 +27,14 @@ Future Franchise Owners is a modern web platform designed to help aspiring entre
 
 ### Tech Stack
 
-- **Frontend**: Next.js 14 with App Router, TypeScript, Tailwind CSS
-- **CMS**: Payload CMS with PostgreSQL
-- **UI Components**: shadcn/ui with Lucide React icons
+- **Frontend**: Next.js 15.4.4 with App Router, TypeScript 5.7.3, Tailwind CSS 4.1.13
+- **CMS**: Payload CMS 3.56.0 with Vercel Postgres
+- **UI Components**: shadcn/ui (New York style, Slate base color), Lucide React 0.469.0, class-variance-authority, clsx
 - **Deployment**: Vercel with Vercel Postgres
-- **Styling**: Tailwind CSS with custom design system
-- **Package Manager**: pnpm
+- **Styling**: Tailwind CSS 4.1.13 with PostCSS
+- **Package Manager**: pnpm (^9 || ^10)
+- **Testing**: Playwright 1.54.1, Vitest 3.2.3
+- **Runtime**: Node.js ^18.20.2 || >=20.9.0
 
 ### Project Structure
 
@@ -61,9 +63,9 @@ future-franchise-owners/
 
 ### Prerequisites
 
-- Node.js 18.20.2 or higher
-- pnpm package manager
-- PostgreSQL database access
+- Node.js ^18.20.2 || >=20.9.0
+- pnpm ^9 || ^10
+- PostgreSQL database access (Vercel Postgres recommended)
 
 ### Installation
 
@@ -139,28 +141,22 @@ SENDGRID_API_KEY=your_sendgrid_api_key
 ```bash
 # Development
 pnpm dev              # Start development server
+pnpm devsafe          # Clean .next and start dev server
 pnpm build            # Build for production
 pnpm start            # Start production server
 
 # Testing
-pnpm test             # Run all tests
-pnpm test:watch       # Run tests in watch mode
-pnpm test:e2e         # Run end-to-end tests
+pnpm test             # Run all tests (integration + e2e)
+pnpm test:int         # Run integration tests with Vitest
+pnpm test:e2e         # Run end-to-end tests with Playwright
 
 # Code Quality
 pnpm lint             # Run ESLint
-pnpm lint:fix         # Fix ESLint issues
-pnpm type-check       # TypeScript type checking
-pnpm format           # Format code with Prettier
-
-# Database
-pnpm db:migrate       # Run database migrations
-pnpm db:seed          # Seed database with test data
-pnpm db:studio        # Open database studio
 
 # Payload CMS
-pnpm payload:generate # Generate TypeScript types
-pnpm payload:migrate  # Run Payload migrations
+pnpm payload          # Run Payload CLI commands
+pnpm generate:types   # Generate TypeScript types
+pnpm generate:importmap # Generate import map
 ```
 
 ### Development Workflow
@@ -189,11 +185,12 @@ pnpm payload:migrate  # Run Payload migrations
 
 ### Components
 
-Built with shadcn/ui components:
-- Consistent design language
-- Accessible by default
-- Customizable with Tailwind CSS
-- TypeScript support
+Built with modern React and utility libraries:
+- **Styling**: Tailwind CSS 4.1.13 with class-variance-authority
+- **Utilities**: clsx for conditional classes, tailwind-merge for merging
+- **Icons**: Lucide React 0.544.0 for consistent iconography
+- **Animations**: tw-animate-css for enhanced animations
+- **TypeScript**: Full type safety across all components
 
 ---
 
@@ -209,9 +206,11 @@ Built with shadcn/ui components:
 
 ### Technical Features
 
-- **Server-Side Rendering**: Next.js App Router for optimal performance
-- **Type Safety**: Full TypeScript implementation
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Server-Side Rendering**: Next.js 15.4.4 App Router for optimal performance
+- **Type Safety**: Full TypeScript 5.7.3 implementation
+- **Modern React**: React 19.1.0 with React DOM 19.1.0
+- **Responsive Design**: Mobile-first approach with Tailwind CSS 4.1.13
+- **Rich Text Editing**: Payload Lexical editor integration
 - **SEO Optimized**: Meta tags, structured data, and performance optimization
 - **Accessibility**: WCAG 2.1 AA compliance
 
@@ -243,27 +242,20 @@ For detailed deployment instructions, see [PAYLOAD_CMS_DEPLOYMENT.md](./docs/PAY
 
 ### Testing Strategy
 
-- **Unit Tests**: Component and utility function testing
-- **Integration Tests**: API endpoint and database testing
-- **End-to-End Tests**: User flow testing with Playwright
-- **Performance Tests**: Core Web Vitals and load testing
+- **Integration Tests**: API endpoint and database testing with Vitest 3.2.3
+- **End-to-End Tests**: User flow testing with Playwright 1.54.1
+- **Component Testing**: React Testing Library 16.3.0
+- **Test Environment**: jsdom 26.1.0
 
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (integration + e2e)
 pnpm test
 
 # Run specific test types
-pnpm test:unit
-pnpm test:integration
-pnpm test:e2e
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Generate coverage report
-pnpm test:coverage
+pnpm test:int         # Integration tests with Vitest
+pnpm test:e2e         # End-to-end tests with Playwright
 ```
 
 ---
