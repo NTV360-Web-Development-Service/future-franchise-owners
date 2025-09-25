@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock } from '@/components/blocks'
+import { HeroBlock } from '@/app/(frontend)/components/blocks'
 
 export default async function HomePage() {
   const headers = await getHeaders()
