@@ -166,6 +166,32 @@ export interface Page {
   id: number;
   title: string;
   slug: string;
+  layout: {
+    heading: string;
+    subheading: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    image: number | Media;
+    cta_button: {
+      label: string;
+      url: string;
+    };
+    id?: string | null;
+    blockName?: string | null;
+    blockType: 'hero';
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -277,6 +303,25 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              image?: T;
+              cta_button?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
