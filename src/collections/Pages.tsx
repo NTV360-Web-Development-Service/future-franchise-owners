@@ -1,8 +1,17 @@
 import { CollectionConfig } from 'payload'
+import { v7 as uuidv7 } from 'uuid'
 
 const Pages: CollectionConfig = {
   slug: 'pages',
   fields: [
+    {
+      name: 'id',
+      type: 'text',
+      defaultValue: () => uuidv7(),
+      admin: {
+        hidden: true,
+      },
+    },
     {
       name: 'title',
       type: 'text',

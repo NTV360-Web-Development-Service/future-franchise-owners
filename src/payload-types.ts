@@ -120,7 +120,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -144,7 +144,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt: string;
   prefix?: string | null;
   updatedAt: string;
@@ -164,7 +164,7 @@ export interface Media {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   layout: {
@@ -184,7 +184,7 @@ export interface Page {
       };
       [k: string]: unknown;
     };
-    image?: (number | null) | Media;
+    image?: (string | null) | Media;
     cta_button: {
       label: string;
       url: string;
@@ -205,20 +205,20 @@ export interface PayloadLockedDocument {
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
+        value: string | Media;
       } | null)
     | ({
         relationTo: 'pages';
-        value: number | Page;
+        value: string | Page;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -231,7 +231,7 @@ export interface PayloadPreference {
   id: number;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -262,6 +262,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  id?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -284,6 +285,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  id?: T;
   alt?: T;
   prefix?: T;
   updatedAt?: T;
@@ -303,6 +305,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  id?: T;
   title?: T;
   slug?: T;
   layout?:
