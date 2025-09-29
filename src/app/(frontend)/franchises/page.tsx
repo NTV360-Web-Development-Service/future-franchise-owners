@@ -1,5 +1,6 @@
 import React from 'react'
-import FranchiseFiltersGrid, { type Franchise } from './FranchiseFiltersGrid'
+import FranchiseFiltersGrid from './FranchiseFiltersGrid'
+import { type Franchise } from '../components/FranchiseCard'
 
 export default function FranchisesPage() {
   // Sample data; will be replaced with CMS data later
