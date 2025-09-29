@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { v7 as uuidv7 } from 'uuid'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -7,7 +8,13 @@ export const Users: CollectionConfig = {
   },
   auth: true,
   fields: [
-    // Email added by default
-    // Add more fields as needed
+    {
+      name: 'id',
+      type: 'text',
+      defaultValue: () => uuidv7(),
+      admin: {
+        hidden: true,
+      },
+    },
   ],
 }

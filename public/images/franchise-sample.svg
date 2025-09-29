@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fd3ff"/>
+      <stop offset="100%" stop-color="#eaf6ff"/>
+    </linearGradient>
+    <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ed957"/>
+      <stop offset="100%" stop-color="#3dbb3d"/>
+    </linearGradient>
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect x="0" y="0" width="1600" height="540" fill="url(#skyGrad)"/>
+  <!-- Clouds -->
+  <g opacity="0.45">
+    <ellipse cx="380" cy="190" rx="140" ry="55" fill="#fff"/>
+    <ellipse cx="470" cy="190" rx="110" ry="45" fill="#fff"/>
+    <ellipse cx="1150" cy="220" rx="170" ry="65" fill="#fff"/>
+    <ellipse cx="1260" cy="220" rx="120" ry="50" fill="#fff"/>
+  </g>
+
+  <!-- Hills -->
+  <path d="M0,540 C300,500 600,570 800,540 C1000,510 1300,560 1600,520 L1600,900 L0,900 Z" fill="url(#grassGrad)"/>
+
+  <!-- Tree trunk -->
+  <rect x="780" y="520" width="40" height="120" fill="#5a3a1b" filter="url(#softShadow)"/>
+  <!-- Tree foliage -->
+  <circle cx="800" cy="480" r="110" fill="#2C8939" filter="url(#softShadow)"/>
+  <circle cx="860" cy="520" r="70" fill="#2C8939" opacity="0.9"/>
+  <circle cx="740" cy="520" r="70" fill="#2C8939" opacity="0.9"/>
+
+  <!-- Ground shadow -->
+  <ellipse cx="800" cy="660" rx="180" ry="30" fill="#1a6b1a" opacity="0.25"/>
+</svg>

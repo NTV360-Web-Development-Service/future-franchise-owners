@@ -1,4 +1,4 @@
-// storage-adapter-import-placeholder
+import { s3Storage } from '@payloadcms/storage-s3'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -35,6 +35,29 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // storage-adapter-placeholder
+    // Only add S3 storage if all required environment variables are present
+    ...(process.env.SUPABASE_STORAGE_BUCKET && 
+        process.env.SUPABASE_S3_ACCESS_KEY_ID && 
+        process.env.SUPABASE_S3_SECRET_ACCESS_KEY && 
+        process.env.SUPABASE_S3_REGION && 
+        process.env.SUPABASE_S3_ENDPOINT ? [
+      s3Storage({
+        collections: {
+          media: {
+            prefix: 'media',
+          },
+        },
+        bucket: process.env.SUPABASE_STORAGE_BUCKET,
+        config: {
+          forcePathStyle: true,
+          credentials: {
+            accessKeyId: process.env.SUPABASE_S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.SUPABASE_S3_SECRET_ACCESS_KEY,
+          },
+          region: process.env.SUPABASE_S3_REGION,
+          endpoint: process.env.SUPABASE_S3_ENDPOINT,
+        },
+      })
+    ] : []),
   ],
 })
