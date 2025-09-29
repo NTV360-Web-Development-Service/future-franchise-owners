@@ -146,6 +146,7 @@ export interface User {
 export interface Media {
   id: number;
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -172,7 +173,7 @@ export interface Page {
       root: {
         type: string;
         children: {
-          type: string;
+          type: any;
           version: number;
           [k: string]: unknown;
         }[];
@@ -183,7 +184,7 @@ export interface Page {
       };
       [k: string]: unknown;
     };
-    image: number | Media;
+    image?: (number | null) | Media;
     cta_button: {
       label: string;
       url: string;
@@ -284,6 +285,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
