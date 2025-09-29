@@ -1,8 +1,26 @@
 import { Button, Badge } from '@/components'
-import type { Page } from '@/types/payload'
 
 interface HeroBlockComponentProps {
-  block: Page['layout'][0]
+  block: {
+    blockType: 'hero'
+    heading: string
+    subheading: any // Rich text from Payload
+    image?: {
+      url?: string | null
+      alt?: string
+      [key: string]: any // Additional Media fields from Payload
+    } | string | null
+    cta_buttons?: {
+      label: string
+      url: string
+      style?: 'primary' | 'secondary'
+    }[] | null
+    tags?: {
+      label: string
+    }[] | null
+    id?: string | null
+    blockName?: string | null
+  }
 }
 
 export default function HeroBlock({ block }: HeroBlockComponentProps) {
@@ -53,30 +71,41 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
           )}
 
           {/* CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            {block.cta_button && (
-              <Button 
-                asChild 
-                size="lg"
-                className="px-8 bg-[#004AAD] text-white hover:bg-[#003a89]"
-              >
-                <a href={block.cta_button.url}>
-                  {block.cta_button.label}
-                </a>
-              </Button>
-            )}
-            <Button asChild size="lg" className="px-8 bg-white text-[#004AAD] hover:bg-white/90">
-               <a href="#opportunities">Browse opportunities</a>
-             </Button>
-          </div>
+          {block.cta_buttons && block.cta_buttons.length > 0 && (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              {block.cta_buttons.map((button, index) => (
+                <Button 
+                  key={index}
+                  asChild 
+                  size="lg"
+                  className={`px-8 ${
+                    button.style === 'secondary' 
+                      ? 'bg-white text-[#004AAD] hover:bg-white/90' 
+                      : 'bg-[#004AAD] text-white hover:bg-[#003a89]'
+                  }`}
+                >
+                  <a href={button.url}>
+                    {button.label}
+                  </a>
+                </Button>
+              ))}
+            </div>
+          )}
 
-          {/* Quick badges / filters preview */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-            <Badge className="bg-white/10 text-white border-white/30" variant="outline">Low Cost</Badge>
-            <Badge className="bg-white/10 text-white border-white/30" variant="outline">Home Based</Badge>
-            <Badge className="bg-white/10 text-white border-white/30" variant="outline">Financing Available</Badge>
-            <Badge className="bg-white/10 text-white border-white/30" variant="outline">New Arrivals</Badge>
-          </div>
+          {/* Tags / badges */}
+          {block.tags && block.tags.length > 0 && (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+              {block.tags.map((tag, index) => (
+                <Badge 
+                  key={index}
+                  className="bg-white/10 text-white border-white/30" 
+                  variant="outline"
+                >
+                  {tag.label}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

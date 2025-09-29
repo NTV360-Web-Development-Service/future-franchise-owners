@@ -167,32 +167,145 @@ export interface Page {
   id: string;
   title: string;
   slug: string;
-  layout: {
-    heading: string;
-    subheading: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
+  layout: (
+    | {
+        /**
+         * The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")
+         */
+        text: string;
+        /**
+         * Background color of the ribbon
+         */
+        backgroundColor: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'orange';
+        /**
+         * Text color for the ribbon
+         */
+        textColor: 'white' | 'black';
+        /**
+         * Optional link to make the ribbon clickable
+         */
+        link: {
+          /**
+           * URL to navigate to when ribbon is clicked
+           */
+          url: string;
+          /**
+           * Open link in a new tab
+           */
+          openInNewTab?: boolean | null;
+        };
+        /**
+         * Allow users to dismiss/close the ribbon
+         */
+        dismissible?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ribbon';
+      }
+    | {
+        /**
+         * Logo configuration - either image or text fallback
+         */
+        logo?: {
+          /**
+           * Logo image for the navbar
+           */
+          image?: (string | null) | Media;
+          /**
+           * Text to display if no logo image is provided (e.g., "FFO")
+           */
+          text?: string | null;
+        };
+        /**
+         * Navigation menu links
+         */
+        navigationLinks: {
+          /**
+           * Display text for the navigation link
+           */
+          label: string;
+          /**
+           * URL path (e.g., "/", "/opportunities", "/contact")
+           */
+          url: string;
+          id?: string | null;
         }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    };
-    image?: (string | null) | Media;
-    cta_button: {
-      label: string;
-      url: string;
-    };
-    id?: string | null;
-    blockName?: string | null;
-    blockType: 'hero';
-  }[];
+        /**
+         * Call-to-action button configuration
+         */
+        ctaButton: {
+          /**
+           * Text for the call-to-action button
+           */
+          label: string;
+          /**
+           * URL for the CTA button
+           */
+          url: string;
+          /**
+           * Open CTA link in a new tab
+           */
+          openInNewTab?: boolean | null;
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'navbar';
+      }
+    | {
+        heading: string;
+        subheading: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        image?: (string | null) | Media;
+        /**
+         * Call-to-action buttons (up to 5 buttons)
+         */
+        cta_buttons?:
+          | {
+              /**
+               * Button text (e.g., "Discover Top Franchises", "Browse Opportunities")
+               */
+              label: string;
+              /**
+               * URL path or external link
+               */
+              url: string;
+              /**
+               * Button style - primary for main actions, secondary for alternative actions
+               */
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Feature tags/badges to display below the buttons (up to 8 tags)
+         */
+        tags?:
+          | {
+              /**
+               * Tag text (e.g., "Low Cost", "Home Based", "Financing Available")
+               */
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+  )[];
   updatedAt: string;
   createdAt: string;
 }
@@ -311,17 +424,67 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        ribbon?:
+          | T
+          | {
+              text?: T;
+              backgroundColor?: T;
+              textColor?: T;
+              link?:
+                | T
+                | {
+                    url?: T;
+                    openInNewTab?: T;
+                  };
+              dismissible?: T;
+              id?: T;
+              blockName?: T;
+            };
+        navbar?:
+          | T
+          | {
+              logo?:
+                | T
+                | {
+                    image?: T;
+                    text?: T;
+                  };
+              navigationLinks?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    id?: T;
+                  };
+              ctaButton?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    openInNewTab?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         hero?:
           | T
           | {
               heading?: T;
               subheading?: T;
               image?: T;
-              cta_button?:
+              cta_buttons?:
                 | T
                 | {
                     label?: T;
                     url?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              tags?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
                   };
               id?: T;
               blockName?: T;

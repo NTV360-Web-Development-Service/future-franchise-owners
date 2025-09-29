@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock } from '@/app/(frontend)/components/blocks'
+import { HeroBlock, RibbonBlock, NavbarBlock } from '@/app/(frontend)/components/blocks'
 import FranchiseCard, { type Franchise } from '@/app/(frontend)/components/FranchiseCard'
 
 export default async function HomePage() {
@@ -33,6 +33,10 @@ export default async function HomePage() {
 
   const renderBlock = (block: Page['layout'][0]) => {
     switch (block.blockType) {
+      case 'ribbon':
+        return <RibbonBlock block={block} key={block.id} />
+      case 'navbar':
+        return <NavbarBlock block={block} key={block.id} />
       case 'hero':
         return <HeroBlock block={block} key={block.id} />
       default:
