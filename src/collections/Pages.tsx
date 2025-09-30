@@ -28,6 +28,62 @@ const Pages: CollectionConfig = {
       required: true,
       blocks: [
         {
+          slug: 'franchiseGrid',
+          fields: [
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              admin: { description: 'Section heading (optional)' },
+            },
+            {
+              name: 'showFilters',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: { description: 'Show filter controls above the grid' },
+            },
+            {
+              name: 'onlyFeatured',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: { description: 'Only include Featured franchises' },
+            },
+            {
+              name: 'onlySponsored',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: { description: 'Only include Sponsored franchises' },
+            },
+            {
+              name: 'onlyTopPick',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: { description: 'Only include Top Pick franchises' },
+            },
+            {
+              name: 'category',
+              type: 'select',
+              required: false,
+              options: [
+                { label: 'All', value: 'all' },
+                { label: 'Fitness', value: 'Fitness' },
+                { label: 'Food and Beverage', value: 'Food and Beverage' },
+                { label: 'Health and Wellness', value: 'Health and Wellness' },
+                { label: 'Home Services', value: 'Home Services' },
+                { label: 'Senior Care', value: 'Senior Care' },
+                { label: 'Sports', value: 'Sports' },
+              ],
+              admin: { description: 'Restrict grid to a single category (optional)' },
+            },
+            {
+              name: 'limit',
+              type: 'number',
+              required: false,
+              admin: { description: 'Maximum number of items to show (optional)' },
+            },
+          ],
+        },
+        {
           slug: 'ribbon',
           fields: [
             {

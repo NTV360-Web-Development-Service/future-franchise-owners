@@ -9,6 +9,14 @@
 
 ## 🚀 High Priority Tasks
 
+### ✅ Completed — Workspace Cleanup & Build Readiness
+- [x] Fix incorrect `next/headers.js` imports to `next/headers` across frontend files
+- [x] Remove unused sample route `src/app/my-route/route.ts`
+- [x] Delete unused asset `public/images/franchise-sample.svg`
+- [x] Adjust dynamic franchise detail page to handle Promise-based `params` (Next.js v15)
+- [x] Simplify ESLint configuration to remove missing plugin errors
+- [x] Run `pnpm build` and verify successful compilation
+
 ### Project Setup & Architecture
 - [ ] **Environment Setup**
   - [ ] Configure development environment

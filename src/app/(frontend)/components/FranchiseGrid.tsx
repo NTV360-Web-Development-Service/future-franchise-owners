@@ -13,7 +13,7 @@ const TAB_DEFS = [
   { key: 'new', label: 'New Arrivals' },
 ]
 
-export default function FranchiseGrid({ franchises }: { franchises: Franchise[] }) {
+export default function FranchiseGrid({ franchises, heading = 'Best Franchise Opportunities' }: { franchises: Franchise[]; heading?: string }) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string>('all')
@@ -91,7 +91,7 @@ export default function FranchiseGrid({ franchises }: { franchises: Franchise[] 
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16">
       <div className="flex items-baseline justify-between mb-6">
-        <h2 className="text-2xl sm:text-3xl font-semibold">Best Franchise Opportunities</h2>
+        <h2 className="text-2xl sm:text-3xl font-semibold">{heading}</h2>
         <span className="text-sm text-gray-600">
           Showing {filtered.length} of {franchises.length} franchises
         </span>
@@ -102,7 +102,7 @@ export default function FranchiseGrid({ franchises }: { franchises: Franchise[] 
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((franchise) => (
-          <FranchiseCard key={franchise.name} franchise={franchise} variant="featured" />
+          <FranchiseCard key={franchise.name} franchise={franchise} />
         ))}
       </div>
     </section>

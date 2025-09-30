@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    franchises: Franchise;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +80,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    franchises: FranchisesSelect<false> | FranchisesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -168,6 +170,49 @@ export interface Page {
   title: string;
   slug: string;
   layout: (
+    | {
+        /**
+         * Section heading (optional)
+         */
+        heading?: string | null;
+        /**
+         * Show filter controls above the grid
+         */
+        showFilters?: boolean | null;
+        /**
+         * Only include Featured franchises
+         */
+        onlyFeatured?: boolean | null;
+        /**
+         * Only include Sponsored franchises
+         */
+        onlySponsored?: boolean | null;
+        /**
+         * Only include Top Pick franchises
+         */
+        onlyTopPick?: boolean | null;
+        /**
+         * Restrict grid to a single category (optional)
+         */
+        category?:
+          | (
+              | 'all'
+              | 'Fitness'
+              | 'Food and Beverage'
+              | 'Health and Wellness'
+              | 'Home Services'
+              | 'Senior Care'
+              | 'Sports'
+            )
+          | null;
+        /**
+         * Maximum number of items to show (optional)
+         */
+        limit?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'franchiseGrid';
+      }
     | {
         /**
          * The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")
@@ -310,6 +355,80 @@ export interface Page {
   createdAt: string;
 }
 /**
+ * Manage dynamic franchise listings and their metadata.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franchises".
+ */
+export interface Franchise {
+  id: string;
+  businessName: string;
+  /**
+   * Optional legacy URL identifier (hidden; ID is primary)
+   */
+  slug?: string | null;
+  /**
+   * Publish lifecycle status
+   */
+  status?: ('draft' | 'published' | 'archived') | null;
+  /**
+   * Mark as featured (editorial highlight)
+   */
+  isFeatured?: boolean | null;
+  /**
+   * Mark as sponsored (paid promotion)
+   */
+  isSponsored?: boolean | null;
+  /**
+   * Mark as a top pick to highlight across the site
+   */
+  isTopPick?: boolean | null;
+  /**
+   * Detailed description using the rich text editor
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Primary business category
+   */
+  category: 'Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports';
+  /**
+   * Classification tags (e.g., Low Cost, Home Based)
+   */
+  tags?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Initial investment range
+   */
+  investment?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  /**
+   * Franchise logo or primary image
+   */
+  logo?: (string | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
@@ -327,6 +446,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'franchises';
+        value: string | Franchise;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -424,6 +547,19 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        franchiseGrid?:
+          | T
+          | {
+              heading?: T;
+              showFilters?: T;
+              onlyFeatured?: T;
+              onlySponsored?: T;
+              onlyTopPick?: T;
+              category?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
         ribbon?:
           | T
           | {
@@ -490,6 +626,36 @@ export interface PagesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franchises_select".
+ */
+export interface FranchisesSelect<T extends boolean = true> {
+  id?: T;
+  businessName?: T;
+  slug?: T;
+  status?: T;
+  isFeatured?: T;
+  isSponsored?: T;
+  isTopPick?: T;
+  description?: T;
+  category?: T;
+  tags?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  investment?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+      };
+  logo?: T;
   updatedAt?: T;
   createdAt?: T;
 }

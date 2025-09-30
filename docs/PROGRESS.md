@@ -26,6 +26,19 @@
 - [x] **DEVELOPMENT_PROCESS.md** - Complete development workflow and process guide
 - [x] **README.md** - Project overview and comprehensive documentation hub
 
+### 🔧 Recent Technical Updates (Workspace)
+- [x] Fixed incorrect `next/headers.js` imports across frontend pages to `next/headers` (consistent with Next.js v15).
+- [x] Removed unused sample route `src/app/my-route/route.ts`.
+- [x] Deleted unused public asset `public/images/franchise-sample.svg`.
+- [x] Updated dynamic franchise detail page to accept Promise-based `params` (Next.js v15 async props).
+- [x] Simplified ESLint configuration to avoid missing plugin errors; build lint step no longer blocks.
+- [x] Production build verified: `pnpm build` completed successfully with static pages generated.
+- [x] Verified homepage and franchises listing render from CMS data. 
+
+### 🧪 Build & Preview
+- Build status: Passing (`pnpm build`)
+- Local previews confirmed during development (e.g., homepage and `/franchises`).
+
 #### 🎯 Ready for Next Phase
 - [x] All documentation finalized
 - [x] Development process established
