@@ -1,11 +1,11 @@
-import { headers as getHeaders } from 'next/headers.js'
+import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import React from 'react'
 import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock, RibbonBlock, NavbarBlock } from '@/app/(frontend)/components/blocks'
+import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock } from '@/app/(frontend)/components/blocks'
 import FranchiseCard, { type Franchise } from '@/app/(frontend)/components/FranchiseCard'
 
 export default async function HomePage() {
@@ -39,59 +39,14 @@ export default async function HomePage() {
         return <NavbarBlock block={block} key={block.id} />
       case 'hero':
         return <HeroBlock block={block} key={block.id} />
+      case 'franchiseGrid':
+        return <FranchiseGridBlock block={block} key={block.id} />
       default:
         return null
     }
   }
 
-  // Sample franchise data (placeholder until CMS integration)
-  const featured: Franchise[] = [
-    {
-      name: 'Franchise Alpha',
-      category: 'Automotive',
-      description: 'A leading opportunity with proven success.',
-      cashRequired: '$300,000',
-      tags: ['Featured', 'Priority', 'Best Score 90'],
-    },
-    {
-      name: 'Franchise Beta',
-      category: 'Business Services',
-      description: 'Trusted brand with nationwide presence.',
-      cashRequired: '$50,000',
-      tags: ['Featured', 'Priority', 'Low Cost', 'Best Score 88'],
-    },
-    {
-      name: 'Franchise Gamma',
-      category: 'Food & Beverage',
-      description: 'High-growth mobile food concept.',
-      cashRequired: '$100,000',
-      tags: ['Featured', 'Priority', 'Home Based', 'Best Score 87'],
-    },
-  ]
-
-  const topPicks: Franchise[] = [
-    {
-      name: 'Franchise Delta',
-      category: 'Senior Care',
-      description: 'Care services franchise with strong support.',
-      cashRequired: '$50,000',
-      tags: ['User Pick', 'New Arrival', 'Best Score 86'],
-    },
-    {
-      name: 'Franchise Epsilon',
-      category: 'Retail/Experiences',
-      description: 'Experience-based retail concept with recurring revenue.',
-      cashRequired: '$10,000',
-      tags: ['User Pick', 'Low Cost', 'Best Score 86'],
-    },
-    {
-      name: 'Franchise Zeta',
-      category: 'Home Services',
-      description: 'Essential services with strong local demand.',
-      cashRequired: '$60,000',
-      tags: ['User Pick', 'Home Based', 'Best Score 86'],
-    },
-  ]
+  
 
   return (
     <div>
@@ -100,18 +55,7 @@ export default async function HomePage() {
 
       {/* Featured franchises section */}
 
-      {/* Top pick franchises section */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl sm:text-3xl font-semibold">Top Picks</h2>
-          <span className="text-sm text-muted-foreground">User-rated selections</span>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {topPicks.map((franchise) => (
-            <FranchiseCard key={franchise.name} franchise={franchise} variant="featured" />
-          ))}
-        </div>
-      </section>
+      {/* Top Picks section removed in favor of CMS-driven franchiseGrid block */}
 
       {/* <pre>{JSON.stringify(page.layout, null, 2)}</pre> */}
     </div>

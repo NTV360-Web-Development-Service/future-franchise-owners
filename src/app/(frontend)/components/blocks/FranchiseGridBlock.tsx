@@ -1,18 +1,42 @@
 import React from 'react'
-import FranchiseFiltersGrid from './FranchiseFiltersGrid'
 import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { type Franchise } from '../components/FranchiseCard'
+import FranchiseFiltersGrid from '@/app/(frontend)/franchises/FranchiseFiltersGrid'
+import FranchiseGrid from '@/app/(frontend)/components/FranchiseGrid'
+import type { Franchise } from '@/app/(frontend)/components/FranchiseCard'
 
-export default async function FranchisesPage() {
+type FranchiseGridBlockProps = {
+  block: {
+    blockType: 'franchiseGrid'
+    heading?: string | null
+    showFilters?: boolean | null
+    onlyFeatured?: boolean | null
+    onlySponsored?: boolean | null
+    onlyTopPick?: boolean | null
+    category?: 'all' | 'Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports' | null
+    limit?: number | null
+    id?: string | null
+    blockName?: string | null
+  }
+}
+
+export default async function FranchiseGridBlock({ block }: FranchiseGridBlockProps) {
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
+  const where: any = {}
+  if (block.onlyFeatured) where.isFeatured = { equals: true }
+  if (block.onlySponsored) where.isSponsored = { equals: true }
+  if (block.onlyTopPick) where.isTopPick = { equals: true }
+  if (block.category && block.category !== 'all') where.category = { equals: block.category }
+
   const { docs } = await payload.find({
     collection: 'franchises',
+    where: Object.keys(where).length ? where : undefined,
     sort: '-updatedAt',
+    limit: block.limit ?? undefined,
     depth: 1,
   })
 
@@ -61,13 +85,23 @@ export default async function FranchisesPage() {
   })
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="flex items-baseline justify-between mb-6">
-        <h1 className="text-2xl sm:text-3xl font-semibold">Franchise Directory</h1>
-        <span className="text-sm text-muted-foreground">Filter and browse all franchises</span>
-      </div>
+    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      {/* If showFilters is true, show the heading here and render the filters grid */}
+      {block.showFilters && block.heading && (
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-2xl sm:text-3xl font-semibold">{block.heading}</h2>
+        </div>
+      )}
 
-      <FranchiseFiltersGrid franchises={franchises} />
-    </div>
+      {block.showFilters ? (
+        <FranchiseFiltersGrid franchises={franchises} />
+      ) : (
+        // Without filters, render the simple grid and pass the heading down
+        <FranchiseGrid
+          franchises={franchises}
+          heading={block.heading ?? 'Franchise Opportunities'}
+        />
+      )}
+    </section>
   )
 }
