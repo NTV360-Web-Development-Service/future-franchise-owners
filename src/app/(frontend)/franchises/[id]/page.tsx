@@ -1,11 +1,28 @@
-import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import React from 'react'
 
 import config from '@/payload.config'
 
+/**
+ * FranchiseDetailPage - Individual franchise detail page component
+ * 
+ * This server-side component fetches and displays detailed information
+ * for a specific franchise based on the provided ID parameter. It handles
+ * data fetching, error states, and renders franchise details including
+ * business information, description, and metadata.
+ * 
+ * Features:
+ * - Server-side data fetching from Payload CMS
+ * - Dynamic routing with franchise ID parameter
+ * - Error handling for non-existent franchises
+ * - Rich text content display (with fallback)
+ * - Franchise metadata display
+ * - Responsive layout
+ * 
+ * @param params - Route parameters containing franchise ID
+ * @returns JSX element containing franchise details or error message
+ */
 export default async function FranchiseDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const headers = getHeaders()
   const { id } = await params
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

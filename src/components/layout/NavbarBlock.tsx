@@ -7,39 +7,77 @@ import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Media } from '@/types/payload'
 
+/**
+ * Props interface for the NavbarBlock component
+ */
 interface NavbarBlockProps {
+  /** Block configuration from Payload CMS */
   block: {
+    /** Unique identifier for the block */
     id?: string | null
+    /** Optional block name for admin reference */
     blockName?: string | null
+    /** Block type identifier */
     blockType: 'navbar'
+    /** Logo configuration */
     logo?: {
+      /** Logo image from media collection or URL */
       image?: string | Media | null
+      /** Fallback text if no image is provided */
       text?: string | null
     } | null
+    /** Array of navigation menu links */
     navigationLinks: Array<{
+      /** Display text for the link */
       label: string
+      /** URL path or external link */
       url: string
+      /** Optional unique identifier */
       id?: string | null
     }>
+    /** Call-to-action button configuration */
     ctaButton: {
+      /** Button text */
       label: string
+      /** Button URL */
       url: string
+      /** Whether to open link in new tab */
       openInNewTab?: boolean | null
     }
   }
 }
 
+/**
+ * NavbarBlock - A responsive navigation header component
+ * 
+ * Features:
+ * - Responsive design with mobile hamburger menu
+ * - Logo support (image or text fallback)
+ * - Dynamic navigation links from CMS
+ * - Call-to-action button
+ * - Sticky positioning
+ * - Mobile menu with overlay
+ * 
+ * @param props - Component props
+ * @returns JSX element containing the navigation header
+ */
 export function NavbarBlock({ block }: NavbarBlockProps) {
   const [open, setOpen] = React.useState(false)
 
-  // Close mobile menu when navigating
+  /**
+   * Close mobile menu when navigating
+   * Listens for hash changes to automatically close the mobile menu
+   */
   React.useEffect(() => {
     const handleRouteChange = () => setOpen(false)
     window.addEventListener('hashchange', handleRouteChange)
     return () => window.removeEventListener('hashchange', handleRouteChange)
   }, [])
 
-  // Extract logo information
+  /**
+   * Extract and process logo information from block data
+   * Handles both Media objects and direct URL strings
+   */
   let logoUrl: string | null = null
   let logoAlt: string | null = null
   let logoWidth = 32
@@ -56,7 +94,7 @@ export function NavbarBlock({ block }: NavbarBlockProps) {
   const logoText = block.logo?.text || 'FFO'
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Brand */}

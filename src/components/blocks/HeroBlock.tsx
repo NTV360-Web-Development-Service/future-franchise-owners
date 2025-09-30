@@ -1,30 +1,70 @@
 import { Button, Badge } from '@/components'
 
+/**
+ * Props interface for the HeroBlock component
+ */
 interface HeroBlockComponentProps {
+  /** Block configuration from Payload CMS */
   block: {
+    /** Block type identifier */
     blockType: 'hero'
+    /** Main heading text */
     heading: string
+    /** Rich text subheading from Payload CMS */
     subheading: any // Rich text from Payload
+    /** Hero background image */
     image?: {
+      /** Image URL */
       url?: string | null
+      /** Image alt text for accessibility */
       alt?: string
-      [key: string]: any // Additional Media fields from Payload
+      /** Additional Media fields from Payload */
+      [key: string]: any
     } | string | null
+    /** Call-to-action buttons array */
     cta_buttons?: {
+      /** Button text */
       label: string
+      /** Button URL */
       url: string
+      /** Button style variant */
       style?: 'primary' | 'secondary'
     }[] | null
+    /** Feature tags/badges to display */
     tags?: {
+      /** Tag text */
       label: string
     }[] | null
+    /** Unique identifier for the block */
     id?: string | null
+    /** Optional block name for admin reference */
     blockName?: string | null
   }
 }
 
+/**
+ * HeroBlock - A prominent hero section component for landing pages
+ * 
+ * Features:
+ * - Large heading and subheading text
+ * - Background image support with overlay
+ * - Multiple call-to-action buttons
+ * - Feature tags/badges
+ * - Rich text content parsing
+ * - Responsive design
+ * - Accessibility support
+ * 
+ * @param props - Component props
+ * @returns JSX element containing the hero section
+ */
 export default function HeroBlock({ block }: HeroBlockComponentProps) {
-  // Extract text content from the rich text subheading
+  /**
+   * Extract plain text content from Payload's rich text format
+   * Recursively processes the rich text structure to extract readable text
+   * 
+   * @param richText - Rich text object from Payload CMS
+   * @returns Plain text string
+   */
   const getTextFromRichText = (richText: any): string => {
     if (!richText?.root?.children) return ''
     

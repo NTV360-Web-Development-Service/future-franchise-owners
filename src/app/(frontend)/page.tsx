@@ -5,9 +5,24 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock } from '@/app/(frontend)/components/blocks'
-import FranchiseCard, { type Franchise } from '@/app/(frontend)/components/FranchiseCard'
+import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock } from '@/components/blocks'
 
+/**
+ * HomePage - The main landing page component for the franchise website
+ * 
+ * This server-side component fetches page data from Payload CMS and renders
+ * dynamic blocks based on the page layout configuration. It supports various
+ * block types including hero sections, navigation, ribbons, and franchise grids.
+ * 
+ * Features:
+ * - Server-side rendering with Payload CMS integration
+ * - Dynamic block rendering based on CMS configuration
+ * - User authentication context
+ * - Flexible layout system
+ * - SEO-friendly structure
+ * 
+ * @returns JSX element containing the complete homepage
+ */
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
@@ -31,6 +46,13 @@ export default async function HomePage() {
     return <div>Page not found</div>
   }
 
+  /**
+   * Render a block component based on its type
+   * Maps block types to their corresponding React components
+   * 
+   * @param block - Block data from Payload CMS
+   * @returns JSX element for the block or null if type not supported
+   */
   const renderBlock = (block: Page['layout'][0]) => {
     switch (block.blockType) {
       case 'ribbon':
