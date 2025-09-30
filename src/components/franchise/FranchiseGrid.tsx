@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import FranchiseCard, { type Franchise } from './FranchiseCard'
-import { parseCurrencyToNumber, extractBestScore } from '../utils/franchiseUtils'
+import { parseCurrencyToNumber, extractBestScore } from '@/lib/franchise'
 
 const TAB_DEFS = [
   { key: 'all', label: 'All' },
@@ -100,11 +100,22 @@ export default function FranchiseGrid({ franchises, heading = 'Best Franchise Op
       {/* Remove filters & tabs on homepage to comply with requirement */}
       {/* Tabs and filters will move to the dedicated franchises page */}
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((franchise) => (
-          <FranchiseCard key={franchise.name} franchise={franchise} />
-        ))}
-      </div>
+      {(() => {
+        const isSingle = filtered.length <= 1
+        const colsClass = isSingle ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3'
+        return (
+          <div className={`grid gap-6 ${colsClass}`}>
+            {filtered.map((franchise) => (
+              <div
+                key={franchise.name}
+                className={isSingle ? 'w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto' : ''}
+              >
+                <FranchiseCard franchise={franchise} />
+              </div>
+            ))}
+          </div>
+        )
+      })()}
     </section>
   )
 }

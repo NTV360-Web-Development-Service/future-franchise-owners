@@ -1,142 +1,483 @@
-"use client"
+'use client'
 
 import { useMemo, useState } from 'react'
-import { Input, Button } from '@/components'
-import FranchiseCard, { type Franchise } from '../components/FranchiseCard'
-import { parseCurrencyToNumber, extractBestScore } from '../utils/franchiseUtils'
+import {
+  Input,
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components'
+import FranchiseCard, { type Franchise } from '@/components/franchise/FranchiseCard'
+import { parseCurrencyToNumber, extractBestScore } from '@/lib/franchise'
 
-export default function FranchiseFiltersGrid({ franchises }: { franchises: Franchise[] }) {
+/**
+ * Investment range configuration for filtering franchises by cash required
+ */
+interface InvestmentRange {
+  label: string
+  value: string
+  min?: number
+  max?: number
+}
+
+/**
+ * Props for the FranchiseFiltersGrid component
+ */
+interface FranchiseFiltersGridProps {
+  /** Array of franchise data to display and filter */
+  franchises: Franchise[]
+  /** Optional heading text for the grid */
+  heading?: string
+  /** Whether to show the heading section */
+  showHeading?: boolean
+}
+
+/**
+ * Sort options for franchise listings
+ */
+type SortOption = 'relevance' | 'best' | 'cash'
+
+/**
+ * Reusable expand/collapse icon component
+ */
+const ExpandCollapseIcon = ({ isExpanded }: { isExpanded: boolean }) => (
+  <>
+    <svg
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className={`size-5 ${isExpanded ? 'hidden' : 'block'}`}
+    >
+      <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+    </svg>
+    <svg
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className={`size-5 ${isExpanded ? 'block' : 'hidden'}`}
+    >
+      <path
+        d="M4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10Z"
+        clipRule="evenodd"
+        fillRule="evenodd"
+      />
+    </svg>
+  </>
+)
+
+/**
+ * Reusable checkbox component with consistent styling
+ */
+const FilterCheckbox = ({ 
+  id, 
+  checked, 
+  onChange, 
+  label 
+}: { 
+  id: string
+  checked: boolean
+  onChange: () => void
+  label: string
+}) => (
+  <div className="flex gap-3">
+    <div className="flex h-5 shrink-0 items-center">
+      <div className="group grid size-4 grid-cols-1">
+        <input
+          id={id}
+          type="checkbox"
+          checked={checked}
+          onChange={onChange}
+          className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+        />
+        <svg
+          viewBox="0 0 14 14"
+          fill="none"
+          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+        >
+          <path
+            d="M3 8L6 11L11 3.5"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="opacity-0 group-has-checked:opacity-100"
+          />
+        </svg>
+      </div>
+    </div>
+    <label htmlFor={id} className="text-sm text-gray-600">
+      {label}
+    </label>
+  </div>
+)
+
+/**
+ * Collapsible filter section component
+ */
+const FilterSection = ({ 
+  title, 
+  isOpen, 
+  onToggle, 
+  children 
+}: { 
+  title: string
+  isOpen: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) => (
+  <div className="border-b border-gray-200 py-6">
+    <h3 className="-my-3 flow-root">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500"
+      >
+        <span className="font-medium text-gray-900">{title}</span>
+        <span className="ml-6 flex items-center">
+          <ExpandCollapseIcon isExpanded={isOpen} />
+        </span>
+      </button>
+    </h3>
+    <div className={`${isOpen ? 'block' : 'hidden'} pt-6`}>
+      <div className="space-y-4">
+        {children}
+      </div>
+    </div>
+  </div>
+)
+
+/**
+ * Determines the appropriate grid layout based on the number of items
+ */
+const getGridLayout = (itemCount: number): string => {
+  if (itemCount <= 1) return 'grid-cols-1'
+  if (itemCount === 2) return 'sm:grid-cols-2'
+  return 'sm:grid-cols-2 lg:grid-cols-3'
+}
+
+/**
+ * FranchiseFiltersGrid - A comprehensive franchise listing component with filtering and sorting capabilities
+ * 
+ * Features:
+ * - Search functionality across name, category, and description
+ * - Category filtering with dynamic category generation
+ * - Investment range filtering with predefined ranges
+ * - Tag/feature filtering with popular tags
+ * - Sorting by relevance, rating, and price
+ * - Responsive grid layout that adapts to content
+ * - Collapsible filter sections for better UX
+ * 
+ * @param props - Component props
+ * @returns JSX element containing the franchise grid with filters
+ */
+export default function FranchiseFiltersGrid({
+  franchises,
+  heading,
+  showHeading = true,
+}: FranchiseFiltersGridProps) {
+  // Filter and sort state
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState<string>('all')
-  const [maxCash, setMaxCash] = useState<string>('')
-  const [sortBy, setSortBy] = useState<string>('relevance')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedInvestmentRanges, setSelectedInvestmentRanges] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState<SortOption>('relevance')
+  const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
+  // Collapsible section states
+  const [categoryOpen, setCategoryOpen] = useState<boolean>(false)
+  const [investmentOpen, setInvestmentOpen] = useState<boolean>(false)
+  const [tagsOpen, setTagsOpen] = useState<boolean>(false)
+
+  /**
+   * Extract unique categories from franchise data
+   */
   const categories = useMemo(() => {
-    const set = new Set(franchises.map((f) => f.category))
-    return ['all', ...Array.from(set)]
+    const categorySet = new Set(franchises.map((franchise) => franchise.category))
+    return Array.from(categorySet)
   }, [franchises])
 
-  const filtered = useMemo(() => {
-    let list = [...franchises]
+  /**
+   * Predefined investment ranges for filtering
+   */
+  const investmentRanges = useMemo((): InvestmentRange[] => [
+    { label: 'Under $50K', value: 'under-50k', max: 50000 },
+    { label: '$50K - $100K', value: '50k-100k', min: 50000, max: 100000 },
+    { label: '$100K - $250K', value: '100k-250k', min: 100000, max: 250000 },
+    { label: '$250K - $500K', value: '250k-500k', min: 250000, max: 500000 },
+    { label: '$500K - $1M', value: '500k-1m', min: 500000, max: 1000000 },
+    { label: 'Over $1M', value: 'over-1m', min: 1000000 },
+  ], [])
 
-    // Search
+  /**
+   * Extract and rank popular tags from franchise data
+   * Returns the top 8 most frequently used tags
+   */
+  const popularTags = useMemo(() => {
+    const tagCounts = new Map<string, number>()
+    
+    franchises.forEach((franchise) => {
+      franchise.tags.forEach((tag) => {
+        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+      })
+    })
+    
+    return Array.from(tagCounts.entries())
+      .sort((a, b) => b[1] - a[1]) // Sort by frequency (descending)
+      .slice(0, 8) // Take top 8
+      .map(([tag]) => tag)
+  }, [franchises])
+
+  /**
+   * Apply all filters and sorting to the franchise list
+   */
+  const filteredFranchises = useMemo(() => {
+    let result = [...franchises]
+
+    // Apply search filter
     if (search.trim()) {
-      const q = search.toLowerCase()
-      list = list.filter(
-        (f) =>
-          f.name.toLowerCase().includes(q) ||
-          f.category.toLowerCase().includes(q) ||
-          f.description.toLowerCase().includes(q),
+      const searchQuery = search.toLowerCase()
+      result = result.filter((franchise) =>
+        franchise.name.toLowerCase().includes(searchQuery) ||
+        franchise.category.toLowerCase().includes(searchQuery) ||
+        franchise.description.toLowerCase().includes(searchQuery)
       )
     }
 
-    // Category filter
-    if (category !== 'all') {
-      list = list.filter((f) => f.category === category)
+    // Apply category filter
+    if (selectedCategories.length > 0) {
+      const allowedCategories = new Set(selectedCategories)
+      result = result.filter((franchise) => allowedCategories.has(franchise.category))
     }
 
-    // Max cash filter
-    if (maxCash) {
-      const max = Number(maxCash)
-      if (!Number.isNaN(max)) {
-        list = list.filter((f) => parseCurrencyToNumber(f.cashRequired) <= max)
-      }
+    // Apply investment range filter
+    if (selectedInvestmentRanges.length > 0) {
+      result = result.filter((franchise) => {
+        const cashRequired = parseCurrencyToNumber(franchise.cashRequired)
+        return selectedInvestmentRanges.some((rangeValue) => {
+          const range = investmentRanges.find((r) => r.value === rangeValue)
+          if (!range) return false
+
+          // Check if cash required falls within the range
+          const withinMin = range.min === undefined || cashRequired >= range.min
+          const withinMax = range.max === undefined || cashRequired <= range.max
+          return withinMin && withinMax
+        })
+      })
     }
 
-    // Sort
-    list.sort((a, b) => {
-      if (sortBy === 'best') {
-        const sa = extractBestScore(a.tags) ?? -Infinity
-        const sb = extractBestScore(b.tags) ?? -Infinity
-        return sb - sa
+    // Apply tags filter
+    if (selectedTags.length > 0) {
+      result = result.filter((franchise) =>
+        selectedTags.some((tag) => franchise.tags.includes(tag))
+      )
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'best': {
+          const scoreA = extractBestScore(a.tags) ?? -Infinity
+          const scoreB = extractBestScore(b.tags) ?? -Infinity
+          return scoreB - scoreA // Descending order
+        }
+        case 'cash': {
+          return parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
+        }
+        case 'relevance':
+        default:
+          return 0 // Keep original order
       }
-      if (sortBy === 'cash') {
-        return parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
-      }
-      // relevance (default): keep current order
-      return 0
     })
 
-    return list
-  }, [franchises, search, category, maxCash, sortBy])
+    return result
+  }, [
+    franchises,
+    search,
+    selectedCategories,
+    selectedInvestmentRanges,
+    selectedTags,
+    sortBy,
+    investmentRanges,
+  ])
+
+  /**
+   * Handle category selection toggle
+   */
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) 
+        ? prev.filter((c) => c !== category) 
+        : [category] // Single selection for categories
+    )
+  }
+
+  /**
+   * Handle investment range selection toggle
+   */
+  const handleInvestmentRangeToggle = (rangeValue: string) => {
+    setSelectedInvestmentRanges((prev) =>
+      prev.includes(rangeValue)
+        ? prev.filter((r) => r !== rangeValue)
+        : [...prev, rangeValue]
+    )
+  }
+
+  /**
+   * Handle tag selection toggle
+   */
+  const handleTagToggle = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) 
+        ? prev.filter((t) => t !== tag) 
+        : [...prev, tag]
+    )
+  }
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="text-2xl sm:text-3xl font-semibold">Browse Franchises</h2>
-        <span className="text-sm text-gray-600">
-          Showing {filtered.length} of {franchises.length} franchises
-        </span>
-      </div>
+    <div className="bg-white">
+      {showHeading && (
+        <div className="lg:sticky lg:top-16 lg:z-10 bg-white flex items-baseline justify-between border-b border-gray-200 pt-6 pb-6">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+            {heading ?? 'Browse Franchises'}
+          </h1>
 
-      {/* Filters: standardized with shadcn Input and Button */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium mb-1">Search</label>
-          <Input
-            placeholder="Search by name, category..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Category</label>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <Button
-                key={cat}
-                variant={category === cat ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCategory(cat)}
-              >
-                {cat}
-              </Button>
-            ))}
+          <div className="flex items-center gap-4">
+            {/* Results count */}
+            <span className="text-sm text-gray-600">
+              Showing {filteredFranchises.length} of {franchises.length} franchises
+            </span>
+
+            {/* Sort dropdown */}
+            <div className="relative inline-block text-left">
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Most Popular</SelectItem>
+                  <SelectItem value="best">Best Rating</SelectItem>
+                  <SelectItem value="cash">Price: Low to High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Filter toggle button */}
+            <button
+              type="button"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+              aria-label="Toggle filters"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                <path
+                  d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Max Cash</label>
-          <Input
-            type="number"
-            placeholder="e.g. 50000"
-            value={maxCash}
-            onChange={(e) => setMaxCash(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Sort By</label>
-          <div className="flex gap-2">
-            <Button
-              variant={sortBy === 'relevance' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSortBy('relevance')}
+      )}
+
+      <section aria-labelledby="products-heading" className="pt-6 pb-24">
+        <h2 id="products-heading" className="sr-only">
+          Franchises
+        </h2>
+
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+          {/* Filters sidebar */}
+          <form
+            className={`${filtersOpen ? 'block' : 'hidden'} lg:block lg:sticky lg:top-[184px] px-4 lg:self-start lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto`}
+          >
+            <h3 className="sr-only">Filters</h3>
+
+            {/* Quick category filters */}
+            <ul
+              role="list"
+              className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
             >
-              Relevance
-            </Button>
-            <Button
-              variant={sortBy === 'best' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSortBy('best')}
+              {categories.map((category) => (
+                <li key={category}>
+                  <button
+                    type="button"
+                    onClick={() => handleCategoryToggle(category)}
+                    className={`block hover:text-indigo-600 transition-colors ${
+                      selectedCategories.includes(category) ? 'text-indigo-600 font-semibold' : ''
+                    }`}
+                  >
+                    {category}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* Search filter */}
+            <div className="border-b border-gray-200 py-6">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">Search</h3>
+              <Input
+                type="text"
+                placeholder="Search franchises..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            {/* Investment range filter */}
+            <FilterSection
+              title="Investment Range"
+              isOpen={investmentOpen}
+              onToggle={() => setInvestmentOpen(!investmentOpen)}
             >
-              Best Score
-            </Button>
-            <Button
-              variant={sortBy === 'cash' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSortBy('cash')}
+              {investmentRanges.map((range) => (
+                <FilterCheckbox
+                  key={range.value}
+                  id={`filter-investment-${range.value}`}
+                  checked={selectedInvestmentRanges.includes(range.value)}
+                  onChange={() => handleInvestmentRangeToggle(range.value)}
+                  label={range.label}
+                />
+              ))}
+            </FilterSection>
+
+            {/* Tags/Features filter */}
+            <FilterSection
+              title="Features"
+              isOpen={tagsOpen}
+              onToggle={() => setTagsOpen(!tagsOpen)}
             >
-              Cash Required
-            </Button>
+              {popularTags.map((tag) => (
+                <FilterCheckbox
+                  key={tag}
+                  id={`filter-tag-${tag.replace(/\s+/g, '-').toLowerCase()}`}
+                  checked={selectedTags.includes(tag)}
+                  onChange={() => handleTagToggle(tag)}
+                  label={tag}
+                />
+              ))}
+            </FilterSection>
+          </form>
+
+          {/* Results grid */}
+          <div className="lg:col-span-3 min-h-0">
+            <div className={`grid gap-6 justify-items-start ${getGridLayout(filteredFranchises.length)} pb-8`}>
+              {filteredFranchises.map((franchise) => (
+                <div
+                  key={franchise.name}
+                  className={
+                    filteredFranchises.length <= 1 
+                      ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start' 
+                      : ''
+                  }
+                >
+                  <FranchiseCard franchise={franchise} variant="grid" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Results grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((franchise) => (
-          <FranchiseCard key={franchise.name} franchise={franchise} variant="grid" />
-        ))}
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }

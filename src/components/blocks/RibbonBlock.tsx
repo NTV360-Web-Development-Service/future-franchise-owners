@@ -4,21 +4,37 @@ import React, { useState } from 'react'
 import { X } from 'lucide-react'
 import Marquee from 'react-fast-marquee'
 
+/**
+ * Props interface for the RibbonBlock component
+ */
 interface RibbonBlockProps {
+  /** Block configuration from Payload CMS */
   block: {
+    /** Text content to display in the ribbon */
     text: string
+    /** Background color theme */
     backgroundColor: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'orange'
+    /** Text color for contrast */
     textColor: 'white' | 'black'
+    /** Optional link configuration */
     link?: {
+      /** URL to navigate to when clicked */
       url: string
+      /** Whether to open link in new tab */
       openInNewTab?: boolean | null
     }
+    /** Whether the ribbon can be dismissed by users */
     dismissible?: boolean | null
+    /** Unique identifier for the block */
     id?: string | null
+    /** Optional block name for admin reference */
     blockName?: string | null
   }
 }
 
+/**
+ * CSS class mappings for background colors
+ */
 const backgroundColorClasses = {
   blue: 'bg-blue-600',
   red: 'bg-red-600',
@@ -28,11 +44,28 @@ const backgroundColorClasses = {
   orange: 'bg-orange-600',
 }
 
+/**
+ * CSS class mappings for text colors
+ */
 const textColorClasses = {
   white: 'text-white',
   black: 'text-black',
 }
 
+/**
+ * RibbonBlock - A dismissible announcement banner component
+ * 
+ * Features:
+ * - Scrolling marquee text animation
+ * - Customizable background and text colors
+ * - Optional click-through links
+ * - Dismissible functionality with close button
+ * - Responsive design
+ * - Smooth animations
+ * 
+ * @param props - Component props
+ * @returns JSX element containing the ribbon banner or null if dismissed
+ */
 export function RibbonBlock({ block }: RibbonBlockProps) {
   const [isVisible, setIsVisible] = useState(true)
 
@@ -40,6 +73,10 @@ export function RibbonBlock({ block }: RibbonBlockProps) {
     return null
   }
 
+  /**
+   * Handle ribbon dismissal
+   * Sets the ribbon as not visible, effectively removing it from the DOM
+   */
   const handleDismiss = () => {
     setIsVisible(false)
   }
