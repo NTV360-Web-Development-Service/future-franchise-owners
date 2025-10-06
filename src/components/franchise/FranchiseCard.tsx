@@ -4,7 +4,10 @@ import { Badge, Card, CardContent, CardDescription, CardFooter, CardHeader, Card
 import { extractBestScore } from '@/lib/franchise'
 
 /**
- * Franchise data type definition
+ * Franchise data passed to card views.
+ *
+ * Represents the subset of franchise fields used for listing cards,
+ * including optional agent info when a consultant is assigned.
  */
 export type Franchise = {
   /** Franchise business name */
@@ -23,14 +26,25 @@ export type Franchise = {
   isSponsored?: boolean
   /** Whether franchise is marked as a top pick */
   isTopPick?: boolean
+  /** If true, force use main contact and hide agent display */
+  useMainContact?: boolean
   /** URL for franchise logo/image */
   imageUrl?: string
   /** Alt text for franchise image */
   imageAlt?: string
+  /** Assigned agent display name */
+  agentName?: string
+  /** Assigned agent title */
+  agentTitle?: string
+  /** Assigned agent photo URL */
+  agentPhotoUrl?: string
 }
 
 /**
- * Props interface for the FranchiseCard component
+ * Props for the FranchiseCard component.
+ *
+ * @property franchise - Franchise data to render. May include `href` for linking.
+ * @property variant - Visual variant for card styling.
  */
 interface FranchiseCardProps {
   /** Franchise data with optional href for linking */
@@ -40,26 +54,21 @@ interface FranchiseCardProps {
 }
 
 /**
- * FranchiseCard - A reusable card component for displaying franchise information
- * 
- * Features:
- * - Responsive image display with fallback
- * - Franchise name, category, and description
- * - Investment amount and feature tags
- * - Best score extraction and display
- * - Optional linking functionality
- * - Multiple visual variants
- * - Accessibility support
- * 
- * @param props - Component props
- * @returns JSX element containing the franchise card
+ * FranchiseCard component.
+ *
+ * Renders a franchise listing card with logo, name, category, summary,
+ * cash requirements, tags, and optional assigned agent details.
+ *
+ * @param props - Component props containing franchise data and optional variant.
+ * @returns JSX element containing the franchise card.
  */
 export default function FranchiseCard({ franchise, variant = 'default' }: FranchiseCardProps) {
   const bestScore = extractBestScore(franchise.tags)
 
   /**
-   * Wrapper component that conditionally renders a Link or div
-   * Provides linking functionality when href is present
+   * Wrapper that conditionally renders a Next.js Link when `href` is present.
+   *
+   * @param props.children - Card content to wrap.
    */
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (franchise.href) {
@@ -69,7 +78,7 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
   }
 
   return (
-    <Card>
+    <Card className="h-full flex flex-col">
       {/* Image: prefer franchise logo, fallback to sample */}
       <Wrapper>
         <div className="relative w-full aspect-[16/9]">
@@ -114,8 +123,37 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="pt-4">
-        <p className="text-sm text-muted-foreground">{franchise.description}</p>
+      <CardContent className="pt-4 flex-1">
+        <p
+          className="text-sm text-muted-foreground"
+          style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+        >
+          {franchise.description}
+        </p>
+        {/* Assigned Agent display below description */}
+        {franchise.agentName && !franchise.useMainContact && (
+          <div className="mt-3 text-xs text-muted-foreground flex items-center gap-2">
+            {franchise.agentPhotoUrl ? (
+              <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src={franchise.agentPhotoUrl}
+                  alt={`${franchise.agentName} photo`}
+                  fill
+                  sizes="32px"
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-[10px] font-medium text-gray-600">
+                  {franchise.agentName?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <span className="font-medium">{franchise.agentName}</span>
+            {franchise.agentTitle && <span className="text-muted-foreground">{franchise.agentTitle}</span>}
+          </div>
+        )}
       </CardContent>
       
       <CardFooter className="flex flex-wrap gap-2 border-t">

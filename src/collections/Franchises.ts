@@ -138,6 +138,26 @@ export const Franchises: CollectionConfig = {
         description: 'Franchise logo or primary image',
       },
     },
+    {
+      name: 'assignedAgent',
+      type: 'relationship',
+      relationTo: 'agents' as any,
+      admin: {
+        description:
+          'Assign a specific agent to this franchise (optional). If not assigned, inquiries go to main contact.',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'useMainContact',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Force use main contact even if agent is assigned (overrides agent assignment)',
+        position: 'sidebar',
+      },
+    },
   ],
 }
 

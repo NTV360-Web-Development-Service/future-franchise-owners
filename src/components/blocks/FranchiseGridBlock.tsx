@@ -7,7 +7,10 @@ import FranchiseGrid from '@/components/franchise/FranchiseGrid'
 import type { Franchise } from '@/components/franchise/FranchiseCard'
 
 /**
- * Props interface for the FranchiseGridBlock component
+ * Props for the FranchiseGridBlock component.
+ *
+ * Represents block configuration authored in Payload CMS used to
+ * drive server-side franchise fetching and filtering.
  */
 type FranchiseGridBlockProps = {
   /** Block configuration from Payload CMS */
@@ -36,20 +39,13 @@ type FranchiseGridBlockProps = {
 }
 
 /**
- * FranchiseGridBlock - A server-side component that fetches and displays franchise data
- * 
- * Features:
- * - Server-side data fetching from Payload CMS
- * - Dynamic filtering based on block configuration
- * - Support for featured, sponsored, and top pick filters
- * - Category-based filtering
- * - Configurable display limits
- * - Rich text content parsing
- * - Currency formatting
- * - Integration with FranchiseFiltersGrid for interactive filtering
- * 
- * @param props - Component props
- * @returns JSX element containing the franchise grid
+ * Server component that fetches and displays franchise data.
+ *
+ * Applies filters coming from the CMS block config and maps Payload
+ * documents into lightweight `Franchise` view models consumed by cards.
+ *
+ * @param props - Component props containing the block configuration.
+ * @returns JSX element rendering either the filterable grid or simple grid.
  */
 export default async function FranchiseGridBlock({ block }: FranchiseGridBlockProps) {
   const headers = await getHeaders()
@@ -68,7 +64,8 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
     where: Object.keys(where).length ? where : undefined,
     sort: '-updatedAt',
     limit: block.limit ?? undefined,
-    depth: 1,
+    // Use depth=2 so nested relationships (assignedAgent.photo) are populated
+    depth: 2,
   })
 
   /**
@@ -113,6 +110,12 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
             ? formatCurrency(max)
             : ''
 
+    // Assigned agent info (requires relationship population)
+    const agent = typeof doc?.assignedAgent === 'object' ? doc.assignedAgent : undefined
+    const agentName = agent?.name ?? undefined
+    const agentTitle = agent?.title ?? undefined
+    const agentPhotoUrl = agent?.photo?.url ?? undefined
+
     return {
       name: doc.businessName || 'Untitled Franchise',
       category: doc.category || 'Uncategorized',
@@ -122,8 +125,12 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       isFeatured: !!doc.isFeatured,
       isSponsored: !!doc.isSponsored,
       isTopPick: !!doc.isTopPick,
+      useMainContact: !!doc.useMainContact,
       imageUrl: doc?.logo?.url ?? undefined,
       imageAlt: doc?.logo?.alt ?? undefined,
+      agentName,
+      agentTitle,
+      agentPhotoUrl,
       href: `/franchises/${doc.id}`,
     }
   })

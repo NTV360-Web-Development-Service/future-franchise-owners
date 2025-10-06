@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     franchises: Franchise;
+    agents: Agent;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     franchises: FranchisesSelect<false> | FranchisesSelect<true>;
+    agents: AgentsSelect<false> | AgentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -425,6 +427,61 @@ export interface Franchise {
    * Franchise logo or primary image
    */
   logo?: (string | null) | Media;
+  /**
+   * Assign a specific agent to this franchise (optional). If not assigned, inquiries go to main contact.
+   */
+  assignedAgent?: (string | null) | Agent;
+  /**
+   * Force use main contact even if agent is assigned (overrides agent assignment)
+   */
+  useMainContact?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage franchise consultants and agents
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents".
+ */
+export interface Agent {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  title?: string | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  photo?: (string | null) | Media;
+  /**
+   * Franchise categories or specialties
+   */
+  specialties?:
+    | {
+        category?:
+          | ('Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports')
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  isActive?: boolean | null;
+  /**
+   * GoHighLevel webhook URL (optional)
+   */
+  ghlWebhook?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -450,6 +507,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'franchises';
         value: string | Franchise;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: string | Agent;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -656,6 +717,31 @@ export interface FranchisesSelect<T extends boolean = true> {
         max?: T;
       };
   logo?: T;
+  assignedAgent?: T;
+  useMainContact?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents_select".
+ */
+export interface AgentsSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  email?: T;
+  phone?: T;
+  title?: T;
+  bio?: T;
+  photo?: T;
+  specialties?:
+    | T
+    | {
+        category?: T;
+        id?: T;
+      };
+  isActive?: T;
+  ghlWebhook?: T;
   updatedAt?: T;
   createdAt?: T;
 }
