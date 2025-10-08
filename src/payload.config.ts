@@ -7,10 +7,20 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+/**
+ * Payload configuration for Future Franchise Owners.
+ *
+ * - PostgreSQL via Vercel adapter with UUID primary keys
+ * - Rich text editor: Lexical
+ * - Types generated to `src/payload-types.ts`
+ * - Optional S3 storage enabled via Supabase-compatible env vars
+ */
+
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import Pages from './collections/Pages'
 import Franchises from './collections/Franchises'
+import Agents from './collections/Agents'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,13 +32,15 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Pages, Franchises],
+  collections: [Users, Media, Pages, Franchises, Agents],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  /** Database adapter: Vercel Postgres with UUID primary IDs */
   db: vercelPostgresAdapter({
+    idType: 'uuid',
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
     },

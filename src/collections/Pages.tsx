@@ -1,17 +1,10 @@
 import { CollectionConfig } from 'payload'
-import { v7 as uuidv7 } from 'uuid'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 
 const Pages: CollectionConfig = {
   slug: 'pages',
   fields: [
-    {
-      name: 'id',
-      type: 'text',
-      defaultValue: () => uuidv7(),
-      admin: {
-        hidden: true,
-      },
-    },
     {
       name: 'title',
       type: 'text',
@@ -291,6 +284,12 @@ const Pages: CollectionConfig = {
               name: 'subheading',
               type: 'richText',
               required: true,
+              editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  SlateToLexicalFeature({}),
+                ],
+              }),
             },
             {
               name: 'image',
@@ -373,3 +372,10 @@ const Pages: CollectionConfig = {
 }
 
 export default Pages
+/**
+ * Pages collection
+ *
+ * CMS-managed pages composed of reusable blocks (Ribbon, Navbar, Hero,
+ * FranchiseGrid). Used to render the frontend without hardcoding layout.
+ * Primary `id` is a UUID string.
+ */

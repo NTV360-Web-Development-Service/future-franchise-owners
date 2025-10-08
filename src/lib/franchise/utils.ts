@@ -4,19 +4,26 @@
 
 /**
  * Parses a currency string and extracts the numeric value
+ * For ranges (e.g., "$150,000 - $300,000"), returns the minimum (first) value
  * 
- * @param input - Currency string (e.g., "$50,000", "€100.000", "¥1,000,000")
+ * @param input - Currency string (e.g., "$50,000", "$150,000 - $300,000")
  * @returns The numeric value extracted from the currency string
  * 
  * @example
  * ```typescript
  * parseCurrencyToNumber("$50,000") // returns 50000
+ * parseCurrencyToNumber("$150,000 - $300,000") // returns 150000
  * parseCurrencyToNumber("€100.50") // returns 100.50
  * parseCurrencyToNumber("invalid") // returns 0
  * ```
  */
 export function parseCurrencyToNumber(input: string): number {
-  const clean = input.replace(/[^0-9.]/g, '')
+  // Match the first number in the string (handles ranges by taking the minimum)
+  const match = input.match(/[\d,]+(?:\.\d+)?/)
+  if (!match) return 0
+  
+  // Remove commas and convert to number
+  const clean = match[0].replace(/,/g, '')
   return Number(clean || '0')
 }
 

@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { v7 as uuidv7 } from 'uuid'
 // Lightweight slugify helper to avoid extra deps
 const toSlug = (input: string): string =>
   (input || '')
@@ -22,12 +21,6 @@ export const Franchises: CollectionConfig = {
   },
   // No slug auto-generation; prefer ID-only URLs
   fields: [
-    {
-      name: 'id',
-      type: 'text',
-      defaultValue: () => uuidv7(),
-      admin: { hidden: true },
-    },
     {
       name: 'businessName',
       type: 'text',
@@ -138,7 +131,34 @@ export const Franchises: CollectionConfig = {
         description: 'Franchise logo or primary image',
       },
     },
+    {
+      name: 'assignedAgent',
+      type: 'relationship',
+      relationTo: 'agents' as any,
+      admin: {
+        description:
+          'Assign a specific agent to this franchise (optional). If not assigned, inquiries go to main contact.',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'useMainContact',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Force use main contact even if agent is assigned (overrides agent assignment)',
+        position: 'sidebar',
+      },
+    },
   ],
 }
 
 export default Franchises
+/**
+ * Franchises collection
+ *
+ * Core business entities listed on the site. Includes category, status,
+ * investment ranges, tags, assigned agent, and feature flags.
+ * Primary `id` is a UUID string used for routing and linking.
+ */
