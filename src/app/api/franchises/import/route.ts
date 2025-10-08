@@ -60,12 +60,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Verify the token and get user information using PayloadCMS Local API
     let user
     try {
+      console.log('🔐 Starting authentication process...')
+      console.log('🔑 Token received:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN')
+      console.log('🔒 PAYLOAD_SECRET available:', !!process.env.PAYLOAD_SECRET)
+      console.log('🌍 Environment:', process.env.NODE_ENV)
+      
+      if (!process.env.PAYLOAD_SECRET) {
+        throw new Error('PAYLOAD_SECRET environment variable is not configured')
+      }
+      
       // Decode the JWT token to get user information
-      const decoded = jwt.verify(token, process.env.PAYLOAD_SECRET || '') as any
+      const decoded = jwt.verify(token, process.env.PAYLOAD_SECRET) as any
+      console.log('✅ JWT decoded successfully:', { id: decoded?.id, email: decoded?.email, collection: decoded?.collection })
       
       if (!decoded || !decoded.id) {
-        throw new Error('Invalid token structure')
+        throw new Error('Invalid token structure - missing ID')
       }
+      
+      // Check if token is expired
+      const now = Math.floor(Date.now() / 1000)
+      if (decoded.exp && now > decoded.exp) {
+        throw new Error('Token has expired')
+      }
+      
+      console.log('🔍 Looking up user with ID:', decoded.id)
       
       // Find the user using PayloadCMS Local API
       const userDoc = await payload.findByID({
@@ -73,15 +91,36 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         id: decoded.id,
       })
       
+      console.log('👤 User lookup result:', userDoc ? `Found user: ${userDoc.email}` : 'User not found')
+      
       if (!userDoc) {
-        throw new Error('User not found')
+        throw new Error('User not found in database')
       }
       
       user = userDoc
+      console.log('✅ Authentication successful for user:', user.email)
     } catch (error) {
-      console.warn('Unauthorized import attempt - invalid token:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown authentication error'
+      console.error('❌ Authentication failed:', {
+        error: errorMessage,
+        tokenPresent: !!token,
+        secretPresent: !!process.env.PAYLOAD_SECRET,
+        environment: process.env.NODE_ENV,
+        isJWTError: errorMessage.includes('signature') || errorMessage.includes('malformed') || errorMessage.includes('expired')
+      })
+      
+      // Provide more specific error messages
+      let userErrorMessage = 'Invalid authentication. Please log in again to PayloadCMS admin.'
+      if (errorMessage.includes('signature')) {
+        userErrorMessage = 'Authentication token signature mismatch. Please log in again to PayloadCMS admin.'
+      } else if (errorMessage.includes('expired')) {
+        userErrorMessage = 'Authentication token has expired. Please log in again to PayloadCMS admin.'
+      } else if (errorMessage.includes('PAYLOAD_SECRET')) {
+        userErrorMessage = 'Server configuration error. Please contact administrator.'
+      }
+      
       return NextResponse.json(
-        { error: 'Invalid authentication. Please log in again to PayloadCMS admin.' },
+        { error: userErrorMessage },
         { status: 401 }
       )
     }
