@@ -1,7 +1,10 @@
 // shadcn/ui components
+export { Alert, AlertDescription, AlertTitle } from './alert'
 export { Badge } from './badge'
 export { Button } from './button'
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
-export { Navbar } from './navbar'
 export { Input } from './input'
+export { Label } from './label'
+export { Navbar } from './navbar'
+export { Progress } from './progress'
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
