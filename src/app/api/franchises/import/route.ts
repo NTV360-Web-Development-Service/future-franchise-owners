@@ -44,20 +44,50 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const config = await configPromise
     const payload = await getPayload({ config })
     
-    // Authentication check - this should be handled by middleware, but double-check for security
-    const userId = request.headers.get('x-payload-user-id')
-    const userEmail = request.headers.get('x-payload-user-email')
+    // Authentication check using PayloadCMS token
+    const token = request.cookies.get('payload-token')?.value || 
+                 request.headers.get('authorization')?.replace('Bearer ', '')
     
-    if (!userId || !userEmail) {
-      console.warn('Unauthorized import attempt - missing user authentication')
+    if (!token) {
+      console.warn('Unauthorized import attempt - missing authentication token')
       return NextResponse.json(
         { error: 'Authentication required. Please log in to PayloadCMS admin to import franchises.' },
         { status: 401 }
       )
     }
+
+    // Verify the token and get user information using PayloadCMS REST API
+    let user
+    try {
+      // Use the PayloadCMS /api/users/me endpoint to verify authentication
+      const baseUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3003'
+      const response = await fetch(`${baseUrl}/api/users/me`, {
+        headers: {
+          'Authorization': `JWT ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Authentication failed: ${response.status}`)
+      }
+
+      const userData = await response.json()
+      if (!userData.user) {
+        throw new Error('No user data returned')
+      }
+
+      user = userData.user
+    } catch (error) {
+      console.warn('Unauthorized import attempt - invalid token:', error)
+      return NextResponse.json(
+        { error: 'Invalid authentication. Please log in again to PayloadCMS admin.' },
+        { status: 401 }
+      )
+    }
     
     // Log the import attempt for audit purposes
-    console.log(`Franchise import initiated by user: ${userEmail} (ID: ${userId})`)
+    console.log(`Franchise import initiated by user: ${user.email} (ID: ${user.id})`)
     
     // Parse form data
     const formData = await request.formData()
@@ -295,7 +325,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     
     // Log the import results for audit purposes
-    console.log(`Franchise import completed by user: ${userEmail} (ID: ${userId}) - Created: ${result.created}, Errors: ${result.errors.length}`)
+    console.log(`Franchise import completed by user: ${user.email} (ID: ${user.id}) - Created: ${result.created}, Errors: ${result.errors.length}`)
     
     return NextResponse.json(result)
     
