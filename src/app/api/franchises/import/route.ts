@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import { v7 as uuidv7 } from 'uuid'
+import jwt from 'jsonwebtoken'
 
 // Define valid categories based on the Franchises collection
 const VALID_CATEGORIES = [
@@ -56,28 +57,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    // Verify the token and get user information using PayloadCMS REST API
+    // Verify the token and get user information using PayloadCMS Local API
     let user
     try {
-      // Use the PayloadCMS /api/users/me endpoint to verify authentication
-      const baseUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3003'
-      const response = await fetch(`${baseUrl}/api/users/me`, {
-        headers: {
-          'Authorization': `JWT ${token}`,
-          'Content-Type': 'application/json',
-        },
+      // Decode the JWT token to get user information
+      const decoded = jwt.verify(token, process.env.PAYLOAD_SECRET || '') as any
+      
+      if (!decoded || !decoded.id) {
+        throw new Error('Invalid token structure')
+      }
+      
+      // Find the user using PayloadCMS Local API
+      const userDoc = await payload.findByID({
+        collection: 'users',
+        id: decoded.id,
       })
-
-      if (!response.ok) {
-        throw new Error(`Authentication failed: ${response.status}`)
+      
+      if (!userDoc) {
+        throw new Error('User not found')
       }
-
-      const userData = await response.json()
-      if (!userData.user) {
-        throw new Error('No user data returned')
-      }
-
-      user = userData.user
+      
+      user = userDoc
     } catch (error) {
       console.warn('Unauthorized import attempt - invalid token:', error)
       return NextResponse.json(
