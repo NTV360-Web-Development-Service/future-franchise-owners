@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { v7 as uuidv7 } from 'uuid'
 
 const Agents: CollectionConfig = {
   slug: 'agents',
@@ -12,12 +11,6 @@ const Agents: CollectionConfig = {
     defaultColumns: ['name', 'email', 'phone', 'isActive', 'updatedAt'],
   },
   fields: [
-    {
-      name: 'id',
-      type: 'text',
-      defaultValue: () => uuidv7(),
-      admin: { hidden: true },
-    },
     { name: 'name', type: 'text', required: true },
     { name: 'email', type: 'email', required: true },
     { name: 'phone', type: 'text' },
@@ -49,3 +42,10 @@ const Agents: CollectionConfig = {
 }
 
 export default Agents
+/**
+ * Agents collection
+ *
+ * Represents franchise consultants who can be assigned to franchises.
+ * Includes contact info, bio (Lexical rich text), specialties, and active status.
+ * Primary `id` is a UUID string.
+ */

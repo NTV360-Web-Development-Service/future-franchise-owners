@@ -88,7 +88,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   globals: {};
   globalsSelect: {};
@@ -125,6 +125,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -490,7 +491,7 @@ export interface Agent {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
@@ -525,7 +526,7 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
     value: string | User;
@@ -548,7 +549,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -559,7 +560,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  id?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -582,7 +583,6 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  id?: T;
   alt?: T;
   prefix?: T;
   updatedAt?: T;
@@ -602,7 +602,6 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
-  id?: T;
   title?: T;
   slug?: T;
   layout?:
@@ -695,7 +694,6 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "franchises_select".
  */
 export interface FranchisesSelect<T extends boolean = true> {
-  id?: T;
   businessName?: T;
   slug?: T;
   status?: T;
@@ -727,7 +725,6 @@ export interface FranchisesSelect<T extends boolean = true> {
  * via the `definition` "agents_select".
  */
 export interface AgentsSelect<T extends boolean = true> {
-  id?: T;
   name?: T;
   email?: T;
   phone?: T;

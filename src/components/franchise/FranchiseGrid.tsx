@@ -13,7 +13,7 @@ const TAB_DEFS = [
   { key: 'new', label: 'New Arrivals' },
 ]
 
-export default function FranchiseGrid({ franchises, heading = 'Best Franchise Opportunities' }: { franchises: Franchise[]; heading?: string }) {
+export default function FranchiseGrid({ franchises, heading = 'Best Franchise Opportunities' }: { franchises: (Franchise & { href?: string; id?: string })[]; heading?: string }) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string>('all')
@@ -113,7 +113,7 @@ export default function FranchiseGrid({ franchises, heading = 'Best Franchise Op
           <div className={`grid gap-6 auto-rows-fr ${colsClass}`}>
             {filtered.map((franchise) => (
               <div
-                key={franchise.name}
+                key={franchise.href ?? franchise.id ?? franchise.name}
                 className={`${isSingle ? 'w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto' : ''} h-full`}
               >
                 <FranchiseCard franchise={franchise} />

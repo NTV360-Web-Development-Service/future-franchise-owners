@@ -20,6 +20,8 @@ export type Franchise = {
   cashRequired: string // e.g. "$50,000"
   /** Array of feature tags */
   tags: string[] // e.g. ['Low Cost', 'Best Score 88']
+  /** Optional link to franchise detail page */
+  href?: string
   /** Whether franchise is marked as featured */
   isFeatured?: boolean
   /** Whether franchise is sponsored content */

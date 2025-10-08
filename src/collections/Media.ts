@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { v7 as uuidv7 } from 'uuid'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -8,14 +7,6 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
-      name: 'id',
-      type: 'text',
-      defaultValue: () => uuidv7(),
-      admin: {
-        hidden: true,
-      },
-    },
-    {
       name: 'alt',
       type: 'text',
       required: true,
@@ -23,3 +14,9 @@ export const Media: CollectionConfig = {
   ],
   upload: true,
 }
+/**
+ * Media collection
+ *
+ * Uploads and stores files (images, documents). Optionally integrates with S3
+ * when environment variables are provided. Primary `id` is a UUID string.
+ */

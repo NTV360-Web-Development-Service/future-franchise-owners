@@ -28,7 +28,7 @@ interface InvestmentRange {
  */
 interface FranchiseFiltersGridProps {
   /** Array of franchise data to display and filter */
-  franchises: Franchise[]
+  franchises: (Franchise & { href?: string })[]
   /** Optional heading text for the grid */
   heading?: string
   /** Whether to show the heading section */
@@ -178,13 +178,14 @@ export default function FranchiseFiltersGrid({
   // Filter and sort state
   const [search, setSearch] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedInvestmentRanges, setSelectedInvestmentRanges] = useState<string[]>([])
+  const [minPrice, setMinPrice] = useState<number | undefined>(undefined)
+  const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<SortOption>('relevance')
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
   // Collapsible section states
-  const [categoryOpen, setCategoryOpen] = useState<boolean>(false)
+  const [categoryOpen, setCategoryOpen] = useState<boolean>(true)
   const [investmentOpen, setInvestmentOpen] = useState<boolean>(false)
   const [tagsOpen, setTagsOpen] = useState<boolean>(false)
 
@@ -195,18 +196,6 @@ export default function FranchiseFiltersGrid({
     const categorySet = new Set(franchises.map((franchise) => franchise.category))
     return Array.from(categorySet)
   }, [franchises])
-
-  /**
-   * Predefined investment ranges for filtering
-   */
-  const investmentRanges = useMemo((): InvestmentRange[] => [
-    { label: 'Under $50K', value: 'under-50k', max: 50000 },
-    { label: '$50K - $100K', value: '50k-100k', min: 50000, max: 100000 },
-    { label: '$100K - $250K', value: '100k-250k', min: 100000, max: 250000 },
-    { label: '$250K - $500K', value: '250k-500k', min: 250000, max: 500000 },
-    { label: '$500K - $1M', value: '500k-1m', min: 500000, max: 1000000 },
-    { label: 'Over $1M', value: 'over-1m', min: 1000000 },
-  ], [])
 
   /**
    * Extract and rank popular tags from franchise data
@@ -249,19 +238,13 @@ export default function FranchiseFiltersGrid({
       result = result.filter((franchise) => allowedCategories.has(franchise.category))
     }
 
-    // Apply investment range filter
-    if (selectedInvestmentRanges.length > 0) {
+    // Apply investment range filter (min/max inputs)
+    if (minPrice !== undefined || maxPrice !== undefined) {
       result = result.filter((franchise) => {
         const cashRequired = parseCurrencyToNumber(franchise.cashRequired)
-        return selectedInvestmentRanges.some((rangeValue) => {
-          const range = investmentRanges.find((r) => r.value === rangeValue)
-          if (!range) return false
-
-          // Check if cash required falls within the range
-          const withinMin = range.min === undefined || cashRequired >= range.min
-          const withinMax = range.max === undefined || cashRequired <= range.max
-          return withinMin && withinMax
-        })
+        const meetsMin = minPrice === undefined || cashRequired >= minPrice
+        const meetsMax = maxPrice === undefined || cashRequired <= maxPrice
+        return meetsMin && meetsMax
       })
     }
 
@@ -294,10 +277,10 @@ export default function FranchiseFiltersGrid({
     franchises,
     search,
     selectedCategories,
-    selectedInvestmentRanges,
+    minPrice,
+    maxPrice,
     selectedTags,
     sortBy,
-    investmentRanges,
   ])
 
   /**
@@ -305,22 +288,13 @@ export default function FranchiseFiltersGrid({
    */
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category) 
-        ? prev.filter((c) => c !== category) 
-        : [category] // Single selection for categories
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
     )
   }
 
-  /**
-   * Handle investment range selection toggle
-   */
-  const handleInvestmentRangeToggle = (rangeValue: string) => {
-    setSelectedInvestmentRanges((prev) =>
-      prev.includes(rangeValue)
-        ? prev.filter((r) => r !== rangeValue)
-        : [...prev, rangeValue]
-    )
-  }
+
 
   /**
    * Handle tag selection toggle
@@ -392,27 +366,7 @@ export default function FranchiseFiltersGrid({
           >
             <h3 className="sr-only">Filters</h3>
 
-            {/* Quick category filters */}
-            <ul
-              role="list"
-              className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
-            >
-              {categories.map((category) => (
-                <li key={category}>
-                  <button
-                    type="button"
-                    onClick={() => handleCategoryToggle(category)}
-                    className={`block hover:text-indigo-600 transition-colors ${
-                      selectedCategories.includes(category) ? 'text-indigo-600 font-semibold' : ''
-                    }`}
-                  >
-                    {category}
-                  </button>
-                </li>
-              ))}
-            </ul>
-
-            {/* Search filter */}
+            {/* Search filter (at top) */}
             <div className="border-b border-gray-200 py-6">
               <h3 className="text-sm font-medium text-gray-900 mb-3">Search</h3>
               <Input
@@ -424,21 +378,68 @@ export default function FranchiseFiltersGrid({
               />
             </div>
 
-            {/* Investment range filter */}
+            {/* Industries (Categories) - collapsible */}
+            <FilterSection
+              title="Industries"
+              isOpen={categoryOpen}
+              onToggle={() => setCategoryOpen(!categoryOpen)}
+            >
+              {categories.map((category) => (
+                <FilterCheckbox
+                  key={category}
+                  id={`filter-category-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                  checked={selectedCategories.includes(category)}
+                  onChange={() => handleCategoryToggle(category)}
+                  label={category}
+                />
+              ))}
+            </FilterSection>
+
+            {/* Investment range filter (min/max inputs) */}
             <FilterSection
               title="Investment Range"
               isOpen={investmentOpen}
               onToggle={() => setInvestmentOpen(!investmentOpen)}
             >
-              {investmentRanges.map((range) => (
-                <FilterCheckbox
-                  key={range.value}
-                  id={`filter-investment-${range.value}`}
-                  checked={selectedInvestmentRanges.includes(range.value)}
-                  onChange={() => handleInvestmentRangeToggle(range.value)}
-                  label={range.label}
-                />
-              ))}
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="min-price" className="block text-sm font-medium text-gray-700 mb-1">
+                    Minimum Investment
+                  </label>
+                  <Input
+                    id="min-price"
+                    type="number"
+                    placeholder="$0"
+                    value={minPrice ?? ''}
+                    onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="max-price" className="block text-sm font-medium text-gray-700 mb-1">
+                    Maximum Investment
+                  </label>
+                  <Input
+                    id="max-price"
+                    type="number"
+                    placeholder="No limit"
+                    value={maxPrice ?? ''}
+                    onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    className="w-full"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setMinPrice(undefined)
+                    setMaxPrice(undefined)
+                  }}
+                  className="w-full"
+                >
+                  Clear
+                </Button>
+              </div>
             </FilterSection>
 
             {/* Tags/Features filter */}
@@ -464,7 +465,7 @@ export default function FranchiseFiltersGrid({
             <div className={`grid gap-6 justify-items-start ${getGridLayout(filteredFranchises.length)} pb-8`}>
               {filteredFranchises.map((franchise) => (
                 <div
-                  key={franchise.name}
+                  key={franchise.href ?? franchise.name}
                   className={
                     filteredFranchises.length <= 1 
                       ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start' 
