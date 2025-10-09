@@ -386,6 +386,35 @@ export interface Page {
         blockName?: string | null;
         blockType: 'blogHighlights';
       }
+    | {
+        /**
+         * Section heading (e.g., "Explore Our Locations", "Find Opportunities")
+         */
+        heading?: string | null;
+        /**
+         * Optional description text below the heading
+         */
+        description?: string | null;
+        /**
+         * Google Maps embed URL (from Google My Maps)
+         */
+        mapUrl?: string | null;
+        /**
+         * Map height in pixels (300-800)
+         */
+        height?: number | null;
+        /**
+         * Show "View Full Map" button below the map
+         */
+        showViewButton?: boolean | null;
+        /**
+         * Custom text for the "View Full Map" button
+         */
+        buttonText?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'map';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -728,6 +757,18 @@ export interface PagesSelect<T extends boolean = true> {
               showAuthor?: T;
               showDate?: T;
               showReadTime?: T;
+              id?: T;
+              blockName?: T;
+            };
+        map?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              mapUrl?: T;
+              height?: T;
+              showViewButton?: T;
+              buttonText?: T;
               id?: T;
               blockName?: T;
             };

@@ -433,6 +433,66 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'map',
+          fields: [
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Find Franchise Opportunities Near You',
+              admin: {
+                description: 'Section heading (e.g., "Explore Our Locations", "Find Opportunities")',
+              },
+            },
+            {
+              name: 'description',
+              type: 'text',
+              required: false,
+              defaultValue: 'Explore our network of franchise locations and discover opportunities in your area.',
+              admin: {
+                description: 'Optional description text below the heading',
+              },
+            },
+            {
+              name: 'mapUrl',
+              type: 'text',
+              required: false,
+              defaultValue: 'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F',
+              admin: {
+                description: 'Google Maps embed URL (from Google My Maps)',
+              },
+            },
+            {
+              name: 'height',
+              type: 'number',
+              required: false,
+              defaultValue: 450,
+              min: 300,
+              max: 800,
+              admin: {
+                description: 'Map height in pixels (300-800)',
+              },
+            },
+            {
+              name: 'showViewButton',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Show "View Full Map" button below the map',
+              },
+            },
+            {
+              name: 'buttonText',
+              type: 'text',
+              required: false,
+              defaultValue: 'View Full Directory',
+              admin: {
+                description: 'Custom text for the "View Full Map" button',
+              },
+            },
+          ],
+        },
       ],
     },
   ],

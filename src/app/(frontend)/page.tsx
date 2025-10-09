@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock, BlogHighlightsBlock } from '@/components/blocks'
+import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock, BlogHighlightsBlock, MapBlock } from '@/components/blocks'
 
 /**
  * HomePage - The main landing page component for the franchise website
@@ -65,6 +65,8 @@ export default async function HomePage() {
         return <FranchiseGridBlock block={block} key={block.id} />
       case 'blogHighlights':
         return <BlogHighlightsBlock block={block} key={block.id} />
+      case 'map':
+        return <MapBlock block={block} key={block.id} />
       default:
         return null
     }
