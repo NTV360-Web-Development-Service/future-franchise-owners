@@ -62,9 +62,16 @@ export default function ImportFranchisesPage() {
         setProgress(prev => Math.min(prev + 10, 90))
       }, 200)
 
+      // Read CSRF token from cookie (double-submit pattern)
+      const csrfToken = typeof document !== 'undefined'
+        ? document.cookie.split('; ').find(row => row.startsWith('csrf-token='))?.split('=')[1]
+        : undefined
+
       const response = await fetch('/api/franchises/import', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include',
+        headers: csrfToken ? { 'x-csrf-token': csrfToken } : undefined,
       })
 
       clearInterval(progressInterval)
