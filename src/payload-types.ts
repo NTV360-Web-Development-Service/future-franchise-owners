@@ -353,6 +353,39 @@ export interface Page {
         blockName?: string | null;
         blockType: 'hero';
       }
+    | {
+        /**
+         * Section heading (e.g., "Latest Insights", "Recent Articles")
+         */
+        heading?: string | null;
+        /**
+         * Optional subheading text below the main heading
+         */
+        subheading?: string | null;
+        /**
+         * RSS feed URL to fetch blog posts from
+         */
+        feedUrl?: string | null;
+        /**
+         * Maximum number of blog posts to display (1-12)
+         */
+        limit?: number | null;
+        /**
+         * Display author information on each post
+         */
+        showAuthor?: boolean | null;
+        /**
+         * Display publication date on each post
+         */
+        showDate?: boolean | null;
+        /**
+         * Display estimated reading time on each post
+         */
+        showReadTime?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'blogHighlights';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -682,6 +715,19 @@ export interface PagesSelect<T extends boolean = true> {
                     label?: T;
                     id?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        blogHighlights?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              feedUrl?: T;
+              limit?: T;
+              showAuthor?: T;
+              showDate?: T;
+              showReadTime?: T;
               id?: T;
               blockName?: T;
             };

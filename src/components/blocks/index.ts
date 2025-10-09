@@ -1,8 +1,13 @@
 /**
  * @fileoverview Block component exports for page layouts.
- * Re-export commonly used blocks for cleaner import paths across pages.
+ * 
+ * Centralized exports for all page block components used in Payload CMS layouts.
+ * These components are designed to be composable building blocks for dynamic pages.
+ * 
+ * @module Components/Blocks
  */
 export { default as HeroBlock } from './HeroBlock'
-export { RibbonBlock } from './RibbonBlock'
-export { NavbarBlock } from '../layout/NavbarBlock'
+export { default as RibbonBlock } from './RibbonBlock'
+export { default as NavbarBlock } from './NavbarBlock'
 export { default as FranchiseGridBlock } from './FranchiseGridBlock'
+export { default as BlogHighlightsBlock } from './BlogHighlightsBlock'

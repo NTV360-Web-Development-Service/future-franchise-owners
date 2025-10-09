@@ -366,6 +366,73 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'blogHighlights',
+          fields: [
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Latest Blog Posts',
+              admin: {
+                description: 'Section heading (e.g., "Latest Insights", "Recent Articles")',
+              },
+            },
+            {
+              name: 'subheading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Stay updated with the latest franchise insights and business tips',
+              admin: {
+                description: 'Optional subheading text below the main heading',
+              },
+            },
+            {
+              name: 'feedUrl',
+              type: 'text',
+              required: false,
+              defaultValue: 'https://quantumbc.substack.com/feed',
+              admin: {
+                description: 'RSS feed URL to fetch blog posts from',
+              },
+            },
+            {
+              name: 'limit',
+              type: 'number',
+              required: false,
+              defaultValue: 6,
+              min: 1,
+              max: 12,
+              admin: {
+                description: 'Maximum number of blog posts to display (1-12)',
+              },
+            },
+            {
+              name: 'showAuthor',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Display author information on each post',
+              },
+            },
+            {
+              name: 'showDate',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Display publication date on each post',
+              },
+            },
+            {
+              name: 'showReadTime',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Display estimated reading time on each post',
+              },
+            },
+          ],
+        },
       ],
     },
   ],

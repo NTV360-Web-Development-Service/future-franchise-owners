@@ -61,7 +61,7 @@ interface NavbarBlockProps {
  * @param props - Component props
  * @returns JSX element containing the navigation header
  */
-export function NavbarBlock({ block }: NavbarBlockProps) {
+export default function NavbarBlock({ block }: NavbarBlockProps) {
   const [open, setOpen] = React.useState(false)
 
   /**

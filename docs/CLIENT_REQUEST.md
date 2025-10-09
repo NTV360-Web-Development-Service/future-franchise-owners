@@ -1,135 +1,43 @@
-# Future Franchise Owners Website - Client Requirements
+<!-- CLIENTS DOCUMENT DO NOT CHANGE PLEASE -->
 
-## Project Overview
-Development of a comprehensive franchise discovery and connection platform for Future Franchise Owners.
+Future Franchise Owners Website
 
-## Reference Sites
-- **Current Site**: https://www.futurefranchiseowners.com/
-- **Comparison Site**: https://americasbestfranchises.com/
-- **Logo**: Color scheme provided by client
+Pages to make
 
-## Required Pages
+Home, About Us, Contact Us, Blog, Franchises (Search)
+-Database needed for Franchises
 
-### Core Pages
-1. **Home** - Main landing page with featured content
-2. **About Us** - Company information and background
-3. **Contact Us** - Contact forms and information
-4. **Blog** - Content management and display
-5. **Franchises** - Searchable franchise database
+Current site Future Franchise Owners
+Comparison site https://americasbestfranchises.com/
 
-### Database Requirements
-- Franchise database with search functionality
-- Agent management system
-- Featured business management
+Logo sent for color scheme
 
-## Home Page Requirements
+Note: On the Home page there will be a sponsored area for Businesses to be a “featured business”.
 
-### Key Sections
-- Opening headline and paragraph
-- Franchise showcase
-- Blog stories (5 featured stories)
-- About Us connection/preview
-- Sponsored/Featured business area
-- Credentials, awards, testimonials
-- Assessment button integration
-- Call-to-action: "Speak to a Consultant Now"
+Content Needed for writing and sections
+About Us - anything to keep, use or follow the current sites’/ desired content
+Home - What sections do you want on the Home
+-Franchise, Blogs (5 stories), About Us connection, Sponsor or Featured, Opening headline and paragraph, any credentials, awards, testimonials
 
-### Special Features
+Button at the Home page-Assessment
+https://zorakle.net/assessment-portal/welcome/quantumfranchisegroup?src=85f1aa2635e96345731faca83b17eb7c
 
-#### Assessment Integration
-- **Button**: Assessment portal integration
-- **URL**: https://zorakle.net/assessment-portal/welcome/quantumfranchisegroup?src=85f1aa2635e96345731faca83b17eb7c
+CTA- Speak to a Consultant Now
 
-#### Top Ribbon (Optional)
-- News ticker style, right-to-left scrolling
-- Configurable text, speed, colors, and size
-- Easy content management
+Within the Franchise selection and Featuring “Top Picks” (tag) those would go directly to an agent in particular, email provided and or GHL.
 
-#### Embedded Map
-- Google Maps integration for business locations
-- **Map URL**: https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F
+There could be more than one agent (needs to be set up from the database side)
 
-## Franchise System Requirements
+If Top Pick is not selected then goes to a main contact form or email GHL
 
-### Agent Management
-- Multiple agent support
-- Individual agent assignment for "Top Picks"
-- Email routing and GHL integration
-- Fallback to main contact form for non-Top Pick selections
+\*Provide a few examples of businesses in a spreadsheet, columns are labeled as to what is important. Name, Type, Category, Min Amount, Max Amount, etc… Provide logos and any Tags such as Top Pick, Easy Start Up, Low Investment… these are just examples of columns and tags
 
-### Franchise Database Schema
-Required columns for franchise entries:
-- **Name** - Business name
-- **Type** - Business type/category
-- **Category** - Industry classification
-- **Min Amount** - Minimum investment
-- **Max Amount** - Maximum investment
-- **Logo** - Business logo/image
-- **Tags** - Classification tags (examples below)
+Top Ribbon added to the Home Page, like that of a news or stock ticker going from right to left. Easily add text and control speed, color of ribbon and text, size of text. (possible)
 
-### Franchise Tags System
-Example tags for classification:
-- Top Pick
-- Easy Start Up
-- Low Investment
-- (Additional tags as needed)
+Map of Businesses is to be inserted into the Home Page
+https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F
 
-### Top Picks Functionality
-- Direct routing to specific agents
-- Email integration
-- GHL (Go High Level) integration
-- Priority handling
+Blog is to populate existing Blog from substack
+https://quantumbc.substack.com/
 
-## Blog Integration
-
-### Content Source
-- **Primary**: Substack integration
-- **Blog URL**: https://quantumbc.substack.com/
-- **RSS Feed**: https://quantumbc.substack.com/feed
-
-### Requirements
-- Automatic content population from Substack
-- Featured story selection (5 stories for home page)
-- Blog archive and search functionality
-
-## Content Requirements
-
-### About Us Page
-- Utilize existing site content where appropriate
-- Maintain brand consistency
-- Include company background and mission
-
-### Contact Information
-- Multiple contact methods
-- Agent-specific contact routing
-- Integration with CRM/GHL system
-
-## Technical Specifications
-
-### Database Requirements
-- Franchise listings management
-- Agent management system
-- Featured business management
-- Blog content integration
-- User inquiry tracking
-
-### Integration Requirements
-- Assessment portal integration
-- Substack RSS feed integration
-- Google Maps embedding
-- Email routing system
-- GHL integration
-
-## Deliverables Expected
-- [ ] Complete website with all specified pages
-- [ ] Franchise database with search functionality
-- [ ] Agent management system
-- [ ] Blog integration with Substack
-- [ ] Assessment portal integration
-- [ ] Responsive design for all devices
-- [ ] Admin panel for content management
-
----
-
-**Last Updated**: Initial requirements documentation
-**Status**: Requirements gathering complete
+https://quantumbc.substack.com/feed

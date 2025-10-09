@@ -185,7 +185,7 @@ export default function ImportFranchisesPage() {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-center">
-                  <Button onClick={downloadTemplate} className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button onClick={downloadTemplate}>
                     <Download className="h-4 w-4 mr-2" />
                     Download CSV Template
                   </Button>

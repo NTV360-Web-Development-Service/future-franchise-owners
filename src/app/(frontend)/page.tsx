@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
-import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock } from '@/components/blocks'
+import { HeroBlock, RibbonBlock, NavbarBlock, FranchiseGridBlock, BlogHighlightsBlock } from '@/components/blocks'
 
 /**
  * HomePage - The main landing page component for the franchise website
@@ -63,6 +63,8 @@ export default async function HomePage() {
         return <HeroBlock block={block} key={block.id} />
       case 'franchiseGrid':
         return <FranchiseGridBlock block={block} key={block.id} />
+      case 'blogHighlights':
+        return <BlogHighlightsBlock block={block} key={block.id} />
       default:
         return null
     }
@@ -74,12 +76,6 @@ export default async function HomePage() {
     <div>
       <h1 className="sr-only">{page.title}</h1>
       {page.layout?.map((block) => renderBlock(block))}
-
-      {/* Featured franchises section */}
-
-      {/* Top Picks section removed in favor of CMS-driven franchiseGrid block */}
-
-      {/* <pre>{JSON.stringify(page.layout, null, 2)}</pre> */}
     </div>
   )
 }

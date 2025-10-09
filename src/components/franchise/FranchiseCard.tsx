@@ -1,13 +1,28 @@
+/**
+ * @fileoverview FranchiseCard Component
+ * 
+ * A reusable card component for displaying franchise business information
+ * in grid layouts, featured sections, and listing pages. Supports multiple
+ * variants and includes agent assignment display capabilities.
+ * 
+ * @module Components/Franchise/FranchiseCard
+ * @version 1.0.0
+ */
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Badge, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components'
 import { extractBestScore } from '@/lib/franchise'
 
 /**
- * Franchise data passed to card views.
- *
+ * Franchise data interface for card display
+ * 
  * Represents the subset of franchise fields used for listing cards,
  * including optional agent info when a consultant is assigned.
+ * This interface defines the minimum required data for rendering
+ * a franchise card component.
+ * 
+ * @interface Franchise
  */
 export type Franchise = {
   /** Franchise business name */
@@ -43,10 +58,14 @@ export type Franchise = {
 }
 
 /**
- * Props for the FranchiseCard component.
- *
- * @property franchise - Franchise data to render. May include `href` for linking.
- * @property variant - Visual variant for card styling.
+ * Props interface for the FranchiseCard component
+ * 
+ * Defines the required and optional properties for rendering a franchise card.
+ * Extends the base Franchise interface with optional href for navigation.
+ * 
+ * @interface FranchiseCardProps
+ * @property {Franchise & { href?: string }} franchise - Franchise data to render with optional navigation link
+ * @property {'default' | 'featured' | 'grid'} [variant='default'] - Visual variant for card styling
  */
 interface FranchiseCardProps {
   /** Franchise data with optional href for linking */
@@ -56,21 +75,52 @@ interface FranchiseCardProps {
 }
 
 /**
- * FranchiseCard component.
- *
- * Renders a franchise listing card with logo, name, category, summary,
- * cash requirements, tags, and optional assigned agent details.
- *
- * @param props - Component props containing franchise data and optional variant.
- * @returns JSX element containing the franchise card.
+ * FranchiseCard Component
+ * 
+ * A comprehensive card component for displaying franchise business information.
+ * Renders franchise details including logo, business name, category, description,
+ * investment requirements, feature tags, and assigned agent information.
+ * 
+ * Features:
+ * - Responsive image display with fallback
+ * - Conditional navigation linking
+ * - Multiple visual variants
+ * - Agent assignment display
+ * - Feature badges (sponsored, featured, best score)
+ * - Investment and tag information
+ * - Accessible markup structure
+ * 
+ * @param {FranchiseCardProps} props - Component props containing franchise data and styling options
+ * @returns {JSX.Element} Rendered franchise card component
+ * 
+ * @example
+ * ```tsx
+ * <FranchiseCard 
+ *   franchise={{
+ *     name: "Example Franchise",
+ *     category: "Food and Beverage",
+ *     description: "A great franchise opportunity",
+ *     cashRequired: "$50,000",
+ *     tags: ["Low Cost", "Best Score 88"],
+ *     href: "/franchises/example-franchise"
+ *   }}
+ *   variant="featured"
+ * />
+ * ```
  */
 export default function FranchiseCard({ franchise, variant = 'default' }: FranchiseCardProps) {
   const bestScore = extractBestScore(franchise.tags)
 
   /**
-   * Wrapper that conditionally renders a Next.js Link when `href` is present.
-   *
-   * @param props.children - Card content to wrap.
+   * Conditional Link Wrapper Component
+   * 
+   * Wraps content in a Next.js Link component when href is provided,
+   * otherwise renders content directly. Enables conditional navigation
+   * without duplicating card content.
+   * 
+   * @param {Object} props - Component props
+   * @param {React.ReactNode} props.children - Card content to wrap
+   * @returns {JSX.Element} Wrapped or unwrapped content
    */
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (franchise.href) {

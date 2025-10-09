@@ -1,5 +1,29 @@
+/**
+ * @fileoverview Franchises Collection Configuration
+ * 
+ * Defines the Payload CMS collection for franchise business listings.
+ * This collection manages all franchise data including business information,
+ * categorization, investment details, and agent assignments.
+ * 
+ * @module Collections/Franchises
+ * @version 1.0.0
+ */
+
 import type { CollectionConfig } from 'payload'
-// Lightweight slugify helper to avoid extra deps
+
+/**
+ * Lightweight slugify helper to convert strings to URL-friendly slugs
+ * 
+ * Transforms input strings into lowercase, hyphenated slugs suitable for URLs.
+ * Removes special characters and trims leading/trailing hyphens.
+ * 
+ * @param {string} input - The string to convert to a slug
+ * @returns {string} URL-friendly slug string
+ * 
+ * @example
+ * toSlug('My Business Name!') // returns 'my-business-name'
+ * toSlug('  Special-Characters@#$  ') // returns 'special-characters'
+ */
 const toSlug = (input: string): string =>
   (input || '')
     .toString()
@@ -8,6 +32,24 @@ const toSlug = (input: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
+/**
+ * Franchises Collection Configuration
+ * 
+ * Payload CMS collection for managing franchise business listings.
+ * Includes comprehensive business data, categorization, investment information,
+ * and agent assignment capabilities.
+ * 
+ * Features:
+ * - Public read access for frontend display
+ * - Rich text descriptions with Lexical editor
+ * - Investment range tracking
+ * - Agent assignment system
+ * - Feature flags (featured, sponsored, top pick)
+ * - Category-based organization
+ * - Tag-based classification
+ * 
+ * @type {CollectionConfig}
+ */
 export const Franchises: CollectionConfig = {
   slug: 'franchises',
   access: {

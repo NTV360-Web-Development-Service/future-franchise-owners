@@ -66,7 +66,7 @@ const textColorClasses = {
  * @param props - Component props
  * @returns JSX element containing the ribbon banner or null if dismissed
  */
-export function RibbonBlock({ block }: RibbonBlockProps) {
+export default function RibbonBlock({ block }: RibbonBlockProps) {
   const [isVisible, setIsVisible] = useState(true)
 
   if (!isVisible) {
