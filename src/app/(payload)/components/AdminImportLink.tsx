@@ -26,7 +26,7 @@ export default function AdminImportLink() {
           width: 8,
           height: 8,
           borderRadius: 9999,
-          backgroundColor: 'white',
+          backgroundColor: '#222222',
         }}
       />
       Import Franchises
