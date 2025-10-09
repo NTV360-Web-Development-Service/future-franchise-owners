@@ -17,6 +17,13 @@ const nextConfig = {
       '.mjs': ['.mts', '.mjs'],
     }
 
+    // Ensure bare imports like `app/(payload)/...` resolve to `src/app`
+    webpackConfig.resolve.alias = {
+      ...(webpackConfig.resolve.alias || {}),
+      app: path.resolve(dirname, 'src/app'),
+      '@': path.resolve(dirname, 'src'),
+    }
+
     return webpackConfig
   },
 }
