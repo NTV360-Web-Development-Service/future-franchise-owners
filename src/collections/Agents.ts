@@ -1,5 +1,34 @@
+/**
+ * @fileoverview Agents Collection Configuration
+ * 
+ * Defines the Payload CMS collection for franchise consultants and agents.
+ * This collection manages agent profiles, contact information, specialties,
+ * and integration with external systems like GoHighLevel.
+ * 
+ * @module Collections/Agents
+ * @version 1.0.0
+ */
+
 import type { CollectionConfig } from 'payload'
 
+/**
+ * Agents Collection Configuration
+ * 
+ * Payload CMS collection for managing franchise consultants and agents.
+ * Agents can be assigned to specific franchises to handle inquiries and
+ * provide specialized consultation services.
+ * 
+ * Features:
+ * - Public read access for frontend display
+ * - Rich text bio with Lexical editor
+ * - Specialty categorization matching franchise categories
+ * - Active/inactive status management
+ * - GoHighLevel webhook integration
+ * - Photo upload capability
+ * - Contact information management
+ * 
+ * @type {CollectionConfig}
+ */
 const Agents: CollectionConfig = {
   slug: 'agents',
   access: {

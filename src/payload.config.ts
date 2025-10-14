@@ -31,6 +31,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      /** Add a quick-access link in the admin nav to Import Franchises */
+      afterNavLinks: [
+        'app/(payload)/components/AdminImportLink.tsx',
+      ],
+    },
   },
   collections: [Users, Media, Pages, Franchises, Agents],
   editor: lexicalEditor(),

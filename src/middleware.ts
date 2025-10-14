@@ -19,12 +19,28 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // Token exists, allow access (detailed validation will happen in the API route)
-    return NextResponse.next()
+    // Token exists, ensure a CSRF token cookie is set (double-submit pattern)
+    const csrfCookie = request.cookies.get('csrf-token')?.value
+    const csrfToken = csrfCookie || (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `${Date.now()}-${Math.random()}`)
+    const response = NextResponse.next()
+    if (!csrfCookie) {
+      response.cookies.set('csrf-token', csrfToken, {
+        httpOnly: false, // must be readable by client JS to echo in header
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+      })
+    }
+    return response
   }
 
   // For API routes, check authentication headers
   if (pathname.startsWith('/api/franchises/import')) {
+    // Only allow POST for this route
+    if (request.method !== 'POST') {
+      return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
+    }
+
     // Check for payload-token cookie or Authorization header
     const token = request.cookies.get('payload-token')?.value || 
                  request.headers.get('authorization')?.replace('Bearer ', '')
@@ -36,7 +52,26 @@ export async function middleware(request: NextRequest) {
       )
     }
 
-    // Token exists, allow access (detailed validation will happen in the API route)
+    // Enforce same-origin for CSRF protection
+    const expectedOrigin = request.nextUrl.origin
+    const originHeader = request.headers.get('origin') || ''
+    const refererHeader = request.headers.get('referer') || ''
+    const isSameOrigin = originHeader === expectedOrigin || refererHeader.startsWith(expectedOrigin)
+    if (!isSameOrigin) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 403 })
+    }
+
+    // CSRF validation: require header to match cookie when using cookie-based auth
+    const authHeader = request.headers.get('authorization')
+    const csrfCookie = request.cookies.get('csrf-token')?.value
+    const csrfHeader = request.headers.get('x-csrf-token')
+    if (!authHeader) {
+      if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+        return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 })
+      }
+    }
+
+    // Token and CSRF checks passed; continue to the route for detailed verification
     return NextResponse.next()
   }
 

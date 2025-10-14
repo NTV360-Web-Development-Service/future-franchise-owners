@@ -1,9 +1,13 @@
 /**
  * @fileoverview Main component exports organized by category
- * @module components
+ * 
+ * Centralized exports for commonly used components across the application.
+ * Organized by functional categories for better maintainability and discoverability.
+ * 
+ * @module Components
  */
 
-// UI Components (shadcn/ui)
+// UI Components (shadcn/ui based)
 export { Badge } from './ui/badge'
 export { Button } from './ui/button'
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
@@ -16,7 +20,5 @@ export { default as FranchiseCard } from './franchise/FranchiseCard'
 export { default as FranchiseGrid } from './franchise/FranchiseGrid'
 export type { Franchise } from './franchise/FranchiseCard'
 
-// Layout Components
-export { NavbarBlock } from './layout/NavbarBlock'
-
 // Note: Page blocks are exported separately from ./blocks to keep this index client-safe.
+// Import blocks from '@/components/blocks' for server-side page components.

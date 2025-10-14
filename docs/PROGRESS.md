@@ -35,6 +35,13 @@
 - [x] Production build verified: `pnpm build` completed successfully with static pages generated.
 - [x] Verified homepage and franchises listing render from CMS data. 
 
+### ✅ Finished Sections from CLIENT_REQUEST.md (L1–L44)
+- Home page base: Hero section and Navbar blocks with configurable CTA buttons rendered on `/`.
+- Franchises page: Listing grid and detail view implemented at `/franchises` and `/franchises/[id]`.
+- Top ribbon ticker: `RibbonBlock` implemented with CMS schema (text, colors, dismissible, optional link).
+- CTA framework: Hero and Navbar support CTAs (e.g., “Speak to a Consultant Now”, Assessment link) via CMS-configured buttons.
+- Sample data: Franchise CSV example available at `public/sample/franchise-import-sample.csv` for imports.
+
 ### 🧪 Build & Preview
 - Build status: Passing (`pnpm build`)
 - Local previews confirmed during development (e.g., homepage and `/franchises`).

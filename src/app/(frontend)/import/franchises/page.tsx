@@ -62,9 +62,16 @@ export default function ImportFranchisesPage() {
         setProgress(prev => Math.min(prev + 10, 90))
       }, 200)
 
+      // Read CSRF token from cookie (double-submit pattern)
+      const csrfToken = typeof document !== 'undefined'
+        ? document.cookie.split('; ').find(row => row.startsWith('csrf-token='))?.split('=')[1]
+        : undefined
+
       const response = await fetch('/api/franchises/import', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include',
+        headers: csrfToken ? { 'x-csrf-token': csrfToken } : undefined,
       })
 
       clearInterval(progressInterval)
@@ -106,7 +113,7 @@ export default function ImportFranchisesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-slate-900/70">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
@@ -178,7 +185,7 @@ export default function ImportFranchisesPage() {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-center">
-                  <Button onClick={downloadTemplate} className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button onClick={downloadTemplate}>
                     <Download className="h-4 w-4 mr-2" />
                     Download CSV Template
                   </Button>

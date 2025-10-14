@@ -13,28 +13,35 @@ interface HeroBlockComponentProps {
     /** Rich text subheading from Payload CMS */
     subheading: any // Rich text from Payload
     /** Hero background image */
-    image?: {
-      /** Image URL */
-      url?: string | null
-      /** Image alt text for accessibility */
-      alt?: string
-      /** Additional Media fields from Payload */
-      [key: string]: any
-    } | string | null
+    image?:
+      | {
+          /** Image URL */
+          url?: string | null
+          /** Image alt text for accessibility */
+          alt?: string
+          /** Additional Media fields from Payload */
+          [key: string]: any
+        }
+      | string
+      | null
     /** Call-to-action buttons array */
-    cta_buttons?: {
-      /** Button text */
-      label: string
-      /** Button URL */
-      url: string
-      /** Button style variant */
-      style?: 'primary' | 'secondary'
-    }[] | null
+    cta_buttons?:
+      | {
+          /** Button text */
+          label: string
+          /** Button URL */
+          url: string
+          /** Button style variant */
+          style?: 'primary' | 'secondary'
+        }[]
+      | null
     /** Feature tags/badges to display */
-    tags?: {
-      /** Tag text */
-      label: string
-    }[] | null
+    tags?:
+      | {
+          /** Tag text */
+          label: string
+        }[]
+      | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -44,7 +51,7 @@ interface HeroBlockComponentProps {
 
 /**
  * HeroBlock - A prominent hero section component for landing pages
- * 
+ *
  * Features:
  * - Large heading and subheading text
  * - Background image support with overlay
@@ -53,7 +60,7 @@ interface HeroBlockComponentProps {
  * - Rich text content parsing
  * - Responsive design
  * - Accessibility support
- * 
+ *
  * @param props - Component props
  * @returns JSX element containing the hero section
  */
@@ -61,13 +68,13 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
   /**
    * Extract plain text content from Payload's rich text format
    * Recursively processes the rich text structure to extract readable text
-   * 
+   *
    * @param richText - Rich text object from Payload CMS
    * @returns Plain text string
    */
   const getTextFromRichText = (richText: any): string => {
     if (!richText?.root?.children) return ''
-    
+
     return richText.root.children
       .map((child: any) => {
         if (child.children) {
@@ -84,11 +91,11 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
   const subheadingText = getTextFromRichText(block.subheading)
 
   return (
-    <section 
+    <section
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ 
+      style={{
         fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
-        backgroundImage: "url('/images/hero-bg.avif')"
+        backgroundImage: "url('/images/hero-bg.avif')",
       }}
       aria-label="Hero"
     >
@@ -100,33 +107,29 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
           {/* Eyebrow / tagline placeholder (optional) */}
           {/* <p className="text-sm font-medium text-blue-200">Discover the best franchises</p> */}
 
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-md">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white drop-shadow-md text-balance">
             {block.heading}
           </h1>
-          
+
           {subheadingText && (
-            <p className="mt-6 text-lg sm:text-xl text-white/80">
-              {subheadingText}
-            </p>
+            <p className="mt-6 text-lg sm:text-xl text-white/80">{subheadingText}</p>
           )}
 
           {/* CTAs */}
           {block.cta_buttons && block.cta_buttons.length > 0 && (
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               {block.cta_buttons.map((button, index) => (
-                <Button 
+                <Button
                   key={index}
-                  asChild 
+                  asChild
                   size="lg"
                   className={`px-8 ${
-                    button.style === 'secondary' 
-                      ? 'bg-white text-[#004AAD] hover:bg-white/90' 
+                    button.style === 'secondary'
+                      ? 'bg-white text-[#004AAD] hover:bg-white/90'
                       : 'bg-[#004AAD] text-white hover:bg-[#003a89]'
                   }`}
                 >
-                  <a href={button.url}>
-                    {button.label}
-                  </a>
+                  <a href={button.url}>{button.label}</a>
                 </Button>
               ))}
             </div>
@@ -136,9 +139,9 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
           {block.tags && block.tags.length > 0 && (
             <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
               {block.tags.map((tag, index) => (
-                <Badge 
+                <Badge
                   key={index}
-                  className="bg-white/10 text-white border-white/30" 
+                  className="bg-white/10 text-white border-white/30"
                   variant="outline"
                 >
                   {tag.label}

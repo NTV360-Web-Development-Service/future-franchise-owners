@@ -353,6 +353,68 @@ export interface Page {
         blockName?: string | null;
         blockType: 'hero';
       }
+    | {
+        /**
+         * Section heading (e.g., "Latest Insights", "Recent Articles")
+         */
+        heading?: string | null;
+        /**
+         * Optional subheading text below the main heading
+         */
+        subheading?: string | null;
+        /**
+         * RSS feed URL to fetch blog posts from
+         */
+        feedUrl?: string | null;
+        /**
+         * Maximum number of blog posts to display (1-12)
+         */
+        limit?: number | null;
+        /**
+         * Display author information on each post
+         */
+        showAuthor?: boolean | null;
+        /**
+         * Display publication date on each post
+         */
+        showDate?: boolean | null;
+        /**
+         * Display estimated reading time on each post
+         */
+        showReadTime?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'blogHighlights';
+      }
+    | {
+        /**
+         * Section heading (e.g., "Explore Our Locations", "Find Opportunities")
+         */
+        heading?: string | null;
+        /**
+         * Optional description text below the heading
+         */
+        description?: string | null;
+        /**
+         * Google Maps embed URL (from Google My Maps)
+         */
+        mapUrl?: string | null;
+        /**
+         * Map height in pixels (300-800)
+         */
+        height?: number | null;
+        /**
+         * Show "View Full Map" button below the map
+         */
+        showViewButton?: boolean | null;
+        /**
+         * Custom text for the "View Full Map" button
+         */
+        buttonText?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'map';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -682,6 +744,31 @@ export interface PagesSelect<T extends boolean = true> {
                     label?: T;
                     id?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        blogHighlights?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              feedUrl?: T;
+              limit?: T;
+              showAuthor?: T;
+              showDate?: T;
+              showReadTime?: T;
+              id?: T;
+              blockName?: T;
+            };
+        map?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              mapUrl?: T;
+              height?: T;
+              showViewButton?: T;
+              buttonText?: T;
               id?: T;
               blockName?: T;
             };
