@@ -57,13 +57,13 @@ export default function NotFound() {
 
             {/* Subheading */}
             <h2 className="text-xl text-gray-700 mb-8 font-medium">
-              We're Building Something Amazing
+              We&apos;re Building Something Amazing
             </h2>
 
             {/* Description */}
             <div className="space-y-4 mb-10 text-gray-600">
               <p className="text-lg leading-relaxed">
-                Our franchise discovery platform is currently under development. We're working hard
+                Our franchise discovery platform is currently under development. We&apos;re working hard
                 to bring you the best experience for finding your perfect franchise opportunity.
               </p>
               <p className="text-base">
