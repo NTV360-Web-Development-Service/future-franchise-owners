@@ -316,7 +316,18 @@ export interface Page {
           };
           [k: string]: unknown;
         };
+        /**
+         * Background image for the hero section (optional)
+         */
         image?: (string | null) | Media;
+        /**
+         * Add a dark overlay over the background image to improve contrast
+         */
+        showOverlay?: boolean | null;
+        /**
+         * Apply a soft blur to the overlay for extra readability
+         */
+        backgroundBlur?: boolean | null;
         /**
          * Call-to-action buttons (up to 5 buttons)
          */
@@ -352,6 +363,67 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'hero';
+      }
+    | {
+        /**
+         * Short label shown above the heading (e.g., "Our Purpose")
+         */
+        eyebrow?: string | null;
+        /**
+         * Main section heading
+         */
+        heading?: string | null;
+        /**
+         * Supporting paragraph introducing your team and value proposition
+         */
+        description?: string | null;
+        /**
+         * Key differentiators, credentials, or testimonials to feature
+         */
+        highlights?:
+          | {
+              /**
+               * Short highlight title (e.g., "25+ Years Advising Franchises")
+               */
+              title: string;
+              /**
+               * Optional supporting sentence elaborating on the highlight
+               */
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Add one or more call-to-action buttons (optional)
+         */
+        ctas?:
+          | {
+              /**
+               * Call-to-action text (e.g., "Speak to a Consultant")
+               */
+              label: string;
+              /**
+               * Call-to-action link destination
+               */
+              url: string;
+              /**
+               * Visual style for the button
+               */
+              style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+              /**
+               * Open the call-to-action in a new tab
+               */
+              openInNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional supporting image or consultant photo
+         */
+        image?: (string | null) | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'aboutTeaser';
       }
     | {
         /**
@@ -730,6 +802,8 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               subheading?: T;
               image?: T;
+              showOverlay?: T;
+              backgroundBlur?: T;
               cta_buttons?:
                 | T
                 | {
@@ -744,6 +818,32 @@ export interface PagesSelect<T extends boolean = true> {
                     label?: T;
                     id?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        aboutTeaser?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              description?: T;
+              highlights?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              image?: T;
               id?: T;
               blockName?: T;
             };

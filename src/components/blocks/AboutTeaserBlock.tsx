@@ -1,0 +1,174 @@
+import React from 'react'
+import Image from 'next/image'
+import { CheckCircle2 } from 'lucide-react'
+
+import { Button } from '@/components'
+import type { Media } from '@/types/payload'
+
+interface CTAConfig {
+  label: string
+  url: string
+  style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  openInNewTab?: boolean | null
+}
+
+interface HighlightItem {
+  title?: string | null
+  description?: string | null
+  id?: string | null
+}
+
+export interface AboutTeaserBlockProps {
+  block: {
+    blockType: 'aboutTeaser'
+    eyebrow?: string | null
+    heading?: string | null
+    description?: string | null
+    highlights?: HighlightItem[] | null
+    ctas?: CTAConfig[] | null
+    image?: string | Media | null
+    id?: string | null
+    blockName?: string | null
+  }
+}
+
+const resolveVariant = (style?: CTAConfig['style']) => {
+  switch (style) {
+    case 'secondary':
+      return 'secondary' as const
+    case 'outline':
+      return 'outline' as const
+    case 'ghost':
+      return 'ghost' as const
+    default:
+      return 'default' as const
+  }
+}
+
+const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
+  const {
+    eyebrow = 'About Future Franchise Owners',
+    heading = 'Seasoned franchise experts guiding your journey',
+    description = 'We combine decades of franchise ownership, coaching, and operations experience to help entrepreneurs make confident, informed decisions. From fit assessments to long-term growth planning, our consultants stay by your side at every stage.',
+    highlights = [],
+    ctas = [],
+    image,
+  } = block
+
+  let imageUrl: string | null = null
+  let imageAlt: string | null = null
+  let imageWidth = 640
+  let imageHeight = 640
+
+  if (typeof image === 'string') {
+    imageUrl = image
+  } else if (image && typeof image === 'object') {
+    const media = image as Media
+    imageUrl = media.url ?? null
+    imageAlt = media.alt ?? null
+    imageWidth = media.width ?? imageWidth
+    imageHeight = media.height ?? imageHeight
+  }
+
+  const highlightItems = (highlights || []).filter(
+    (item) => item && (item.title || item.description),
+  )
+  const ctaList = (ctas || []).filter((cta) => cta && cta.label && cta.url)
+  const altText: string = imageAlt ?? heading ?? 'Future Franchise Owners consultants'
+
+  return (
+    <section className="bg-slate-50 py-16">
+      <div className="container mx-auto grid gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,_1fr)_minmax(320px,_420px)] lg:items-center lg:gap-16 lg:px-8">
+        <div>
+          {eyebrow && (
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#004AAD]">
+              {eyebrow}
+            </p>
+          )}
+
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            {heading}
+          </h2>
+
+          {description && <p className="mt-6 text-lg text-gray-600">{description}</p>}
+
+          {highlightItems.length > 0 && (
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              {highlightItems.map((item, index) => (
+                <div
+                  key={item.id || index}
+                  className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+                >
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-[#00A1E4]" aria-hidden="true" />
+                  <div>
+                    {item.title && <p className="font-semibold text-gray-900">{item.title}</p>}
+                    {item.description && (
+                      <p className="mt-1 text-sm text-gray-600">{item.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {ctaList.length > 0 && (
+            <div className="mt-10 flex flex-wrap gap-3">
+              {ctaList.map((cta, index) => (
+                <Button
+                  key={`${cta.label}-${index}`}
+                  asChild
+                  size="lg"
+                  variant={resolveVariant(cta.style)}
+                  className={index === 0 ? 'shadow-sm' : undefined}
+                >
+                  <a
+                    href={cta.url}
+                    target={cta.openInNewTab ? '_blank' : '_self'}
+                    rel={cta.openInNewTab ? 'noopener noreferrer' : undefined}
+                  >
+                    {cta.label}
+                  </a>
+                </Button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="relative">
+          <div
+            className="absolute -inset-x-6 -inset-y-8 rounded-3xl bg-[#004AAD]/10 blur-3xl"
+            aria-hidden="true"
+          />
+          <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-[#004AAD] via-[#00264D] to-[#001633] p-6 text-white shadow-xl">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={altText}
+                width={imageWidth}
+                height={imageHeight}
+                className="aspect-square w-full rounded-2xl object-cover"
+              />
+            ) : (
+              <div className="flex aspect-square w-full flex-col justify-between rounded-2xl bg-white/5 p-6">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/70">
+                    Trusted Advisors
+                  </p>
+                  <p className="mt-4 text-2xl font-semibold">
+                    Dedicated consultants supporting every ownership milestone.
+                  </p>
+                </div>
+                <p className="text-sm text-white/70">
+                  Schedule a discovery call to chart your path from investigation to launch with
+                  guidance tailored to your goals.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default AboutTeaserBlock

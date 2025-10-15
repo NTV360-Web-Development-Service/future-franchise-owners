@@ -84,7 +84,8 @@ const Pages: CollectionConfig = {
               type: 'text',
               required: true,
               admin: {
-                description: 'The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")',
+                description:
+                  'The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")',
               },
             },
             {
@@ -285,10 +286,7 @@ const Pages: CollectionConfig = {
               type: 'richText',
               required: true,
               editor: lexicalEditor({
-                features: ({ defaultFeatures }) => [
-                  ...defaultFeatures,
-                  SlateToLexicalFeature({}),
-                ],
+                features: ({ defaultFeatures }) => [...defaultFeatures, SlateToLexicalFeature({})],
               }),
             },
             {
@@ -296,6 +294,25 @@ const Pages: CollectionConfig = {
               type: 'upload',
               relationTo: 'media',
               required: false,
+              admin: {
+                description: 'Background image for the hero section (optional)',
+              },
+            },
+            {
+              name: 'showOverlay',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Add a dark overlay over the background image to improve contrast',
+              },
+            },
+            {
+              name: 'backgroundBlur',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Apply a soft blur to the overlay for extra readability',
+              },
             },
             {
               name: 'cta_buttons',
@@ -309,7 +326,8 @@ const Pages: CollectionConfig = {
                   type: 'text',
                   required: true,
                   admin: {
-                    description: 'Button text (e.g., "Discover Top Franchises", "Browse Opportunities")',
+                    description:
+                      'Button text (e.g., "Discover Top Franchises", "Browse Opportunities")',
                   },
                 },
                 {
@@ -336,7 +354,8 @@ const Pages: CollectionConfig = {
                     },
                   ],
                   admin: {
-                    description: 'Button style - primary for main actions, secondary for alternative actions',
+                    description:
+                      'Button style - primary for main actions, secondary for alternative actions',
                   },
                 },
               ],
@@ -362,6 +381,127 @@ const Pages: CollectionConfig = {
               ],
               admin: {
                 description: 'Feature tags/badges to display below the buttons (up to 8 tags)',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'aboutTeaser',
+          fields: [
+            {
+              name: 'eyebrow',
+              type: 'text',
+              required: false,
+              defaultValue: 'About Future Franchise Owners',
+              admin: {
+                description: 'Short label shown above the heading (e.g., "Our Purpose")',
+              },
+            },
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Seasoned franchise experts guiding your journey',
+              admin: {
+                description: 'Main section heading',
+              },
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: false,
+              defaultValue:
+                'We combine decades of franchise ownership, coaching, and operations experience to help entrepreneurs make confident, informed decisions.',
+              admin: {
+                description: 'Supporting paragraph introducing your team and value proposition',
+              },
+            },
+            {
+              name: 'highlights',
+              type: 'array',
+              required: false,
+              minRows: 0,
+              maxRows: 4,
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Short highlight title (e.g., "25+ Years Advising Franchises")',
+                  },
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Optional supporting sentence elaborating on the highlight',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Key differentiators, credentials, or testimonials to feature',
+              },
+            },
+            {
+              name: 'ctas',
+              type: 'array',
+              required: false,
+              minRows: 0,
+              maxRows: 4,
+              fields: [
+                {
+                  name: 'label',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Call-to-action text (e.g., "Speak to a Consultant")',
+                  },
+                },
+                {
+                  name: 'url',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Call-to-action link destination',
+                  },
+                },
+                {
+                  name: 'style',
+                  type: 'select',
+                  required: false,
+                  defaultValue: 'primary',
+                  options: [
+                    { label: 'Primary (Solid)', value: 'primary' },
+                    { label: 'Secondary', value: 'secondary' },
+                    { label: 'Outline', value: 'outline' },
+                    { label: 'Ghost', value: 'ghost' },
+                  ],
+                  admin: {
+                    description: 'Visual style for the button',
+                  },
+                },
+                {
+                  name: 'openInNewTab',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description: 'Open the call-to-action in a new tab',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add one or more call-to-action buttons (optional)',
+              },
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description: 'Optional supporting image or consultant photo',
               },
             },
           ],
@@ -442,14 +582,16 @@ const Pages: CollectionConfig = {
               required: false,
               defaultValue: 'Find Franchise Opportunities Near You',
               admin: {
-                description: 'Section heading (e.g., "Explore Our Locations", "Find Opportunities")',
+                description:
+                  'Section heading (e.g., "Explore Our Locations", "Find Opportunities")',
               },
             },
             {
               name: 'description',
               type: 'text',
               required: false,
-              defaultValue: 'Explore our network of franchise locations and discover opportunities in your area.',
+              defaultValue:
+                'Explore our network of franchise locations and discover opportunities in your area.',
               admin: {
                 description: 'Optional description text below the heading',
               },
@@ -458,7 +600,8 @@ const Pages: CollectionConfig = {
               name: 'mapUrl',
               type: 'text',
               required: false,
-              defaultValue: 'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F',
+              defaultValue:
+                'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F',
               admin: {
                 description: 'Google Maps embed URL (from Google My Maps)',
               },

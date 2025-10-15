@@ -24,6 +24,10 @@ interface HeroBlockComponentProps {
         }
       | string
       | null
+    /** Whether to render the dark overlay */
+    showOverlay?: boolean | null
+    /** Whether to apply blur to the overlay */
+    backgroundBlur?: boolean | null
     /** Call-to-action buttons array */
     cta_buttons?:
       | {
@@ -90,17 +94,30 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
 
   const subheadingText = getTextFromRichText(block.subheading)
 
+  let backgroundImageUrl = '/images/hero-bg.avif'
+  if (typeof block.image === 'string' && block.image.trim().length > 0) {
+    backgroundImageUrl = block.image
+  } else if (block.image && typeof block.image === 'object') {
+    backgroundImageUrl = block.image.url ?? backgroundImageUrl
+  }
+
+  const showOverlay = block.showOverlay ?? true
+  const backgroundBlur = block.backgroundBlur ?? true
+  const overlayClasses = backgroundBlur
+    ? 'absolute inset-0 bg-black/70 backdrop-blur-md'
+    : 'absolute inset-0 bg-black/60'
+
   return (
     <section
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
         fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
-        backgroundImage: "url('/images/hero-bg.avif')",
+        backgroundImage: `url(${backgroundImageUrl})`,
       }}
       aria-label="Hero"
     >
       {/* Brand gradient overlay for readability */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
+      {showOverlay && <div className={overlayClasses} />}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
         <div className="mx-auto max-w-3xl text-center">
