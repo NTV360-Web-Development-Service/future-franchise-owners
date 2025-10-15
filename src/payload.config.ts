@@ -33,9 +33,7 @@ export default buildConfig({
     },
     components: {
       /** Add a quick-access link in the admin nav to Import Franchises */
-      afterNavLinks: [
-        'app/(payload)/components/AdminImportLink.tsx',
-      ],
+      afterNavLinks: ['app/(payload)/components/AdminImportLink.tsx'],
     },
   },
   collections: [Users, Media, Pages, Franchises, Agents],
@@ -55,28 +53,30 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // Only add S3 storage if all required environment variables are present
-    ...(process.env.SUPABASE_STORAGE_BUCKET && 
-        process.env.SUPABASE_S3_ACCESS_KEY_ID && 
-        process.env.SUPABASE_S3_SECRET_ACCESS_KEY && 
-        process.env.SUPABASE_S3_REGION && 
-        process.env.SUPABASE_S3_ENDPOINT ? [
-      s3Storage({
-        collections: {
-          media: {
-            prefix: 'media',
-          },
-        },
-        bucket: process.env.SUPABASE_STORAGE_BUCKET,
-        config: {
-          forcePathStyle: true,
-          credentials: {
-            accessKeyId: process.env.SUPABASE_S3_ACCESS_KEY_ID,
-            secretAccessKey: process.env.SUPABASE_S3_SECRET_ACCESS_KEY,
-          },
-          region: process.env.SUPABASE_S3_REGION,
-          endpoint: process.env.SUPABASE_S3_ENDPOINT,
-        },
-      })
-    ] : []),
+    ...(process.env.SUPABASE_STORAGE_BUCKET &&
+    process.env.SUPABASE_S3_ACCESS_KEY_ID &&
+    process.env.SUPABASE_S3_SECRET_ACCESS_KEY &&
+    process.env.SUPABASE_S3_REGION &&
+    process.env.SUPABASE_S3_ENDPOINT
+      ? [
+          s3Storage({
+            collections: {
+              media: {
+                prefix: 'media',
+              },
+            },
+            bucket: process.env.SUPABASE_STORAGE_BUCKET,
+            config: {
+              forcePathStyle: true,
+              credentials: {
+                accessKeyId: process.env.SUPABASE_S3_ACCESS_KEY_ID,
+                secretAccessKey: process.env.SUPABASE_S3_SECRET_ACCESS_KEY,
+              },
+              region: process.env.SUPABASE_S3_REGION,
+              endpoint: process.env.SUPABASE_S3_ENDPOINT,
+            },
+          }),
+        ]
+      : []),
   ],
 })
