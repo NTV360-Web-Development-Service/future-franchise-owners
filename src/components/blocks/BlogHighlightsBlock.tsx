@@ -1,10 +1,10 @@
 /**
  * @fileoverview BlogHighlightsBlock Component
- * 
+ *
  * A dynamic blog highlights section that fetches and displays recent blog posts
  * from RSS feeds. Features responsive card layouts, configurable metadata display,
  * and performance optimizations for content delivery.
- * 
+ *
  * @module Components/Blocks/BlogHighlightsBlock
  * @version 1.0.0
  * @author Franchise Site Development Team
@@ -18,10 +18,10 @@ import Parser from 'rss-parser'
 
 /**
  * Blog post data structure for RSS feed content
- * 
+ *
  * Represents a single blog post with all necessary metadata
  * for display in the highlights section.
- * 
+ *
  * @interface BlogPost
  */
 interface BlogPost {
@@ -41,10 +41,10 @@ interface BlogPost {
 
 /**
  * Configuration props for the BlogHighlightsBlock component
- * 
+ *
  * Defines the block configuration structure as provided by Payload CMS
  * for customizing the blog highlights display behavior and content.
- * 
+ *
  * @interface BlogHighlightsBlockProps
  */
 interface BlogHighlightsBlockProps {
@@ -165,10 +165,10 @@ function estimateReadTime(content: string): string {
 
 /**
  * BlogHighlightsBlock Component
- * 
+ *
  * An async server component that fetches and displays recent blog posts from RSS feeds.
  * Provides a responsive, card-based layout with configurable metadata display options.
- * 
+ *
  * Key Features:
  * - RSS feed integration with rss-parser
  * - Responsive grid layout (1-3 columns based on screen size)
@@ -179,20 +179,20 @@ function estimateReadTime(content: string): string {
  * - Error handling with graceful fallbacks
  * - SEO-friendly markup structure
  * - Accessibility considerations
- * 
+ *
  * Performance Optimizations:
  * - Server-side rendering for better SEO
  * - Image lazy loading
  * - Efficient RSS parsing with custom field extraction
  * - Content truncation for consistent layouts
- * 
+ *
  * @param {BlogHighlightsBlockProps} props - Component configuration from Payload CMS
  * @param {Object} props.block - Block configuration object
  * @returns {Promise<JSX.Element>} Rendered blog highlights section
- * 
+ *
  * @example
  * ```tsx
- * <BlogHighlightsBlock 
+ * <BlogHighlightsBlock
  *   block={{
  *     blockType: 'blogHighlights',
  *     heading: 'Latest Insights',
@@ -221,12 +221,12 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
 
   if (posts.length === 0) {
     return (
-      <section className="bg-[#002855]">
+      <section>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">{heading}</h2>
-            {subheading && <p className="text-lg text-white/90 mb-8">{subheading}</p>}
-            <p className="text-white/90">No blog posts available at the moment.</p>
+            <h2 className="text-3xl font-bold text-slate-800 mb-4">{heading}</h2>
+            {subheading && <p className="text-lg text-slate-800/90 mb-8">{subheading}</p>}
+            <p className="text-slate-800/90">No blog posts available at the moment.</p>
           </div>
         </div>
       </section>
@@ -234,18 +234,20 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
   }
 
   return (
-    <section className="bg-[#002855]">
+    <section>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">{heading}</h2>
-          {subheading && <p className="text-lg text-white/90 max-w-3xl mx-auto">{subheading}</p>}
+          <h2 className="text-3xl font-bold text-slate-800 mb-4">{heading}</h2>
+          {subheading && (
+            <p className="text-lg text-slate-800/90 max-w-3xl mx-auto">{subheading}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post, index) => (
             <Card
               key={index}
-              className="group hover:shadow-xl transition-all duration-300 !bg-blue-100 hover:!bg-blue-50 border-0 hover:scale-105 h-full flex flex-col"
+              className="group hover:shadow-xl  transition-all duration-300 bg-slate-50 hover:!bg-blue-50 border-0 hover:scale-105 h-full flex flex-col"
             >
               {post.image && (
                 <div className="aspect-video overflow-hidden">
