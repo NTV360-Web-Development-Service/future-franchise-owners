@@ -13,8 +13,10 @@ import {
   BlogHighlightsBlock,
   MapBlock,
   AboutTeaserBlock,
+  CallToActionBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
+import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
 
 /**
  * HomePage - The main landing page component for the franchise website
@@ -58,14 +60,20 @@ export default async function HomePage() {
   /**
    * Render a block component based on its type
    * Maps block types to their corresponding React components
+   * Only renders blocks that are marked as published
    *
    * @param block - Block data from Payload CMS
-   * @returns JSX element for the block or null if type not supported
+   * @returns JSX element for the block or null if type not supported or unpublished
    */
   const renderBlock = (
-    block: Page['layout'][0] | AboutTeaserBlockProps['block'],
+    block: Page['layout'][0] | AboutTeaserBlockProps['block'] | CallToActionBlockProps['block'],
     index: number,
   ) => {
+    // Skip rendering if block is unpublished
+    if ('published' in block && block.published === false) {
+      return null
+    }
+
     const key = 'id' in block && block.id ? block.id : `${block.blockType}-${index}`
 
     switch (block.blockType) {
@@ -83,6 +91,8 @@ export default async function HomePage() {
         return <MapBlock block={block} key={key} />
       case 'aboutTeaser':
         return <AboutTeaserBlock block={block as AboutTeaserBlockProps['block']} key={key} />
+      case 'callToAction':
+        return <CallToActionBlock block={block as CallToActionBlockProps['block']} key={key} />
       default:
         return null
     }

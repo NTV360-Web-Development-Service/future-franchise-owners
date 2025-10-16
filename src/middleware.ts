@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
- * Middleware to protect import routes with PayloadCMS authentication
- * Only authenticated PayloadCMS users can access /import/* routes
+ * Middleware to:
+ * 1. Add pathname to headers for server-side access in layouts
+ * 2. Protect import routes with PayloadCMS authentication
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Add pathname to headers so layouts can access it
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-pathname', pathname)
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
 
   // Only protect import routes
   if (pathname.startsWith('/import')) {
@@ -21,8 +32,11 @@ export async function middleware(request: NextRequest) {
 
     // Token exists, ensure a CSRF token cookie is set (double-submit pattern)
     const csrfCookie = request.cookies.get('csrf-token')?.value
-    const csrfToken = csrfCookie || (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `${Date.now()}-${Math.random()}`)
-    const response = NextResponse.next()
+    const csrfToken =
+      csrfCookie ||
+      (globalThis.crypto?.randomUUID
+        ? globalThis.crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`)
     if (!csrfCookie) {
       response.cookies.set('csrf-token', csrfToken, {
         httpOnly: false, // must be readable by client JS to echo in header
@@ -42,14 +56,12 @@ export async function middleware(request: NextRequest) {
     }
 
     // Check for payload-token cookie or Authorization header
-    const token = request.cookies.get('payload-token')?.value || 
-                 request.headers.get('authorization')?.replace('Bearer ', '')
+    const token =
+      request.cookies.get('payload-token')?.value ||
+      request.headers.get('authorization')?.replace('Bearer ', '')
 
     if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
     // Enforce same-origin for CSRF protection
@@ -75,13 +87,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Allow all other routes
-  return NextResponse.next()
+  // Allow all other routes with pathname header
+  return response
 }
 
 export const config = {
   matcher: [
-    '/import/:path*',
-    '/api/franchises/import/:path*'
-  ]
+    // Run on all routes to add pathname header
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 }

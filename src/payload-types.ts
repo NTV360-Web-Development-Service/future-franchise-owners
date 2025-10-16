@@ -90,8 +90,12 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -175,6 +179,10 @@ export interface Page {
   layout: (
     | {
         /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
          * Section heading (optional)
          */
         heading?: string | null;
@@ -218,6 +226,10 @@ export interface Page {
       }
     | {
         /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
          * The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")
          */
         text: string;
@@ -251,6 +263,10 @@ export interface Page {
         blockType: 'ribbon';
       }
     | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
         /**
          * Logo configuration - either image or text fallback
          */
@@ -300,6 +316,10 @@ export interface Page {
         blockType: 'navbar';
       }
     | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
         heading: string;
         subheading: {
           root: {
@@ -366,6 +386,10 @@ export interface Page {
       }
     | {
         /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
          * Short label shown above the heading (e.g., "Our Purpose")
          */
         eyebrow?: string | null;
@@ -427,6 +451,87 @@ export interface Page {
       }
     | {
         /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional kicker text shown above the heading (e.g., "Let's Talk")
+         */
+        eyebrow?: string | null;
+        /**
+         * Primary CTA headline
+         */
+        heading?: string | null;
+        /**
+         * Supporting copy that reinforces the call to action
+         */
+        description?: string | null;
+        /**
+         * Control text and button alignment
+         */
+        alignment?: ('center' | 'left') | null;
+        /**
+         * Choose how the background should render
+         */
+        backgroundStyle?: ('color' | 'gradient' | 'image') | null;
+        /**
+         * Hex color used when background style is set to "Solid Color"
+         */
+        backgroundColor?: string | null;
+        /**
+         * CSS gradient value used when background style is "Gradient"
+         */
+        backgroundGradient?: string | null;
+        /**
+         * Background image used when background style is "Image"
+         */
+        backgroundImage?: (string | null) | Media;
+        /**
+         * Overlay color shown on top of gradient or image backgrounds
+         */
+        overlayColor?: string | null;
+        /**
+         * Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.
+         */
+        overlayOpacity?: number | null;
+        /**
+         * Add up to three CTA buttons
+         */
+        ctas?:
+          | {
+              /**
+               * Button label (e.g., "Speak to a Consultant")
+               */
+              label: string;
+              /**
+               * Destination URL for the CTA button
+               */
+              url: string;
+              /**
+               * Button visual style
+               */
+              style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+              /**
+               * Open the CTA link in a new tab
+               */
+              openInNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional fine print or reassurance text shown below the buttons
+         */
+        smallPrint?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'callToAction';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
          * Section heading (e.g., "Latest Insights", "Recent Articles")
          */
         heading?: string | null;
@@ -459,6 +564,10 @@ export interface Page {
         blockType: 'blogHighlights';
       }
     | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
         /**
          * Section heading (e.g., "Explore Our Locations", "Find Opportunities")
          */
@@ -744,6 +853,7 @@ export interface PagesSelect<T extends boolean = true> {
         franchiseGrid?:
           | T
           | {
+              published?: T;
               heading?: T;
               showFilters?: T;
               onlyFeatured?: T;
@@ -757,6 +867,7 @@ export interface PagesSelect<T extends boolean = true> {
         ribbon?:
           | T
           | {
+              published?: T;
               text?: T;
               backgroundColor?: T;
               textColor?: T;
@@ -773,6 +884,7 @@ export interface PagesSelect<T extends boolean = true> {
         navbar?:
           | T
           | {
+              published?: T;
               logo?:
                 | T
                 | {
@@ -799,6 +911,7 @@ export interface PagesSelect<T extends boolean = true> {
         hero?:
           | T
           | {
+              published?: T;
               heading?: T;
               subheading?: T;
               image?: T;
@@ -824,6 +937,7 @@ export interface PagesSelect<T extends boolean = true> {
         aboutTeaser?:
           | T
           | {
+              published?: T;
               eyebrow?: T;
               heading?: T;
               description?: T;
@@ -847,9 +961,37 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        callToAction?:
+          | T
+          | {
+              published?: T;
+              eyebrow?: T;
+              heading?: T;
+              description?: T;
+              alignment?: T;
+              backgroundStyle?: T;
+              backgroundColor?: T;
+              backgroundGradient?: T;
+              backgroundImage?: T;
+              overlayColor?: T;
+              overlayOpacity?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              smallPrint?: T;
+              id?: T;
+              blockName?: T;
+            };
         blogHighlights?:
           | T
           | {
+              published?: T;
               heading?: T;
               subheading?: T;
               feedUrl?: T;
@@ -863,6 +1005,7 @@ export interface PagesSelect<T extends boolean = true> {
         map?:
           | T
           | {
+              published?: T;
               heading?: T;
               description?: T;
               mapUrl?: T;
@@ -960,6 +1103,231 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  /**
+   * ✅ Published | ⬜ Unpublished (hidden from all pages)
+   */
+  navbarPublished?: boolean | null;
+  /**
+   * Control where the navbar appears
+   */
+  navbarVisibility?: ('all' | 'include' | 'exclude') | null;
+  /**
+   * Select pages to include or exclude based on visibility setting above
+   */
+  navbarPages?: (string | Page)[] | null;
+  navbar?: {
+    /**
+     * Logo image for the navbar
+     */
+    logo?: (string | null) | Media;
+    /**
+     * Text to display if no logo is uploaded
+     */
+    logoText?: string | null;
+    /**
+     * Navigation links
+     */
+    links?:
+      | {
+          label: string;
+          url: string;
+          openInNewTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional call-to-action button
+     */
+    ctaButton?: {
+      enabled?: boolean | null;
+      label?: string | null;
+      url?: string | null;
+    };
+  };
+  /**
+   * ✅ Published | ⬜ Unpublished (hidden from all pages)
+   */
+  footerPublished?: boolean | null;
+  /**
+   * Control where the footer appears
+   */
+  footerVisibility?: ('all' | 'include' | 'exclude') | null;
+  /**
+   * Select pages to include or exclude based on visibility setting above
+   */
+  footerPages?: (string | Page)[] | null;
+  footer?: {
+    /**
+     * Company name displayed in footer
+     */
+    companyName?: string | null;
+    /**
+     * Tagline or description
+     */
+    tagline?: string | null;
+    /**
+     * Custom copyright text (leave empty for auto-generated)
+     */
+    copyrightText?: string | null;
+    /**
+     * Display social media links
+     */
+    showSocialLinks?: boolean | null;
+    /**
+     * Social media links
+     */
+    socialLinks?:
+      | {
+          /**
+           * Platform name (e.g., Facebook, Twitter, LinkedIn)
+           */
+          platform: string;
+          url: string;
+          /**
+           * Icon character or emoji (e.g., 📘 or use Font Awesome)
+           */
+          icon?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Footer navigation columns
+     */
+    footerColumns?:
+      | {
+          heading: string;
+          links: {
+            label: string;
+            url: string;
+            openInNewTab?: boolean | null;
+            id?: string | null;
+          }[];
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Links in the bottom bar (e.g., Privacy Policy, Terms)
+     */
+    bottomLinks?:
+      | {
+          label: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Footer background color (hex code)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Footer text color (hex code)
+     */
+    textColor?: string | null;
+  };
+  /**
+   * Site name used in meta tags
+   */
+  siteName?: string | null;
+  /**
+   * Default site description for SEO
+   */
+  siteDescription?: string | null;
+  /**
+   * Contact email for the site
+   */
+  contactEmail?: string | null;
+  /**
+   * Contact phone number
+   */
+  contactPhone?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  navbarPublished?: T;
+  navbarVisibility?: T;
+  navbarPages?: T;
+  navbar?:
+    | T
+    | {
+        logo?: T;
+        logoText?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              openInNewTab?: T;
+              id?: T;
+            };
+        ctaButton?:
+          | T
+          | {
+              enabled?: T;
+              label?: T;
+              url?: T;
+            };
+      };
+  footerPublished?: T;
+  footerVisibility?: T;
+  footerPages?: T;
+  footer?:
+    | T
+    | {
+        companyName?: T;
+        tagline?: T;
+        copyrightText?: T;
+        showSocialLinks?: T;
+        socialLinks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              icon?: T;
+              id?: T;
+            };
+        footerColumns?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        bottomLinks?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        backgroundColor?: T;
+        textColor?: T;
+      };
+  siteName?: T;
+  siteDescription?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
