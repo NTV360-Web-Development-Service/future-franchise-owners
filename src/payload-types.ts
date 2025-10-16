@@ -1181,19 +1181,35 @@ export interface SiteSetting {
      */
     showSocialLinks?: boolean | null;
     /**
-     * Social media links
+     * Add your social media links - icons will be displayed automatically
      */
     socialLinks?:
       | {
           /**
-           * Platform name (e.g., Facebook, Twitter, LinkedIn)
+           * Select the social media platform
            */
-          platform: string;
-          url: string;
+          platform:
+            | 'facebook'
+            | 'twitter'
+            | 'instagram'
+            | 'linkedin'
+            | 'youtube'
+            | 'tiktok'
+            | 'pinterest'
+            | 'reddit'
+            | 'discord'
+            | 'slack'
+            | 'github'
+            | 'gitlab'
+            | 'twitch'
+            | 'whatsapp'
+            | 'telegram'
+            | 'mail'
+            | 'globe';
           /**
-           * Icon character or emoji (e.g., 📘 or use Font Awesome)
+           * Full URL to your social media profile
            */
-          icon?: string | null;
+          url: string;
           id?: string | null;
         }[]
       | null;
@@ -1294,7 +1310,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
           | {
               platform?: T;
               url?: T;
-              icon?: T;
               id?: T;
             };
         footerColumns?:
