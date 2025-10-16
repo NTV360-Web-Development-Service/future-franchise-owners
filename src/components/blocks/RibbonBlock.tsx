@@ -95,13 +95,13 @@ export default function RibbonBlock({ block }: RibbonBlockProps) {
   }
 
   const ribbonContent = (
-    <div className="relative w-full h-10 overflow-hidden flex items-center" style={ribbonStyle}>
+    <div className="relative w-full overflow-hidden flex items-center py-2" style={ribbonStyle}>
       {isMoving ? (
         <Marquee
           gradient={false}
           speed={speed}
           pauseOnHover={true}
-          style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+          style={{ display: 'flex', alignItems: 'center' }}
         >
           <span className="mr-16 whitespace-nowrap" style={textStyle}>
             {block.text}
