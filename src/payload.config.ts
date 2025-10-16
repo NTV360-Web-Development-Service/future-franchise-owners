@@ -21,6 +21,7 @@ import { Media } from './collections/Media'
 import Pages from './collections/Pages'
 import Franchises from './collections/Franchises'
 import Agents from './collections/Agents'
+import SiteSettings from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -37,6 +38,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Franchises, Agents],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

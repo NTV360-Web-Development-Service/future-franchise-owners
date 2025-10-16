@@ -4,6 +4,9 @@ import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 
 const Pages: CollectionConfig = {
   slug: 'pages',
+  admin: {
+    useAsTitle: 'title',
+  },
   fields: [
     {
       name: 'title',
@@ -23,6 +26,15 @@ const Pages: CollectionConfig = {
         {
           slug: 'franchiseGrid',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'heading',
               type: 'text',
@@ -79,6 +91,15 @@ const Pages: CollectionConfig = {
         {
           slug: 'ribbon',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'text',
               type: 'text',
@@ -182,6 +203,15 @@ const Pages: CollectionConfig = {
           slug: 'navbar',
           fields: [
             {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            {
               name: 'logo',
               type: 'group',
               required: false,
@@ -276,6 +306,15 @@ const Pages: CollectionConfig = {
         {
           slug: 'hero',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'heading',
               type: 'text',
@@ -388,6 +427,15 @@ const Pages: CollectionConfig = {
         {
           slug: 'aboutTeaser',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'eyebrow',
               type: 'text',
@@ -507,8 +555,190 @@ const Pages: CollectionConfig = {
           ],
         },
         {
+          slug: 'callToAction',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'eyebrow',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Optional kicker text shown above the heading (e.g., "Let\'s Talk")',
+              },
+            },
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Ready to explore your franchise future?',
+              admin: {
+                description: 'Primary CTA headline',
+              },
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: false,
+              admin: {
+                description: 'Supporting copy that reinforces the call to action',
+              },
+            },
+            {
+              name: 'alignment',
+              type: 'select',
+              required: false,
+              defaultValue: 'center',
+              options: [
+                { label: 'Center', value: 'center' },
+                { label: 'Left', value: 'left' },
+              ],
+              admin: {
+                description: 'Control text and button alignment',
+              },
+            },
+            {
+              name: 'backgroundStyle',
+              type: 'select',
+              required: false,
+              defaultValue: 'gradient',
+              options: [
+                { label: 'Solid Color', value: 'color' },
+                { label: 'Gradient', value: 'gradient' },
+                { label: 'Image', value: 'image' },
+              ],
+              admin: {
+                description: 'Choose how the background should render',
+              },
+            },
+            {
+              name: 'backgroundColor',
+              type: 'text',
+              required: false,
+              defaultValue: '#004AAD',
+              admin: {
+                description: 'Hex color used when background style is set to "Solid Color"',
+              },
+            },
+            {
+              name: 'backgroundGradient',
+              type: 'text',
+              required: false,
+              defaultValue: 'linear-gradient(135deg, #004AAD 0%, #001C40 50%, #000814 100%)',
+              admin: {
+                description: 'CSS gradient value used when background style is "Gradient"',
+              },
+            },
+            {
+              name: 'backgroundImage',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description: 'Background image used when background style is "Image"',
+              },
+            },
+            {
+              name: 'overlayColor',
+              type: 'text',
+              required: false,
+              defaultValue: '#000000',
+              admin: {
+                description: 'Overlay color shown on top of gradient or image backgrounds',
+              },
+            },
+            {
+              name: 'overlayOpacity',
+              type: 'number',
+              required: false,
+              defaultValue: 0.45,
+              admin: {
+                description:
+                  'Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.',
+              },
+              min: 0,
+              max: 0.95,
+            },
+            {
+              name: 'ctas',
+              type: 'array',
+              required: false,
+              minRows: 0,
+              maxRows: 3,
+              fields: [
+                {
+                  name: 'label',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Button label (e.g., "Speak to a Consultant")',
+                  },
+                },
+                {
+                  name: 'url',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Destination URL for the CTA button',
+                  },
+                },
+                {
+                  name: 'style',
+                  type: 'select',
+                  required: false,
+                  defaultValue: 'primary',
+                  options: [
+                    { label: 'Primary (Brand Solid)', value: 'primary' },
+                    { label: 'Secondary', value: 'secondary' },
+                    { label: 'Outline', value: 'outline' },
+                    { label: 'Ghost', value: 'ghost' },
+                  ],
+                  admin: {
+                    description: 'Button visual style',
+                  },
+                },
+                {
+                  name: 'openInNewTab',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description: 'Open the CTA link in a new tab',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add up to three CTA buttons',
+              },
+            },
+            {
+              name: 'smallPrint',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Optional fine print or reassurance text shown below the buttons',
+              },
+            },
+          ],
+        },
+        {
           slug: 'blogHighlights',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'heading',
               type: 'text',
@@ -576,6 +806,15 @@ const Pages: CollectionConfig = {
         {
           slug: 'map',
           fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
             {
               name: 'heading',
               type: 'text',

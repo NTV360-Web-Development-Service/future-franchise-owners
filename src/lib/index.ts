@@ -8,3 +8,7 @@ export { cn } from './utils'
 
 // Franchise-specific utilities
 export { parseCurrencyToNumber, extractBestScore } from './franchise'
+
+// Site settings
+export { getSiteSettings } from './getSiteSettings'
+export { shouldShowOnPage } from './shouldShowOnPage'
