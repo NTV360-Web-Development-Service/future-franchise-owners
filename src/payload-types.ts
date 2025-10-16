@@ -579,6 +579,14 @@ export interface Page {
          * Display estimated reading time on each post
          */
         showReadTime?: boolean | null;
+        /**
+         * URL for the "View All Posts" button (e.g., link to your full blog)
+         */
+        viewAllLink?: string | null;
+        /**
+         * Show the "View All Posts" button at the bottom
+         */
+        showViewAllButton?: boolean | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'blogHighlights';
@@ -1024,6 +1032,8 @@ export interface PagesSelect<T extends boolean = true> {
               showAuthor?: T;
               showDate?: T;
               showReadTime?: T;
+              viewAllLink?: T;
+              showViewAllButton?: T;
               id?: T;
               blockName?: T;
             };
