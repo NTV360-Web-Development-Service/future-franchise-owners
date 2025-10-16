@@ -1,5 +1,40 @@
 import React from 'react'
 import Link from 'next/link'
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Github,
+  Gitlab,
+  Mail,
+  Globe,
+  MessageCircle,
+  Send,
+  Slack,
+} from 'lucide-react'
+
+// Social media icon mapping
+const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  facebook: Facebook,
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  github: Github,
+  gitlab: Gitlab,
+  mail: Mail,
+  globe: Globe,
+  discord: MessageCircle,
+  telegram: Send,
+  slack: Slack,
+  whatsapp: MessageCircle,
+  tiktok: MessageCircle, // Lucide doesn't have TikTok, using generic
+  pinterest: Globe, // Using globe as fallback
+  reddit: MessageCircle, // Using message as fallback
+  twitch: MessageCircle, // Using message as fallback
+}
 
 export interface FooterBlockProps {
   block: {
@@ -12,7 +47,6 @@ export interface FooterBlockProps {
       | {
           platform: string
           url: string
-          icon?: string | null
         }[]
       | null
     footerColumns?:
@@ -73,22 +107,21 @@ export default function FooterBlock({ block }: FooterBlockProps) {
             {/* Social Links */}
             {showSocialLinks && socialLinks && socialLinks.length > 0 && (
               <div className="flex gap-4 mt-6">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-70 hover:opacity-100 transition-opacity"
-                    aria-label={social.platform}
-                  >
-                    {social.icon ? (
-                      <span className="text-xl">{social.icon}</span>
-                    ) : (
-                      <span className="text-sm font-medium">{social.platform}</span>
-                    )}
-                  </a>
-                ))}
+                {socialLinks.map((social, index) => {
+                  const IconComponent = SOCIAL_ICONS[social.platform.toLowerCase()] || Globe
+                  return (
+                    <a
+                      key={index}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-70 hover:opacity-100 transition-opacity"
+                      aria-label={social.platform}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                    </a>
+                  )
+                })}
               </div>
             )}
           </div>
