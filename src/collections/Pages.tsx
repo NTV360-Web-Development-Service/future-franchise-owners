@@ -836,6 +836,23 @@ const Pages: CollectionConfig = {
                 description: 'Display estimated reading time on each post',
               },
             },
+            {
+              name: 'viewAllLink',
+              type: 'text',
+              required: false,
+              defaultValue: 'https://quantumbc.substack.com',
+              admin: {
+                description: 'URL for the "View All Posts" button (e.g., link to your full blog)',
+              },
+            },
+            {
+              name: 'showViewAllButton',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Show the "View All Posts" button at the bottom',
+              },
+            },
           ],
         },
         {

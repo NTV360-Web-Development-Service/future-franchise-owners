@@ -66,6 +66,10 @@ interface BlogHighlightsBlockProps {
     showDate?: boolean | null
     /** Show read time estimate */
     showReadTime?: boolean | null
+    /** URL for "View All Posts" button */
+    viewAllLink?: string | null
+    /** Show "View All Posts" button */
+    showViewAllButton?: boolean | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -214,6 +218,8 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
     showAuthor = true,
     showDate = true,
     showReadTime = true,
+    viewAllLink = 'https://quantumbc.substack.com',
+    showViewAllButton = true,
   } = block
 
   // Fetch blog posts from RSS feed
@@ -308,17 +314,19 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <a
-            href="https://quantumbc.substack.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#004AAD] text-white px-6 py-3 rounded-lg hover:bg-[#003a89] transition-colors font-medium"
-          >
-            View All Posts
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
+        {showViewAllButton && viewAllLink && (
+          <div className="text-center mt-12">
+            <a
+              href={viewAllLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#004AAD] text-white px-6 py-3 rounded-lg hover:bg-[#003a89] transition-colors font-medium"
+            >
+              View All Posts
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        )}
       </div>
     </section>
   )
