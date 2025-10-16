@@ -12,10 +12,20 @@ interface RibbonBlockProps {
   block: {
     /** Text content to display in the ribbon */
     text: string
-    /** Background color theme */
-    backgroundColor: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'orange'
-    /** Text color for contrast */
-    textColor: 'white' | 'black'
+    /** Background color (hex code) */
+    backgroundColor: string
+    /** Text color (hex code) */
+    textColor: string
+    /** Font size in pixels */
+    fontSize?: number | null
+    /** Font weight (CSS font-weight value) */
+    fontWeight?: string | null
+    /** Whether the text should scroll/animate */
+    isMoving?: boolean | null
+    /** Animation speed (only applies when isMoving is true) */
+    speed?: number | null
+    /** Text alignment when static (only applies when isMoving is false) */
+    textAlign?: 'left' | 'center' | 'right' | null
     /** Optional link configuration */
     link?: {
       /** URL to navigate to when clicked */
@@ -33,36 +43,19 @@ interface RibbonBlockProps {
 }
 
 /**
- * CSS class mappings for background colors
- */
-const backgroundColorClasses = {
-  blue: 'bg-blue-600',
-  red: 'bg-red-600',
-  green: 'bg-green-600',
-  yellow: 'bg-yellow-500',
-  purple: 'bg-purple-600',
-  orange: 'bg-orange-600',
-}
-
-/**
- * CSS class mappings for text colors
- */
-const textColorClasses = {
-  white: 'text-white',
-  black: 'text-black',
-}
-
-/**
- * RibbonBlock - A dismissible announcement banner component
- * 
+ * RibbonBlock - A highly customizable announcement banner component
+ *
  * Features:
- * - Scrolling marquee text animation
- * - Customizable background and text colors
+ * - Scrolling marquee text animation (optional)
+ * - Custom hex color pickers for text and background
+ * - Adjustable font size and weight
+ * - Configurable animation speed
+ * - Text alignment options for static ribbons
  * - Optional click-through links
  * - Dismissible functionality with close button
  * - Responsive design
  * - Smooth animations
- * 
+ *
  * @param props - Component props
  * @returns JSX element containing the ribbon banner or null if dismissed
  */
@@ -81,26 +74,59 @@ export default function RibbonBlock({ block }: RibbonBlockProps) {
     setIsVisible(false)
   }
 
+  // Extract configuration with defaults
+  const fontSize = block.fontSize ?? 14
+  const fontWeight = block.fontWeight ?? '400'
+  const isMoving = block.isMoving ?? true
+  const speed = block.speed ?? 30
+  const textAlign = block.textAlign ?? 'center'
+
+  // Inline styles for custom colors and typography
+  const ribbonStyle: React.CSSProperties = {
+    backgroundColor: block.backgroundColor,
+    color: block.textColor,
+    fontSize: `${fontSize}px`,
+    fontWeight: fontWeight,
+  }
+
+  const textStyle: React.CSSProperties = {
+    fontSize: `${fontSize}px`,
+    fontWeight: fontWeight,
+  }
+
   const ribbonContent = (
-    <div 
-      className={`
-        relative w-full h-10 overflow-hidden flex items-center
-        ${backgroundColorClasses[block.backgroundColor]}
-        ${textColorClasses[block.textColor]}
-      `}
-    >
-      <Marquee gradient={false} speed={30} pauseOnHover={true} style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
-        <span className="text-sm mr-16 whitespace-nowrap">{block.text}</span>
-      </Marquee>
-      
+    <div className="relative w-full h-10 overflow-hidden flex items-center" style={ribbonStyle}>
+      {isMoving ? (
+        <Marquee
+          gradient={false}
+          speed={speed}
+          pauseOnHover={true}
+          style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+        >
+          <span className="mr-16 whitespace-nowrap" style={textStyle}>
+            {block.text}
+          </span>
+        </Marquee>
+      ) : (
+        <div
+          className={`w-full px-4 ${
+            textAlign === 'left'
+              ? 'text-left'
+              : textAlign === 'right'
+                ? 'text-right'
+                : 'text-center'
+          }`}
+          style={textStyle}
+        >
+          {block.text}
+        </div>
+      )}
+
       {(block.dismissible ?? true) && (
         <button
           onClick={handleDismiss}
-          className={`
-            absolute right-4 top-1/2 transform -translate-y-1/2
-            ${textColorClasses[block.textColor]}
-            hover:opacity-70 transition-opacity z-10
-          `}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:opacity-70 transition-opacity z-10"
+          style={{ color: block.textColor }}
           aria-label="Dismiss ribbon"
         >
           <X size={16} />
