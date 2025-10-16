@@ -70,6 +70,8 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    franchises: Franchise;
+    agents: Agent;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,15 +81,21 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    franchises: FranchisesSelect<false> | FranchisesSelect<true>;
+    agents: AgentsSelect<false> | AgentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -120,7 +128,8 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -144,8 +153,9 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: string;
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -163,9 +173,587 @@ export interface Media {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number;
+  id: string;
   title: string;
   slug: string;
+  layout: (
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Section heading (optional)
+         */
+        heading?: string | null;
+        /**
+         * Show filter controls above the grid
+         */
+        showFilters?: boolean | null;
+        /**
+         * Only include Featured franchises
+         */
+        onlyFeatured?: boolean | null;
+        /**
+         * Only include Sponsored franchises
+         */
+        onlySponsored?: boolean | null;
+        /**
+         * Only include Top Pick franchises
+         */
+        onlyTopPick?: boolean | null;
+        /**
+         * Restrict grid to a single category (optional)
+         */
+        category?:
+          | (
+              | 'all'
+              | 'Fitness'
+              | 'Food and Beverage'
+              | 'Health and Wellness'
+              | 'Home Services'
+              | 'Senior Care'
+              | 'Sports'
+            )
+          | null;
+        /**
+         * Maximum number of items to show (optional)
+         */
+        limit?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'franchiseGrid';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")
+         */
+        text: string;
+        /**
+         * Background color (hex code, e.g., #2563eb for blue)
+         */
+        backgroundColor: string;
+        /**
+         * Text color (hex code, e.g., #ffffff for white)
+         */
+        textColor: string;
+        /**
+         * Font size in pixels (10-32px)
+         */
+        fontSize?: number | null;
+        /**
+         * Font weight/thickness
+         */
+        fontWeight?: ('300' | '400' | '500' | '600' | '700' | '800') | null;
+        /**
+         * Enable scrolling ticker animation
+         */
+        isMoving?: boolean | null;
+        /**
+         * Animation speed (10-200, higher = faster). Only applies when moving.
+         */
+        speed?: number | null;
+        /**
+         * Text alignment. Only applies when not moving.
+         */
+        textAlign?: ('left' | 'center' | 'right') | null;
+        /**
+         * Optional link to make the ribbon clickable
+         */
+        link: {
+          /**
+           * URL to navigate to when ribbon is clicked
+           */
+          url: string;
+          /**
+           * Open link in a new tab
+           */
+          openInNewTab?: boolean | null;
+        };
+        /**
+         * Allow users to dismiss/close the ribbon
+         */
+        dismissible?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ribbon';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Logo configuration - either image or text fallback
+         */
+        logo?: {
+          /**
+           * Logo image for the navbar
+           */
+          image?: (string | null) | Media;
+          /**
+           * Text to display if no logo image is provided (e.g., "FFO")
+           */
+          text?: string | null;
+        };
+        /**
+         * Navigation menu links
+         */
+        navigationLinks: {
+          /**
+           * Display text for the navigation link
+           */
+          label: string;
+          /**
+           * URL path (e.g., "/", "/opportunities", "/contact")
+           */
+          url: string;
+          id?: string | null;
+        }[];
+        /**
+         * Call-to-action button configuration
+         */
+        ctaButton: {
+          /**
+           * Text for the call-to-action button
+           */
+          label: string;
+          /**
+           * URL for the CTA button
+           */
+          url: string;
+          /**
+           * Open CTA link in a new tab
+           */
+          openInNewTab?: boolean | null;
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'navbar';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        heading: string;
+        subheading: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * Background image for the hero section (optional)
+         */
+        image?: (string | null) | Media;
+        /**
+         * Add a dark overlay over the background image to improve contrast
+         */
+        showOverlay?: boolean | null;
+        /**
+         * Apply a soft blur to the overlay for extra readability
+         */
+        backgroundBlur?: boolean | null;
+        /**
+         * Call-to-action buttons (up to 5 buttons)
+         */
+        cta_buttons?:
+          | {
+              /**
+               * Button text (e.g., "Discover Top Franchises", "Browse Opportunities")
+               */
+              label: string;
+              /**
+               * URL path or external link
+               */
+              url: string;
+              /**
+               * Button style - primary for main actions, secondary for alternative actions
+               */
+              style: 'primary' | 'secondary';
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Feature tags/badges to display below the buttons (up to 8 tags)
+         */
+        tags?:
+          | {
+              /**
+               * Tag text (e.g., "Low Cost", "Home Based", "Financing Available")
+               */
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Short label shown above the heading (e.g., "Our Purpose")
+         */
+        eyebrow?: string | null;
+        /**
+         * Main section heading
+         */
+        heading?: string | null;
+        /**
+         * Supporting paragraph introducing your team and value proposition
+         */
+        description?: string | null;
+        /**
+         * Key differentiators, credentials, or testimonials to feature
+         */
+        highlights?:
+          | {
+              /**
+               * Short highlight title (e.g., "25+ Years Advising Franchises")
+               */
+              title: string;
+              /**
+               * Optional supporting sentence elaborating on the highlight
+               */
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Add one or more call-to-action buttons (optional)
+         */
+        ctas?:
+          | {
+              /**
+               * Call-to-action text (e.g., "Speak to a Consultant")
+               */
+              label: string;
+              /**
+               * Call-to-action link destination
+               */
+              url: string;
+              /**
+               * Visual style for the button
+               */
+              style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+              /**
+               * Open the call-to-action in a new tab
+               */
+              openInNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional supporting image or consultant photo
+         */
+        image?: (string | null) | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'aboutTeaser';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional kicker text shown above the heading (e.g., "Let's Talk")
+         */
+        eyebrow?: string | null;
+        /**
+         * Primary CTA headline
+         */
+        heading?: string | null;
+        /**
+         * Supporting copy that reinforces the call to action
+         */
+        description?: string | null;
+        /**
+         * Control text and button alignment
+         */
+        alignment?: ('center' | 'left') | null;
+        /**
+         * Choose how the background should render
+         */
+        backgroundStyle?: ('color' | 'gradient' | 'image') | null;
+        /**
+         * Hex color used when background style is set to "Solid Color"
+         */
+        backgroundColor?: string | null;
+        /**
+         * CSS gradient value used when background style is "Gradient"
+         */
+        backgroundGradient?: string | null;
+        /**
+         * Background image used when background style is "Image"
+         */
+        backgroundImage?: (string | null) | Media;
+        /**
+         * Overlay color shown on top of gradient or image backgrounds
+         */
+        overlayColor?: string | null;
+        /**
+         * Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.
+         */
+        overlayOpacity?: number | null;
+        /**
+         * Add up to three CTA buttons
+         */
+        ctas?:
+          | {
+              /**
+               * Button label (e.g., "Speak to a Consultant")
+               */
+              label: string;
+              /**
+               * Destination URL for the CTA button
+               */
+              url: string;
+              /**
+               * Button visual style
+               */
+              style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+              /**
+               * Open the CTA link in a new tab
+               */
+              openInNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional fine print or reassurance text shown below the buttons
+         */
+        smallPrint?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'callToAction';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Section heading (e.g., "Latest Insights", "Recent Articles")
+         */
+        heading?: string | null;
+        /**
+         * Optional subheading text below the main heading
+         */
+        subheading?: string | null;
+        /**
+         * RSS feed URL to fetch blog posts from
+         */
+        feedUrl?: string | null;
+        /**
+         * Maximum number of blog posts to display (1-12)
+         */
+        limit?: number | null;
+        /**
+         * Display author information on each post
+         */
+        showAuthor?: boolean | null;
+        /**
+         * Display publication date on each post
+         */
+        showDate?: boolean | null;
+        /**
+         * Display estimated reading time on each post
+         */
+        showReadTime?: boolean | null;
+        /**
+         * URL for the "View All Posts" button (e.g., link to your full blog)
+         */
+        viewAllLink?: string | null;
+        /**
+         * Show the "View All Posts" button at the bottom
+         */
+        showViewAllButton?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'blogHighlights';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Section heading (e.g., "Explore Our Locations", "Find Opportunities")
+         */
+        heading?: string | null;
+        /**
+         * Optional description text below the heading
+         */
+        description?: string | null;
+        /**
+         * Google Maps embed URL (from Google My Maps)
+         */
+        mapUrl?: string | null;
+        /**
+         * Map height in pixels (300-800)
+         */
+        height?: number | null;
+        /**
+         * Show "View Full Map" button below the map
+         */
+        showViewButton?: boolean | null;
+        /**
+         * Custom text for the "View Full Map" button
+         */
+        buttonText?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'map';
+      }
+  )[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage dynamic franchise listings and their metadata.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franchises".
+ */
+export interface Franchise {
+  id: string;
+  businessName: string;
+  /**
+   * Optional legacy URL identifier (hidden; ID is primary)
+   */
+  slug?: string | null;
+  /**
+   * Publish lifecycle status
+   */
+  status?: ('draft' | 'published' | 'archived') | null;
+  /**
+   * Mark as featured (editorial highlight)
+   */
+  isFeatured?: boolean | null;
+  /**
+   * Mark as sponsored (paid promotion)
+   */
+  isSponsored?: boolean | null;
+  /**
+   * Mark as a top pick to highlight across the site
+   */
+  isTopPick?: boolean | null;
+  /**
+   * Detailed description using the rich text editor
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Primary business category
+   */
+  category: 'Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports';
+  /**
+   * Classification tags (e.g., Low Cost, Home Based)
+   */
+  tags?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Initial investment range
+   */
+  investment?: {
+    min?: number | null;
+    max?: number | null;
+  };
+  /**
+   * Franchise logo or primary image
+   */
+  logo?: (string | null) | Media;
+  /**
+   * Assign a specific agent to this franchise (optional). If not assigned, inquiries go to main contact.
+   */
+  assignedAgent?: (string | null) | Agent;
+  /**
+   * Force use main contact even if agent is assigned (overrides agent assignment)
+   */
+  useMainContact?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage franchise consultants and agents
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents".
+ */
+export interface Agent {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  title?: string | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  photo?: (string | null) | Media;
+  /**
+   * Franchise categories or specialties
+   */
+  specialties?:
+    | {
+        category?:
+          | ('Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports')
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  isActive?: boolean | null;
+  /**
+   * GoHighLevel webhook URL (optional)
+   */
+  ghlWebhook?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -174,24 +762,32 @@ export interface Page {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: number | Media;
+        value: string | Media;
       } | null)
     | ({
         relationTo: 'pages';
-        value: number | Page;
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'franchises';
+        value: string | Franchise;
+      } | null)
+    | ({
+        relationTo: 'agents';
+        value: string | Agent;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -201,10 +797,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -224,7 +820,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -235,6 +831,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -258,6 +855,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -277,6 +875,235 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  layout?:
+    | T
+    | {
+        franchiseGrid?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              showFilters?: T;
+              onlyFeatured?: T;
+              onlySponsored?: T;
+              onlyTopPick?: T;
+              category?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        ribbon?:
+          | T
+          | {
+              published?: T;
+              text?: T;
+              backgroundColor?: T;
+              textColor?: T;
+              fontSize?: T;
+              fontWeight?: T;
+              isMoving?: T;
+              speed?: T;
+              textAlign?: T;
+              link?:
+                | T
+                | {
+                    url?: T;
+                    openInNewTab?: T;
+                  };
+              dismissible?: T;
+              id?: T;
+              blockName?: T;
+            };
+        navbar?:
+          | T
+          | {
+              published?: T;
+              logo?:
+                | T
+                | {
+                    image?: T;
+                    text?: T;
+                  };
+              navigationLinks?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    id?: T;
+                  };
+              ctaButton?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    openInNewTab?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        hero?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              subheading?: T;
+              image?: T;
+              showOverlay?: T;
+              backgroundBlur?: T;
+              cta_buttons?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    id?: T;
+                  };
+              tags?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        aboutTeaser?:
+          | T
+          | {
+              published?: T;
+              eyebrow?: T;
+              heading?: T;
+              description?: T;
+              highlights?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    id?: T;
+                  };
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              image?: T;
+              id?: T;
+              blockName?: T;
+            };
+        callToAction?:
+          | T
+          | {
+              published?: T;
+              eyebrow?: T;
+              heading?: T;
+              description?: T;
+              alignment?: T;
+              backgroundStyle?: T;
+              backgroundColor?: T;
+              backgroundGradient?: T;
+              backgroundImage?: T;
+              overlayColor?: T;
+              overlayOpacity?: T;
+              ctas?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    style?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              smallPrint?: T;
+              id?: T;
+              blockName?: T;
+            };
+        blogHighlights?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              subheading?: T;
+              feedUrl?: T;
+              limit?: T;
+              showAuthor?: T;
+              showDate?: T;
+              showReadTime?: T;
+              viewAllLink?: T;
+              showViewAllButton?: T;
+              id?: T;
+              blockName?: T;
+            };
+        map?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              description?: T;
+              mapUrl?: T;
+              height?: T;
+              showViewButton?: T;
+              buttonText?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franchises_select".
+ */
+export interface FranchisesSelect<T extends boolean = true> {
+  businessName?: T;
+  slug?: T;
+  status?: T;
+  isFeatured?: T;
+  isSponsored?: T;
+  isTopPick?: T;
+  description?: T;
+  category?: T;
+  tags?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  investment?:
+    | T
+    | {
+        min?: T;
+        max?: T;
+      };
+  logo?: T;
+  assignedAgent?: T;
+  useMainContact?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "agents_select".
+ */
+export interface AgentsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  title?: T;
+  bio?: T;
+  photo?: T;
+  specialties?:
+    | T
+    | {
+        category?: T;
+        id?: T;
+      };
+  isActive?: T;
+  ghlWebhook?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -311,6 +1138,246 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: string;
+  /**
+   * ✅ Published | ⬜ Unpublished (hidden from all pages)
+   */
+  navbarPublished?: boolean | null;
+  /**
+   * Control where the navbar appears
+   */
+  navbarVisibility?: ('all' | 'include' | 'exclude') | null;
+  /**
+   * Select pages to include or exclude based on visibility setting above
+   */
+  navbarPages?: (string | Page)[] | null;
+  navbar?: {
+    /**
+     * Logo image for the navbar
+     */
+    logo?: (string | null) | Media;
+    /**
+     * Text to display if no logo is uploaded
+     */
+    logoText?: string | null;
+    /**
+     * Navigation links
+     */
+    links?:
+      | {
+          label: string;
+          url: string;
+          openInNewTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional call-to-action button
+     */
+    ctaButton?: {
+      enabled?: boolean | null;
+      label?: string | null;
+      url?: string | null;
+    };
+  };
+  /**
+   * ✅ Published | ⬜ Unpublished (hidden from all pages)
+   */
+  footerPublished?: boolean | null;
+  /**
+   * Control where the footer appears
+   */
+  footerVisibility?: ('all' | 'include' | 'exclude') | null;
+  /**
+   * Select pages to include or exclude based on visibility setting above
+   */
+  footerPages?: (string | Page)[] | null;
+  footer?: {
+    /**
+     * Company name displayed in footer
+     */
+    companyName?: string | null;
+    /**
+     * Tagline or description
+     */
+    tagline?: string | null;
+    /**
+     * Custom copyright text (leave empty for auto-generated)
+     */
+    copyrightText?: string | null;
+    /**
+     * Display social media links
+     */
+    showSocialLinks?: boolean | null;
+    /**
+     * Add your social media links - icons will be displayed automatically
+     */
+    socialLinks?:
+      | {
+          /**
+           * Select the social media platform
+           */
+          platform:
+            | 'facebook'
+            | 'twitter'
+            | 'instagram'
+            | 'linkedin'
+            | 'youtube'
+            | 'tiktok'
+            | 'pinterest'
+            | 'reddit'
+            | 'discord'
+            | 'slack'
+            | 'github'
+            | 'gitlab'
+            | 'twitch'
+            | 'whatsapp'
+            | 'telegram'
+            | 'mail'
+            | 'globe';
+          /**
+           * Full URL to your social media profile
+           */
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Footer navigation columns
+     */
+    footerColumns?:
+      | {
+          heading: string;
+          links: {
+            label: string;
+            url: string;
+            openInNewTab?: boolean | null;
+            id?: string | null;
+          }[];
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Links in the bottom bar (e.g., Privacy Policy, Terms)
+     */
+    bottomLinks?:
+      | {
+          label: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Footer background color (hex code)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Footer text color (hex code)
+     */
+    textColor?: string | null;
+  };
+  /**
+   * Site name used in meta tags
+   */
+  siteName?: string | null;
+  /**
+   * Default site description for SEO
+   */
+  siteDescription?: string | null;
+  /**
+   * Contact email for the site
+   */
+  contactEmail?: string | null;
+  /**
+   * Contact phone number
+   */
+  contactPhone?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  navbarPublished?: T;
+  navbarVisibility?: T;
+  navbarPages?: T;
+  navbar?:
+    | T
+    | {
+        logo?: T;
+        logoText?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              openInNewTab?: T;
+              id?: T;
+            };
+        ctaButton?:
+          | T
+          | {
+              enabled?: T;
+              label?: T;
+              url?: T;
+            };
+      };
+  footerPublished?: T;
+  footerVisibility?: T;
+  footerPages?: T;
+  footer?:
+    | T
+    | {
+        companyName?: T;
+        tagline?: T;
+        copyrightText?: T;
+        showSocialLinks?: T;
+        socialLinks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
+        footerColumns?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        bottomLinks?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        backgroundColor?: T;
+        textColor?: T;
+      };
+  siteName?: T;
+  siteDescription?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
