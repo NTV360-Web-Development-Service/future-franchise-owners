@@ -111,56 +111,91 @@ const Pages: CollectionConfig = {
             },
             {
               name: 'backgroundColor',
-              type: 'select',
+              label: 'Background Color',
+              type: 'text',
               required: true,
-              defaultValue: 'blue',
-              options: [
-                {
-                  label: 'Blue',
-                  value: 'blue',
-                },
-                {
-                  label: 'Red',
-                  value: 'red',
-                },
-                {
-                  label: 'Green',
-                  value: 'green',
-                },
-                {
-                  label: 'Yellow',
-                  value: 'yellow',
-                },
-                {
-                  label: 'Purple',
-                  value: 'purple',
-                },
-                {
-                  label: 'Orange',
-                  value: 'orange',
-                },
-              ],
+              defaultValue: '#2563eb',
               admin: {
-                description: 'Background color of the ribbon',
+                description: 'Background color (hex code, e.g., #2563eb for blue)',
+                components: {
+                  Field: '@/collections/fields/ColorPickerField',
+                },
               },
             },
             {
               name: 'textColor',
-              type: 'select',
+              label: 'Text Color',
+              type: 'text',
               required: true,
-              defaultValue: 'white',
+              defaultValue: '#ffffff',
+              admin: {
+                description: 'Text color (hex code, e.g., #ffffff for white)',
+                components: {
+                  Field: '@/collections/fields/ColorPickerField',
+                },
+              },
+            },
+            {
+              name: 'fontSize',
+              type: 'number',
+              required: false,
+              defaultValue: 14,
+              min: 10,
+              max: 32,
+              admin: {
+                description: 'Font size in pixels (10-32px)',
+              },
+            },
+            {
+              name: 'fontWeight',
+              type: 'select',
+              required: false,
+              defaultValue: '400',
               options: [
-                {
-                  label: 'White',
-                  value: 'white',
-                },
-                {
-                  label: 'Black',
-                  value: 'black',
-                },
+                { label: 'Light (300)', value: '300' },
+                { label: 'Normal (400)', value: '400' },
+                { label: 'Medium (500)', value: '500' },
+                { label: 'Semibold (600)', value: '600' },
+                { label: 'Bold (700)', value: '700' },
+                { label: 'Extrabold (800)', value: '800' },
               ],
               admin: {
-                description: 'Text color for the ribbon',
+                description: 'Font weight/thickness',
+              },
+            },
+            {
+              name: 'isMoving',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Enable scrolling ticker animation',
+              },
+            },
+            {
+              name: 'speed',
+              type: 'number',
+              required: false,
+              defaultValue: 30,
+              min: 10,
+              max: 200,
+              admin: {
+                description: 'Animation speed (10-200, higher = faster). Only applies when moving.',
+                condition: (data, siblingData) => siblingData?.isMoving === true,
+              },
+            },
+            {
+              name: 'textAlign',
+              type: 'select',
+              required: false,
+              defaultValue: 'center',
+              options: [
+                { label: 'Left', value: 'left' },
+                { label: 'Center', value: 'center' },
+                { label: 'Right', value: 'right' },
+              ],
+              admin: {
+                description: 'Text alignment. Only applies when not moving.',
+                condition: (data, siblingData) => siblingData?.isMoving === false,
               },
             },
             {

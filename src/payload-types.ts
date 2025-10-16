@@ -234,13 +234,33 @@ export interface Page {
          */
         text: string;
         /**
-         * Background color of the ribbon
+         * Background color (hex code, e.g., #2563eb for blue)
          */
-        backgroundColor: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'orange';
+        backgroundColor: string;
         /**
-         * Text color for the ribbon
+         * Text color (hex code, e.g., #ffffff for white)
          */
-        textColor: 'white' | 'black';
+        textColor: string;
+        /**
+         * Font size in pixels (10-32px)
+         */
+        fontSize?: number | null;
+        /**
+         * Font weight/thickness
+         */
+        fontWeight?: ('300' | '400' | '500' | '600' | '700' | '800') | null;
+        /**
+         * Enable scrolling ticker animation
+         */
+        isMoving?: boolean | null;
+        /**
+         * Animation speed (10-200, higher = faster). Only applies when moving.
+         */
+        speed?: number | null;
+        /**
+         * Text alignment. Only applies when not moving.
+         */
+        textAlign?: ('left' | 'center' | 'right') | null;
         /**
          * Optional link to make the ribbon clickable
          */
@@ -871,6 +891,11 @@ export interface PagesSelect<T extends boolean = true> {
               text?: T;
               backgroundColor?: T;
               textColor?: T;
+              fontSize?: T;
+              fontWeight?: T;
+              isMoving?: T;
+              speed?: T;
+              textAlign?: T;
               link?:
                 | T
                 | {
