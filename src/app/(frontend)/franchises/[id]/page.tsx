@@ -1,16 +1,17 @@
 import { getPayload } from 'payload'
 import React from 'react'
+import { LucideIcon } from '@/components/ui/lucide-icon'
 
 import config from '@/payload.config'
 
 /**
  * FranchiseDetailPage - Individual franchise detail page component
- * 
+ *
  * This server-side component fetches and displays detailed information
  * for a specific franchise based on the provided ID parameter. It handles
  * data fetching, error states, and renders franchise details including
  * business information, description, and metadata.
- * 
+ *
  * Features:
  * - Server-side data fetching from Payload CMS
  * - Dynamic routing with franchise ID parameter
@@ -18,7 +19,7 @@ import config from '@/payload.config'
  * - Rich text content display (with fallback)
  * - Franchise metadata display
  * - Responsive layout
- * 
+ *
  * @param params - Route parameters containing franchise ID
  * @returns JSX element containing franchise details or error message
  */
@@ -30,7 +31,7 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
   const result = await payload.findByID({
     collection: 'franchises',
     id,
-    depth: 1,
+    depth: 2, // Increased to populate industry and tags relationships
   })
 
   const franchise = result || null
@@ -56,9 +57,30 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
         </div>
       )}
       <div className="mt-6 text-sm grid gap-2">
-        <div><strong>Category:</strong> {franchise.category || '—'}</div>
-        <div><strong>Status:</strong> {franchise.status || '—'}</div>
-        <div><strong>Flags:</strong> {[franchise.isFeatured && 'Featured', franchise.isSponsored && 'Sponsored', franchise.isTopPick && 'Top Pick'].filter(Boolean).join(', ') || '—'}</div>
+        <div className="flex items-center gap-2">
+          <strong>Industry:</strong>
+          {typeof franchise.industry === 'object' && franchise.industry ? (
+            <span className="flex items-center gap-1.5">
+              {franchise.industry.icon && <LucideIcon name={franchise.industry.icon} size={16} />}
+              {franchise.industry.name}
+            </span>
+          ) : (
+            '—'
+          )}
+        </div>
+        <div>
+          <strong>Status:</strong> {franchise.status || '—'}
+        </div>
+        <div>
+          <strong>Flags:</strong>{' '}
+          {[
+            franchise.isFeatured && 'Featured',
+            franchise.isSponsored && 'Sponsored',
+            franchise.isTopPick && 'Top Pick',
+          ]
+            .filter(Boolean)
+            .join(', ') || '—'}
+        </div>
       </div>
     </div>
   )

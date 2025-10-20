@@ -19,17 +19,21 @@ type FranchiseGridBlockProps = {
     blockType: 'franchiseGrid'
     /** Optional section heading */
     heading?: string | null
-    /** Whether to show filter controls */
+    /** Display mode: automatic filters or manual selection */
+    displayMode?: 'automatic' | 'manual' | null
+    /** Manually selected franchises (manual mode only) */
+    selectedFranchises?: Array<string | { id: string; [key: string]: any }> | null
+    /** Whether to show filter controls (automatic mode only) */
     showFilters?: boolean | null
-    /** Filter to only featured franchises */
+    /** Filter to only featured franchises (automatic mode only) */
     onlyFeatured?: boolean | null
-    /** Filter to only sponsored franchises */
+    /** Filter to only sponsored franchises (automatic mode only) */
     onlySponsored?: boolean | null
-    /** Filter to only top pick franchises */
+    /** Filter to only top pick franchises (automatic mode only) */
     onlyTopPick?: boolean | null
-    /** Category filter */
-    category?: 'all' | 'Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports' | null
-    /** Maximum number of franchises to display */
+    /** Industry filter (automatic mode only) */
+    industry?: string | { id: string; [key: string]: any } | null
+    /** Maximum number of franchises to display (automatic mode only) */
     limit?: number | null
     /** Unique identifier for the block */
     id?: string | null
@@ -52,21 +56,55 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
-  // Build query filters based on block configuration
-  const where: any = {}
-  if (block.onlyFeatured) where.isFeatured = { equals: true }
-  if (block.onlySponsored) where.isSponsored = { equals: true }
-  if (block.onlyTopPick) where.isTopPick = { equals: true }
-  if (block.category && block.category !== 'all') where.category = { equals: block.category }
+  let docs: any[] = []
 
-  const { docs } = await payload.find({
-    collection: 'franchises',
-    where: Object.keys(where).length ? where : undefined,
-    sort: '-updatedAt',
-    limit: block.limit ?? undefined,
-    // Use depth=2 so nested relationships (assignedAgent.photo) are populated
-    depth: 2,
-  })
+  // Manual mode: fetch specific franchises by ID
+  if (
+    block.displayMode === 'manual' &&
+    block.selectedFranchises &&
+    block.selectedFranchises.length > 0
+  ) {
+    const franchiseIds = block.selectedFranchises.map((f) => (typeof f === 'string' ? f : f.id))
+
+    // Fetch all selected franchises
+    const { docs: fetchedDocs } = await payload.find({
+      collection: 'franchises',
+      where: {
+        id: { in: franchiseIds },
+      },
+      depth: 2,
+      limit: franchiseIds.length,
+    })
+
+    // Preserve the order from selectedFranchises
+    const docsMap = new Map(fetchedDocs.map((doc) => [doc.id, doc]))
+    docs = franchiseIds.map((id) => docsMap.get(id)).filter(Boolean)
+  }
+  // Automatic mode: use filter-based query
+  else {
+    const where: any = {}
+    if (block.onlyFeatured) where.isFeatured = { equals: true }
+    if (block.onlySponsored) where.isSponsored = { equals: true }
+    if (block.onlyTopPick) where.isTopPick = { equals: true }
+
+    // Industry filter (relationship)
+    if (block.industry) {
+      const industryId = typeof block.industry === 'string' ? block.industry : block.industry.id
+      if (industryId) {
+        where.industry = { equals: industryId }
+      }
+    }
+
+    const result = await payload.find({
+      collection: 'franchises',
+      where: Object.keys(where).length ? where : undefined,
+      sort: '-updatedAt',
+      limit: block.limit ?? undefined,
+      depth: 2,
+    })
+
+    docs = result.docs
+  }
 
   /**
    * Format a number as currency string
@@ -116,12 +154,34 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
     const agentTitle = agent?.title ?? undefined
     const agentPhotoUrl = agent?.photo?.url ?? undefined
 
+    // Extract industry name from relationship
+    const industry = typeof doc?.industry === 'object' ? doc.industry : undefined
+    const categoryName = industry?.name ?? 'Uncategorized'
+    const categoryIcon = industry?.icon ?? undefined
+
+    // Extract tag names and colors from relationships
+    const tags = Array.isArray(doc.tags)
+      ? doc.tags
+          .map((t: any) => {
+            if (typeof t === 'object' && t.name) {
+              return {
+                name: t.name,
+                color: t.color || undefined,
+                textColor: t.textColor || undefined,
+              }
+            }
+            return null
+          })
+          .filter(Boolean)
+      : []
+
     return {
       name: doc.businessName || 'Untitled Franchise',
-      category: doc.category || 'Uncategorized',
+      category: categoryName,
+      categoryIcon,
       description: extractPlainText(doc.description) || 'View details for this franchise',
       cashRequired,
-      tags: Array.isArray(doc.tags) ? doc.tags.map((t: any) => t.label).filter(Boolean) : [],
+      tags,
       isFeatured: !!doc.isFeatured,
       isSponsored: !!doc.isSponsored,
       isTopPick: !!doc.isTopPick,
@@ -138,6 +198,7 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
   // Use only real franchise data from Payload CMS
   const franchises = baseFranchises
 
+  // Render with or without filters based on showFilters setting (works for both modes)
   return (
     <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {block.showFilters ? (
@@ -146,7 +207,6 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
           heading={block.heading ?? 'Browse Franchises'}
         />
       ) : (
-        // Without filters, render the simple grid and pass the heading down
         <FranchiseGrid
           franchises={franchises}
           heading={block.heading ?? 'Franchise Opportunities'}

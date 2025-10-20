@@ -42,49 +42,87 @@ const Pages: CollectionConfig = {
               admin: { description: 'Section heading (optional)' },
             },
             {
+              name: 'displayMode',
+              type: 'select',
+              required: true,
+              defaultValue: 'automatic',
+              options: [
+                { label: 'Automatic (Filter-based)', value: 'automatic' },
+                { label: 'Manual Selection', value: 'manual' },
+              ],
+              admin: {
+                description: 'Choose how franchises are selected for this grid',
+              },
+            },
+            // Manual selection fields
+            {
+              name: 'selectedFranchises',
+              type: 'relationship',
+              relationTo: 'franchises',
+              hasMany: true,
+              required: false,
+              admin: {
+                description: 'Manually select franchises to display (order matters)',
+                condition: (data, siblingData) => siblingData?.displayMode === 'manual',
+              },
+            },
+            // Show filters option (available for both modes)
+            {
               name: 'showFilters',
               type: 'checkbox',
               defaultValue: true,
-              admin: { description: 'Show filter controls above the grid' },
+              admin: {
+                description: 'Show filter controls above the grid',
+              },
             },
+            // Automatic filter fields
+
             {
               name: 'onlyFeatured',
               type: 'checkbox',
               defaultValue: false,
-              admin: { description: 'Only include Featured franchises' },
+              admin: {
+                description: 'Only include Featured franchises',
+                condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
+              },
             },
             {
               name: 'onlySponsored',
               type: 'checkbox',
               defaultValue: false,
-              admin: { description: 'Only include Sponsored franchises' },
+              admin: {
+                description: 'Only include Sponsored franchises',
+                condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
+              },
             },
             {
               name: 'onlyTopPick',
               type: 'checkbox',
               defaultValue: false,
-              admin: { description: 'Only include Top Pick franchises' },
+              admin: {
+                description: 'Only include Top Pick franchises',
+                condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
+              },
             },
             {
-              name: 'category',
-              type: 'select',
+              name: 'industry',
+              type: 'relationship',
+              relationTo: 'industries',
               required: false,
-              options: [
-                { label: 'All', value: 'all' },
-                { label: 'Fitness', value: 'Fitness' },
-                { label: 'Food and Beverage', value: 'Food and Beverage' },
-                { label: 'Health and Wellness', value: 'Health and Wellness' },
-                { label: 'Home Services', value: 'Home Services' },
-                { label: 'Senior Care', value: 'Senior Care' },
-                { label: 'Sports', value: 'Sports' },
-              ],
-              admin: { description: 'Restrict grid to a single category (optional)' },
+              hasMany: false,
+              admin: {
+                description: 'Filter by specific industry (optional)',
+                condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
+              },
             },
             {
               name: 'limit',
               type: 'number',
               required: false,
-              admin: { description: 'Maximum number of items to show (optional)' },
+              admin: {
+                description: 'Maximum number of items to show (optional)',
+                condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
+              },
             },
           ],
         },

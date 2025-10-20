@@ -71,6 +71,8 @@ export interface Config {
     media: Media;
     pages: Page;
     franchises: Franchise;
+    industries: Industry;
+    tags: Tag;
     agents: Agent;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +84,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     franchises: FranchisesSelect<false> | FranchisesSelect<true>;
+    industries: IndustriesSelect<false> | IndustriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     agents: AgentsSelect<false> | AgentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -187,6 +191,14 @@ export interface Page {
          */
         heading?: string | null;
         /**
+         * Choose how franchises are selected for this grid
+         */
+        displayMode: 'automatic' | 'manual';
+        /**
+         * Manually select franchises to display (order matters)
+         */
+        selectedFranchises?: (string | Franchise)[] | null;
+        /**
          * Show filter controls above the grid
          */
         showFilters?: boolean | null;
@@ -203,19 +215,9 @@ export interface Page {
          */
         onlyTopPick?: boolean | null;
         /**
-         * Restrict grid to a single category (optional)
+         * Filter by specific industry (optional)
          */
-        category?:
-          | (
-              | 'all'
-              | 'Fitness'
-              | 'Food and Beverage'
-              | 'Health and Wellness'
-              | 'Home Services'
-              | 'Senior Care'
-              | 'Sports'
-            )
-          | null;
+        industry?: (string | null) | Industry;
         /**
          * Maximum number of items to show (optional)
          */
@@ -646,15 +648,15 @@ export interface Franchise {
    */
   status?: ('draft' | 'published' | 'archived') | null;
   /**
-   * Mark as featured (editorial highlight)
+   * ⭐ Mark as featured (editorial highlight) - Shows "Featured" badge on card
    */
   isFeatured?: boolean | null;
   /**
-   * Mark as sponsored (paid promotion)
+   * 💰 Mark as sponsored (paid promotion) - Shows "Sponsored" badge on card
    */
   isSponsored?: boolean | null;
   /**
-   * Mark as a top pick to highlight across the site
+   * ⭐ Mark as a top pick - Shows "⭐ Top Pick" badge on card
    */
   isTopPick?: boolean | null;
   /**
@@ -676,18 +678,13 @@ export interface Franchise {
     [k: string]: unknown;
   } | null;
   /**
-   * Primary business category
+   * Primary industry/category for this franchise
    */
-  category: 'Fitness' | 'Food and Beverage' | 'Health and Wellness' | 'Home Services' | 'Senior Care' | 'Sports';
+  industry: string | Industry;
   /**
-   * Classification tags (e.g., Low Cost, Home Based)
+   * Feature tags (e.g., Low Cost, Home Based, Financing Available)
    */
-  tags?:
-    | {
-        label: string;
-        id?: string | null;
-      }[]
-    | null;
+  tags?: (string | Tag)[] | null;
   /**
    * Initial investment range
    */
@@ -707,6 +704,92 @@ export interface Franchise {
    * Force use main contact even if agent is assigned (overrides agent assignment)
    */
   useMainContact?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries".
+ */
+export interface Industry {
+  id: string;
+  /**
+   * Industry name (e.g., "Food & Beverage", "Fitness")
+   */
+  name: string;
+  /**
+   * URL-friendly version (auto-generated from name)
+   */
+  slug: string;
+  /**
+   * Optional description of this industry category
+   */
+  description?: string | null;
+  /**
+   * Choose an icon to represent this industry
+   */
+  icon?:
+    | (
+        | 'Briefcase'
+        | 'Dumbbell'
+        | 'Coffee'
+        | 'UtensilsCrossed'
+        | 'Home'
+        | 'Wrench'
+        | 'Heart'
+        | 'Stethoscope'
+        | 'Users'
+        | 'Activity'
+        | 'Sparkles'
+        | 'HardHat'
+        | 'BookOpen'
+        | 'Baby'
+        | 'PawPrint'
+        | 'Car'
+        | 'Sparkle'
+        | 'DollarSign'
+        | 'Store'
+        | 'Package'
+        | 'Palette'
+        | 'Smartphone'
+        | 'Building2'
+        | 'Plane'
+        | 'Music'
+      )
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: string;
+  /**
+   * Tag name (e.g., "Low Cost", "Home Based", "Financing Available")
+   */
+  name: string;
+  /**
+   * URL-friendly version (auto-generated from name)
+   */
+  slug: string;
+  /**
+   * Categorize the tag for better organization
+   */
+  type?: ('feature' | 'investment' | 'model' | 'location' | 'other') | null;
+  /**
+   * Optional description of this tag
+   */
+  description?: string | null;
+  /**
+   * Badge background color (hex code) - Leave empty for default light gray
+   */
+  color?: string | null;
+  /**
+   * Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)
+   */
+  textColor?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -779,6 +862,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'franchises';
         value: string | Franchise;
+      } | null)
+    | ({
+        relationTo: 'industries';
+        value: string | Industry;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: string | Tag;
       } | null)
     | ({
         relationTo: 'agents';
@@ -883,11 +974,13 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               published?: T;
               heading?: T;
+              displayMode?: T;
+              selectedFranchises?: T;
               showFilters?: T;
               onlyFeatured?: T;
               onlySponsored?: T;
               onlyTopPick?: T;
-              category?: T;
+              industry?: T;
               limit?: T;
               id?: T;
               blockName?: T;
@@ -1066,13 +1159,8 @@ export interface FranchisesSelect<T extends boolean = true> {
   isSponsored?: T;
   isTopPick?: T;
   description?: T;
-  category?: T;
-  tags?:
-    | T
-    | {
-        label?: T;
-        id?: T;
-      };
+  industry?: T;
+  tags?: T;
   investment?:
     | T
     | {
@@ -1082,6 +1170,32 @@ export interface FranchisesSelect<T extends boolean = true> {
   logo?: T;
   assignedAgent?: T;
   useMainContact?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "industries_select".
+ */
+export interface IndustriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  icon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  type?: T;
+  description?: T;
+  color?: T;
+  textColor?: T;
   updatedAt?: T;
   createdAt?: T;
 }

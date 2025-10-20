@@ -365,13 +365,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           assignedAgent = agents.docs[0].id
         }
 
-        // Parse tags - convert to array of objects with label property
-        const tags = row.tags
+        // Parse tags - convert to array of tag IDs (relationships)
+        // For import, we'll need to find or create tags
+        const tagNames = row.tags
           ? row.tags
               .split(';')
-              .map((tag) => ({ label: tag.trim() }))
-              .filter((tag) => tag.label)
+              .map((tag) => tag.trim())
+              .filter((tag) => tag)
           : []
+        
+        // Find or create tags
+        const tagIds: string[] = []
+        for (const tagName of tagNames) {
+          try {
+            // Try to find existing tag
+            const existingTags = await payload.find({
+              collection: 'tags',
+              where: {
+                name: {
+                  equals: tagName,
+                },
+              },
+              limit: 1,
+            })
+
+            if (existingTags.docs.length > 0) {
+              tagIds.push(existingTags.docs[0].id)
+            } else {
+              // Create new tag if it doesn't exist
+              const newTag = await payload.create({
+                collection: 'tags',
+                data: {
+                  name: tagName,
+                  slug: tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), // Generate slug
+                  type: 'feature', // Default type
+                },
+              })
+              tagIds.push(newTag.id)
+            }
+          } catch (error) {
+            console.error(`Error processing tag "${tagName}":`, error)
+          }
+        }
 
         // Parse boolean fields
         const isFeatured = row.isFeatured?.toLowerCase() === 'true'
@@ -427,8 +462,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                 version: 1,
               },
             },
-            category,
-            tags,
+            industry: category, // Now it's called "industry" instead of "category"
+            tags: tagIds, // Array of tag IDs
             investment: {
               min: minInvestment,
               max: maxInvestment,

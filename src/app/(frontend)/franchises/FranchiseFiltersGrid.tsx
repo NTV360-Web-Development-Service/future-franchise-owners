@@ -69,12 +69,12 @@ const ExpandCollapseIcon = ({ isExpanded }: { isExpanded: boolean }) => (
 /**
  * Reusable checkbox component with consistent styling
  */
-const FilterCheckbox = ({ 
-  id, 
-  checked, 
-  onChange, 
-  label 
-}: { 
+const FilterCheckbox = ({
+  id,
+  checked,
+  onChange,
+  label,
+}: {
   id: string
   checked: boolean
   onChange: () => void
@@ -114,12 +114,12 @@ const FilterCheckbox = ({
 /**
  * Collapsible filter section component
  */
-const FilterSection = ({ 
-  title, 
-  isOpen, 
-  onToggle, 
-  children 
-}: { 
+const FilterSection = ({
+  title,
+  isOpen,
+  onToggle,
+  children,
+}: {
   title: string
   isOpen: boolean
   onToggle: () => void
@@ -139,9 +139,7 @@ const FilterSection = ({
       </button>
     </h3>
     <div className={`${isOpen ? 'block' : 'hidden'} pt-6`}>
-      <div className="space-y-4">
-        {children}
-      </div>
+      <div className="space-y-4">{children}</div>
     </div>
   </div>
 )
@@ -157,7 +155,7 @@ const getGridLayout = (itemCount: number): string => {
 
 /**
  * FranchiseFiltersGrid - A comprehensive franchise listing component with filtering and sorting capabilities
- * 
+ *
  * Features:
  * - Search functionality across name, category, and description
  * - Category filtering with dynamic category generation
@@ -166,7 +164,7 @@ const getGridLayout = (itemCount: number): string => {
  * - Sorting by relevance, rating, and price
  * - Responsive grid layout that adapts to content
  * - Collapsible filter sections for better UX
- * 
+ *
  * @param props - Component props
  * @returns JSX element containing the franchise grid with filters
  */
@@ -203,13 +201,15 @@ export default function FranchiseFiltersGrid({
    */
   const popularTags = useMemo(() => {
     const tagCounts = new Map<string, number>()
-    
+
     franchises.forEach((franchise) => {
       franchise.tags.forEach((tag) => {
-        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1)
+        // Tags are now objects with name and color
+        const tagName = tag.name
+        tagCounts.set(tagName, (tagCounts.get(tagName) || 0) + 1)
       })
     })
-    
+
     return Array.from(tagCounts.entries())
       .sort((a, b) => b[1] - a[1]) // Sort by frequency (descending)
       .slice(0, 8) // Take top 8
@@ -225,10 +225,11 @@ export default function FranchiseFiltersGrid({
     // Apply search filter
     if (search.trim()) {
       const searchQuery = search.toLowerCase()
-      result = result.filter((franchise) =>
-        franchise.name.toLowerCase().includes(searchQuery) ||
-        franchise.category.toLowerCase().includes(searchQuery) ||
-        franchise.description.toLowerCase().includes(searchQuery)
+      result = result.filter(
+        (franchise) =>
+          franchise.name.toLowerCase().includes(searchQuery) ||
+          franchise.category.toLowerCase().includes(searchQuery) ||
+          franchise.description.toLowerCase().includes(searchQuery),
       )
     }
 
@@ -251,7 +252,7 @@ export default function FranchiseFiltersGrid({
     // Apply tags filter
     if (selectedTags.length > 0) {
       result = result.filter((franchise) =>
-        selectedTags.some((tag) => franchise.tags.includes(tag))
+        selectedTags.some((tag) => franchise.tags.some((t) => t.name === tag)),
       )
     }
 
@@ -259,9 +260,9 @@ export default function FranchiseFiltersGrid({
     result.sort((a, b) => {
       switch (sortBy) {
         case 'best': {
-          const scoreA = extractBestScore(a.tags) ?? -Infinity
-          const scoreB = extractBestScore(b.tags) ?? -Infinity
-          return scoreB - scoreA // Descending order
+          const scoreA = extractBestScore(a.tags.map((t) => t.name)) ?? -Infinity
+          const scoreB = extractBestScore(b.tags.map((t) => t.name)) ?? -Infinity
+          return scoreB - scoreA
         }
         case 'cash': {
           return parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
@@ -273,38 +274,22 @@ export default function FranchiseFiltersGrid({
     })
 
     return result
-  }, [
-    franchises,
-    search,
-    selectedCategories,
-    minPrice,
-    maxPrice,
-    selectedTags,
-    sortBy,
-  ])
+  }, [franchises, search, selectedCategories, minPrice, maxPrice, selectedTags, sortBy])
 
   /**
    * Handle category selection toggle
    */
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
     )
   }
-
-
 
   /**
    * Handle tag selection toggle
    */
   const handleTagToggle = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) 
-        ? prev.filter((t) => t !== tag) 
-        : [...prev, tag]
-    )
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
   }
 
   return (
@@ -403,7 +388,10 @@ export default function FranchiseFiltersGrid({
             >
               <div className="space-y-3">
                 <div>
-                  <label htmlFor="min-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="min-price"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Minimum Investment
                   </label>
                   <Input
@@ -411,12 +399,17 @@ export default function FranchiseFiltersGrid({
                     type="number"
                     placeholder="$0"
                     value={minPrice ?? ''}
-                    onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      setMinPrice(e.target.value ? Number(e.target.value) : undefined)
+                    }
                     className="w-full"
                   />
                 </div>
                 <div>
-                  <label htmlFor="max-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="max-price"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Maximum Investment
                   </label>
                   <Input
@@ -424,7 +417,9 @@ export default function FranchiseFiltersGrid({
                     type="number"
                     placeholder="No limit"
                     value={maxPrice ?? ''}
-                    onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      setMaxPrice(e.target.value ? Number(e.target.value) : undefined)
+                    }
                     className="w-full"
                   />
                 </div>
@@ -462,13 +457,15 @@ export default function FranchiseFiltersGrid({
 
           {/* Results grid */}
           <div className="lg:col-span-3 min-h-0">
-            <div className={`grid gap-6 justify-items-start ${getGridLayout(filteredFranchises.length)} pb-8`}>
+            <div
+              className={`grid gap-6 justify-items-start ${getGridLayout(filteredFranchises.length)} pb-8`}
+            >
               {filteredFranchises.map((franchise) => (
                 <div
                   key={franchise.href ?? franchise.name}
                   className={
-                    filteredFranchises.length <= 1 
-                      ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start' 
+                    filteredFranchises.length <= 1
+                      ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start'
                       : ''
                   }
                 >

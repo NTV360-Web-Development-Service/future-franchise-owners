@@ -20,6 +20,8 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import Pages from './collections/Pages'
 import Franchises from './collections/Franchises'
+import Industries from './collections/Industries'
+import Tags from './collections/Tags'
 import Agents from './collections/Agents'
 import SiteSettings from './globals/SiteSettings'
 
@@ -37,7 +39,7 @@ export default buildConfig({
       afterNavLinks: ['app/(payload)/components/AdminImportLink.tsx'],
     },
   },
-  collections: [Users, Media, Pages, Franchises, Agents],
+  collections: [Users, Media, Pages, Franchises, Industries, Tags, Agents],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

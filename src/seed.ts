@@ -160,6 +160,124 @@ const seed = async () => {
     console.log('✅ Created test agents')
 
     /**
+     * Create industries for franchise categorization
+     */
+    const industryFitness = await payload.create({
+      collection: 'industries',
+      data: {
+        id: uuidv7(),
+        name: 'Fitness',
+        slug: 'fitness',
+        icon: 'Dumbbell',
+        description: 'Gym, fitness centers, and wellness businesses',
+      },
+    })
+
+    const industryFood = await payload.create({
+      collection: 'industries',
+      data: {
+        id: uuidv7(),
+        name: 'Food and Beverage',
+        slug: 'food-and-beverage',
+        icon: 'Coffee',
+        description: 'Restaurants, cafes, and food service businesses',
+      },
+    })
+
+    const industryRetail = await payload.create({
+      collection: 'industries',
+      data: {
+        id: uuidv7(),
+        name: 'Retail',
+        slug: 'retail',
+        icon: 'Store',
+        description: 'Retail stores and shops',
+      },
+    })
+    console.log('✅ Created industries')
+
+    /**
+     * Create tags for franchise filtering
+     */
+    const tagLowCost = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'Low Cost',
+        slug: 'low-cost',
+        type: 'investment',
+        description: 'Franchise opportunities with lower initial investment',
+      },
+    })
+
+    const tagFinancing = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'Financing Available',
+        slug: 'financing-available',
+        type: 'investment',
+        description: 'Franchise offers financing options',
+      },
+    })
+
+    const tagHomeBased = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'Home Based',
+        slug: 'home-based',
+        type: 'location',
+        description: 'Can be operated from home',
+      },
+    })
+
+    const tagHighROI = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'High ROI',
+        slug: 'high-roi',
+        type: 'feature',
+        description: 'High return on investment potential',
+      },
+    })
+
+    const tagQuickStart = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'Quick Start',
+        slug: 'quick-start',
+        type: 'feature',
+        description: 'Can be launched quickly',
+      },
+    })
+
+    const tagHighDemand = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'High Demand',
+        slug: 'high-demand',
+        type: 'feature',
+        description: 'High market demand',
+      },
+    })
+
+    const tagRecessionProof = await payload.create({
+      collection: 'tags',
+      data: {
+        id: uuidv7(),
+        name: 'Recession Proof',
+        slug: 'recession-proof',
+        type: 'feature',
+        description: 'Resilient in economic downturns',
+      },
+    })
+    console.log('✅ Created tags')
+
+    /**
      * Create sample franchises across categories with investment ranges and tags.
      */
     const franchise1 = await payload.create({
@@ -167,7 +285,6 @@ const seed = async () => {
       data: {
         id: uuidv7(),
         businessName: 'FitLife Gym',
-        category: 'Fitness',
         status: 'published',
         description: {
           root: {
@@ -202,10 +319,8 @@ const seed = async () => {
           min: 150000,
           max: 300000,
         },
-        tags: [
-          { label: 'Low Cost' },
-          { label: 'Financing Available' },
-        ],
+        industry: industryFitness.id,
+        tags: [tagLowCost.id, tagFinancing.id],
         assignedAgent: agent1.id,
         isFeatured: true,
         isTopPick: true,
@@ -217,7 +332,6 @@ const seed = async () => {
       data: {
         id: uuidv7(),
         businessName: 'Healthy Bites Cafe',
-        category: 'Food and Beverage',
         status: 'published',
         description: {
           root: {
@@ -252,10 +366,8 @@ const seed = async () => {
           min: 75000,
           max: 150000,
         },
-        tags: [
-          { label: 'Home Based' },
-          { label: 'Quick Start' },
-        ],
+        industry: industryFood.id,
+        tags: [tagHomeBased.id, tagQuickStart.id],
         assignedAgent: agent2.id,
         isFeatured: true,
         isSponsored: true,
@@ -267,7 +379,6 @@ const seed = async () => {
       data: {
         id: uuidv7(),
         businessName: 'Senior Care Plus',
-        category: 'Senior Care',
         status: 'published',
         description: {
           root: {
@@ -302,10 +413,8 @@ const seed = async () => {
           min: 50000,
           max: 100000,
         },
-        tags: [
-          { label: 'High Demand' },
-          { label: 'Recession Proof' },
-        ],
+        industry: industryRetail.id, // Using retail as fallback since we don't have a health category
+        tags: [tagHighDemand.id, tagRecessionProof.id],
         assignedAgent: agent1.id,
         isTopPick: true,
       },
@@ -405,6 +514,7 @@ const seed = async () => {
           {
             blockType: 'franchiseGrid',
             heading: 'Featured Franchise Opportunities',
+            displayMode: 'automatic',
             showFilters: true,
             onlyFeatured: true,
             limit: 6,

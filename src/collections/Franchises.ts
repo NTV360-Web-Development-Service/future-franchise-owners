@@ -1,10 +1,10 @@
 /**
  * @fileoverview Franchises Collection Configuration
- * 
+ *
  * Defines the Payload CMS collection for franchise business listings.
  * This collection manages all franchise data including business information,
  * categorization, investment details, and agent assignments.
- * 
+ *
  * @module Collections/Franchises
  * @version 1.0.0
  */
@@ -13,13 +13,13 @@ import type { CollectionConfig } from 'payload'
 
 /**
  * Lightweight slugify helper to convert strings to URL-friendly slugs
- * 
+ *
  * Transforms input strings into lowercase, hyphenated slugs suitable for URLs.
  * Removes special characters and trims leading/trailing hyphens.
- * 
+ *
  * @param {string} input - The string to convert to a slug
  * @returns {string} URL-friendly slug string
- * 
+ *
  * @example
  * toSlug('My Business Name!') // returns 'my-business-name'
  * toSlug('  Special-Characters@#$  ') // returns 'special-characters'
@@ -34,11 +34,11 @@ const toSlug = (input: string): string =>
 
 /**
  * Franchises Collection Configuration
- * 
+ *
  * Payload CMS collection for managing franchise business listings.
  * Includes comprehensive business data, categorization, investment information,
  * and agent assignment capabilities.
- * 
+ *
  * Features:
  * - Public read access for frontend display
  * - Rich text descriptions with Lexical editor
@@ -47,7 +47,7 @@ const toSlug = (input: string): string =>
  * - Feature flags (featured, sponsored, top pick)
  * - Category-based organization
  * - Tag-based classification
- * 
+ *
  * @type {CollectionConfig}
  */
 export const Franchises: CollectionConfig = {
@@ -58,8 +58,15 @@ export const Franchises: CollectionConfig = {
   admin: {
     useAsTitle: 'businessName',
     description: 'Manage dynamic franchise listings and their metadata.',
-    // Ensure the admin list does not show the legacy `slug` column
-    defaultColumns: ['businessName', 'category', 'status', 'updatedAt'],
+    // Show important flags in the list view
+    defaultColumns: [
+      'businessName',
+      'status',
+      'isFeatured',
+      'isSponsored',
+      'isTopPick',
+      'updatedAt',
+    ],
   },
   // No slug auto-generation; prefer ID-only URLs
   fields: [
@@ -95,7 +102,7 @@ export const Franchises: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Mark as featured (editorial highlight)',
+        description: '⭐ Mark as featured (editorial highlight) - Shows "Featured" badge on card',
         position: 'sidebar',
       },
     },
@@ -104,7 +111,7 @@ export const Franchises: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Mark as sponsored (paid promotion)',
+        description: '💰 Mark as sponsored (paid promotion) - Shows "Sponsored" badge on card',
         position: 'sidebar',
       },
     },
@@ -113,7 +120,7 @@ export const Franchises: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Mark as a top pick to highlight across the site',
+        description: '⭐ Mark as a top pick - Shows "⭐ Top Pick" badge on card',
         position: 'sidebar',
       },
     },
@@ -125,34 +132,26 @@ export const Franchises: CollectionConfig = {
       },
     },
     {
-      name: 'category',
-      type: 'select',
+      name: 'industry',
+      type: 'relationship',
+      relationTo: 'industries',
       required: true,
-      options: [
-        { label: 'Fitness', value: 'Fitness' },
-        { label: 'Food and Beverage', value: 'Food and Beverage' },
-        { label: 'Health and Wellness', value: 'Health and Wellness' },
-        { label: 'Home Services', value: 'Home Services' },
-        { label: 'Senior Care', value: 'Senior Care' },
-        { label: 'Sports', value: 'Sports' },
-      ],
+      hasMany: false,
       admin: {
-        description: 'Primary business category',
+        description: 'Primary industry/category for this franchise',
+        allowCreate: true,
       },
     },
     {
       name: 'tags',
-      type: 'array',
+      type: 'relationship',
+      relationTo: 'tags',
+      required: false,
+      hasMany: true,
       admin: {
-        description: 'Classification tags (e.g., Low Cost, Home Based)',
+        description: 'Feature tags (e.g., Low Cost, Home Based, Financing Available)',
+        allowCreate: true,
       },
-      fields: [
-        {
-          name: 'label',
-          type: 'text',
-          required: true,
-        },
-      ],
     },
     {
       name: 'investment',

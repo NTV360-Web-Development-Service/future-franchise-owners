@@ -13,7 +13,13 @@ const TAB_DEFS = [
   { key: 'new', label: 'New Arrivals' },
 ]
 
-export default function FranchiseGrid({ franchises, heading = 'Best Franchise Opportunities' }: { franchises: (Franchise & { href?: string; id?: string })[]; heading?: string }) {
+export default function FranchiseGrid({
+  franchises,
+  heading = 'Best Franchise Opportunities',
+}: {
+  franchises: (Franchise & { href?: string; id?: string })[]
+  heading?: string
+}) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<string>('all')
@@ -31,19 +37,19 @@ export default function FranchiseGrid({ franchises, heading = 'Best Franchise Op
     // Tabs
     switch (activeTab) {
       case 'best':
-        list = list.filter((f) => extractBestScore(f.tags) !== null)
+        list = list.filter((f) => extractBestScore(f.tags.map((t) => t.name)) !== null)
         break
       case 'low':
         list = list.filter((f) => parseCurrencyToNumber(f.cashRequired) <= 50000)
         break
       case 'home':
-        list = list.filter((f) => f.tags.includes('Home Based'))
+        list = list.filter((f) => f.tags.some((t) => t.name === 'Home Based'))
         break
       case 'finance':
-        list = list.filter((f) => f.tags.includes('Financing Available'))
+        list = list.filter((f) => f.tags.some((t) => t.name === 'Financing Available'))
         break
       case 'new':
-        list = list.filter((f) => f.tags.includes('New Arrival'))
+        list = list.filter((f) => f.tags.some((t) => t.name === 'New Arrival'))
         break
     }
 
@@ -74,8 +80,8 @@ export default function FranchiseGrid({ franchises, heading = 'Best Franchise Op
     // Sort
     list.sort((a, b) => {
       if (sortBy === 'best') {
-        const sa = extractBestScore(a.tags) ?? -Infinity
-        const sb = extractBestScore(b.tags) ?? -Infinity
+        const sa = extractBestScore(a.tags.map((t) => t.name)) ?? -Infinity
+        const sb = extractBestScore(b.tags.map((t) => t.name)) ?? -Infinity
         return sb - sa
       }
       if (sortBy === 'cash') {

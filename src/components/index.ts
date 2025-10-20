@@ -1,9 +1,9 @@
 /**
  * @fileoverview Main component exports organized by category
- * 
+ *
  * Centralized exports for commonly used components across the application.
  * Organized by functional categories for better maintainability and discoverability.
- * 
+ *
  * @module Components
  */
 
@@ -14,6 +14,7 @@ export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export { Navbar } from './ui/navbar'
 export { Input } from './ui/input'
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+export { LucideIcon } from './ui/lucide-icon'
 
 // Franchise Components
 export { default as FranchiseCard } from './franchise/FranchiseCard'
