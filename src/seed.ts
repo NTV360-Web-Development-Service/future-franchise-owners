@@ -425,7 +425,7 @@ const seed = async () => {
       data: {
         id: uuidv7(),
         title: 'Future Franchise Owners',
-        slug: 'landing-page',
+        slug: 'homepage',
         layout: [
           {
             blockType: 'ribbon',

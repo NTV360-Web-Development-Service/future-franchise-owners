@@ -17,6 +17,26 @@ const Pages: CollectionConfig = {
       name: 'slug',
       type: 'text',
       required: true,
+      unique: true,
+      admin: {
+        description:
+          'URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title.',
+        readOnly: true,
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, data }) => {
+            if (!value && data?.title) {
+              return data.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '')
+            }
+            return value
+          },
+        ],
+      },
     },
     {
       name: 'layout',

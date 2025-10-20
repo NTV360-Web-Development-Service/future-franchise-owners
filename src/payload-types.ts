@@ -179,6 +179,9 @@ export interface Media {
 export interface Page {
   id: string;
   title: string;
+  /**
+   * URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title.
+   */
   slug: string;
   layout: (
     | {

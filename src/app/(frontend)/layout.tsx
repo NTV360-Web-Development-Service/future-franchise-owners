@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const pathname = headersList.get('x-pathname') || '/'
 
   // Extract the slug from pathname (remove leading slash)
-  const currentSlug = pathname === '/' ? 'landing-page' : pathname.slice(1).split('/')[0]
+  const currentSlug = pathname === '/' ? 'homepage' : pathname.slice(1).split('/')[0]
 
   // Check if navbar should be visible on this page
   const showNavbar =

@@ -1,5 +1,6 @@
 import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { fileURLToPath } from 'url'
 
@@ -19,22 +20,16 @@ import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
 
 /**
- * HomePage - The main landing page component for the franchise website
+ * DynamicPage - Renders any page from Payload CMS based on slug
  *
- * This server-side component fetches page data from Payload CMS and renders
- * dynamic blocks based on the page layout configuration. It supports various
- * block types including hero sections, navigation, ribbons, and franchise grids.
+ * This server-side component fetches page data from Payload CMS based on the
+ * URL slug and renders dynamic blocks according to the page layout configuration.
  *
- * Features:
- * - Server-side rendering with Payload CMS integration
- * - Dynamic block rendering based on CMS configuration
- * - User authentication context
- * - Flexible layout system
- * - SEO-friendly structure
- *
- * @returns JSX element containing the complete homepage
+ * @param params - Route parameters containing the page slug
+ * @returns JSX element containing the complete page
  */
-export default async function HomePage() {
+export default async function DynamicPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -48,13 +43,13 @@ export default async function HomePage() {
     collection: 'pages',
     where: {
       slug: {
-        equals: 'homepage',
+        equals: slug,
       },
     },
   })
 
   if (!page) {
-    return <div>Page not found</div>
+    notFound()
   }
 
   /**
@@ -69,7 +64,7 @@ export default async function HomePage() {
     block: Page['layout'][0] | AboutTeaserBlockProps['block'] | CallToActionBlockProps['block'],
     index: number,
   ) => {
-    // Skip rendering if block is unpublished
+    // Skip unpublished blocks
     if ('published' in block && block.published === false) {
       return null
     }
@@ -99,9 +94,62 @@ export default async function HomePage() {
   }
 
   return (
-    <div>
-      <h1 className="sr-only">{page.title}</h1>
-      {page.layout?.map((block, index) => renderBlock(block, index))}
+    <div className="flex min-h-screen flex-col">
+      <div className="flex-1">
+        <h1 className="sr-only">{page.title}</h1>
+        {page.layout?.map((block, index) => renderBlock(block, index))}
+      </div>
     </div>
   )
+}
+
+/**
+ * Generate static params for all pages at build time
+ * This enables static generation of all CMS pages
+ */
+export async function generateStaticParams() {
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  const pages = await payload.find({
+    collection: 'pages',
+    limit: 100,
+  })
+
+  return pages.docs
+    .filter((page) => page.slug !== 'homepage') // Exclude homepage as it's handled by /page.tsx
+    .map((page) => ({
+      slug: page.slug,
+    }))
+}
+
+/**
+ * Generate metadata for the page
+ */
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  const {
+    docs: [page],
+  } = await payload.find({
+    collection: 'pages',
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+  })
+
+  if (!page) {
+    return {
+      title: 'Page Not Found',
+    }
+  }
+
+  return {
+    title: page.title || 'Future Franchise Owners',
+    description: page.title || 'Find your perfect franchise opportunity',
+  }
 }
