@@ -21,7 +21,8 @@ dotenvConfig()
  */
 const seed = async () => {
   // Ensure the Payload secret exists for local runs; config reads from env
-  process.env.PAYLOAD_SECRET = process.env.PAYLOAD_SECRET || process.env.NEXT_PUBLIC_PAYLOAD_SECRET || 'dev-secret'
+  process.env.PAYLOAD_SECRET =
+    process.env.PAYLOAD_SECRET || process.env.NEXT_PUBLIC_PAYLOAD_SECRET || 'dev-secret'
 
   // Import config AFTER setting env so buildConfig sees the secret
   const payloadConfig = (await import('./payload.config')).default
@@ -44,7 +45,7 @@ const seed = async () => {
           },
         },
       })
-      
+
       if (existingUsers.docs.length > 0) {
         user = existingUsers.docs[0]
         console.log('✅ Using existing admin user')
@@ -105,10 +106,7 @@ const seed = async () => {
             ],
           },
         },
-        specialties: [
-          { category: 'Fitness' },
-          { category: 'Health and Wellness' },
-        ],
+        specialties: [{ category: 'Fitness' }, { category: 'Health and Wellness' }],
         isActive: true,
       },
     })
@@ -150,10 +148,7 @@ const seed = async () => {
             ],
           },
         },
-        specialties: [
-          { category: 'Food and Beverage' },
-          { category: 'Home Services' },
-        ],
+        specialties: [{ category: 'Food and Beverage' }, { category: 'Home Services' }],
         isActive: true,
       },
     })
@@ -530,7 +525,6 @@ const seed = async () => {
     - 2 agents
     - 3 franchises
     - 1 landing page`)
-
   } catch (error) {
     console.error('❌ Error seeding database:', error)
     throw error

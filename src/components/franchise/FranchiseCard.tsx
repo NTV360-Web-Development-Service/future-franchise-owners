@@ -176,25 +176,19 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
           </span>
           <div className="flex items-center gap-2">
             {franchise.isTopPick && (
-              <Badge
-                className="flex items-center gap-1 bg-red-600 text-white hover:bg-red-700 border-red-600"
-              >
+              <Badge className="flex items-center gap-1 bg-red-600 text-white hover:bg-red-700 border-red-600">
                 <LucideIcon name="Flame" size={12} />
                 Top Pick
               </Badge>
             )}
             {franchise.isSponsored && (
-              <Badge
-                className="flex items-center gap-1 bg-amber-500 text-white hover:bg-amber-600 border-amber-500"
-              >
+              <Badge className="flex items-center gap-1 bg-amber-500 text-white hover:bg-amber-600 border-amber-500">
                 <LucideIcon name="Sparkles" size={12} />
                 Sponsored
               </Badge>
             )}
             {(franchise.isFeatured || variant === 'featured') && (
-              <Badge
-                className="flex items-center gap-1 bg-emerald-600 text-white hover:bg-emerald-700 border-emerald-600"
-              >
+              <Badge className="flex items-center gap-1 bg-emerald-600 text-white hover:bg-emerald-700 border-emerald-600">
                 <LucideIcon name="Star" size={12} />
                 Featured
               </Badge>

@@ -373,7 +373,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               .map((tag) => tag.trim())
               .filter((tag) => tag)
           : []
-        
+
         // Find or create tags
         const tagIds: string[] = []
         for (const tagName of tagNames) {
@@ -397,7 +397,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                 collection: 'tags',
                 data: {
                   name: tagName,
-                  slug: tagName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''), // Generate slug
+                  slug: tagName
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/(^-|-$)/g, ''), // Generate slug
                   type: 'feature', // Default type
                 },
               })

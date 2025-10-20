@@ -92,7 +92,8 @@ export const Tags: CollectionConfig = {
       required: false,
       defaultValue: '#ffffff',
       admin: {
-        description: 'Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)',
+        description:
+          'Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)',
         components: {
           Field: '@/collections/fields/ColorPickerField',
         },
