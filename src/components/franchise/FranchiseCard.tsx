@@ -157,7 +157,9 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
             src={franchise.imageUrl || '/images/free-nature-images.jpg'}
             alt={franchise.imageAlt || `${franchise.name} logo`}
             fill
-            priority
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            quality={85}
             className="object-contain bg-white rounded-t-md"
           />
         </div>

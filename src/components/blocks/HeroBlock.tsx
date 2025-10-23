@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Button, Badge } from '@/components'
 
 /**
@@ -109,17 +110,29 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
 
   return (
     <section
-      className="relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      className="relative overflow-hidden"
       style={{
         fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
-        backgroundImage: `url(${backgroundImageUrl})`,
       }}
       aria-label="Hero"
     >
-      {/* Brand gradient overlay for readability */}
-      {showOverlay && <div className={overlayClasses} />}
+      {/* Optimized Background Image using Next.js Image */}
+      <Image
+        src={backgroundImageUrl}
+        alt="Hero background"
+        fill
+        priority
+        quality={85}
+        sizes="100vw"
+        className="object-cover object-center"
+        placeholder="blur"
+        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+      />
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
+      {/* Brand gradient overlay for readability */}
+      {showOverlay && <div className={`${overlayClasses} z-10`} />}
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-20">
         <div className="mx-auto max-w-3xl text-center">
           {/* Eyebrow / tagline placeholder (optional) */}
           {/* <p className="text-sm font-medium text-blue-200">Discover the best franchises</p> */}
