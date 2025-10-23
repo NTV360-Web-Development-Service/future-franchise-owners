@@ -21,5 +21,8 @@ export { default as FranchiseCard } from './franchise/FranchiseCard'
 export { default as FranchiseGrid } from './franchise/FranchiseGrid'
 export type { Franchise } from './franchise/FranchiseCard'
 
+// Global Layout Components
+export { GlobalNavbarFooter } from './GlobalNavbarFooter'
+
 // Note: Page blocks are exported separately from ./blocks to keep this index client-safe.
 // Import blocks from '@/components/blocks' for server-side page components.

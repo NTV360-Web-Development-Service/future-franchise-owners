@@ -11,6 +11,7 @@ export async function getSiteSettings() {
   try {
     const settings = await payload.findGlobal({
       slug: 'site-settings',
+      depth: 2, // Populate relationship fields (navbarPages, footerPages, etc.)
     })
 
     return settings

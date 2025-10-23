@@ -11,6 +11,7 @@
  */
 
 import React from 'react'
+import Image from 'next/image'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -269,11 +270,13 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
               <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                 <Card className="group hover:shadow-xl transition-all duration-300 bg-slate-50 hover:!bg-blue-50 border-0 h-full flex flex-col">
                   {post.image && (
-                    <div className="aspect-video overflow-hidden">
-                      <img
+                    <div className="aspect-video overflow-hidden relative">
+                      <Image
                         src={post.image}
                         alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   )}

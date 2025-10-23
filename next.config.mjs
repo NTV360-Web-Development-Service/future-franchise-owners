@@ -9,6 +9,19 @@ const dirname = path.dirname(filename)
 const nextConfig = {
   // Fix workspace root warning by setting the correct tracing root
   outputFileTracingRoot: dirname,
+  // Image configuration for external sources (RSS feeds, etc.)
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**', // Allow all HTTPS domains for RSS feed images
+      },
+      {
+        protocol: 'http',
+        hostname: '**', // Allow all HTTP domains for RSS feed images
+      },
+    ],
+  },
   // Your Next.js config here
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
