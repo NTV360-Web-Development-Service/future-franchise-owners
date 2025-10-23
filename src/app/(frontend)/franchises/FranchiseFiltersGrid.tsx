@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import {
   Input,
   Button,
@@ -12,6 +12,7 @@ import {
 } from '@/components'
 import FranchiseCard, { type Franchise } from '@/components/franchise/FranchiseCard'
 import { parseCurrencyToNumber, extractBestScore } from '@/lib/franchise'
+import { Award, DollarSign, Star } from 'lucide-react'
 
 /**
  * Investment range configuration for filtering franchises by cash required
@@ -33,6 +34,8 @@ interface FranchiseFiltersGridProps {
   heading?: string
   /** Whether to show the heading section */
   showHeading?: boolean
+  /** Whether to show filter tabs (Top Pick, Sponsored, Featured) */
+  showTabs?: boolean
 }
 
 /**
@@ -172,6 +175,7 @@ export default function FranchiseFiltersGrid({
   franchises,
   heading,
   showHeading = true,
+  showTabs = true,
 }: FranchiseFiltersGridProps) {
   // Filter and sort state
   const [search, setSearch] = useState('')
@@ -179,8 +183,13 @@ export default function FranchiseFiltersGrid({
   const [minPrice, setMinPrice] = useState<number | undefined>(undefined)
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [activeTabFilter, setActiveTabFilter] = useState<string | null>(null) // For Top Pick, Sponsored, Featured
   const [sortBy, setSortBy] = useState<SortOption>('relevance')
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
+
+  // Pagination state
+  const [displayLimit, setDisplayLimit] = useState(9) // Show 9 items initially
+  const LOAD_MORE_COUNT = 9 // Load 9 more items each time
 
   // Collapsible section states
   const [categoryOpen, setCategoryOpen] = useState<boolean>(true)
@@ -221,6 +230,23 @@ export default function FranchiseFiltersGrid({
    */
   const filteredFranchises = useMemo(() => {
     let result = [...franchises]
+
+    // Apply tab filter first (Top Pick, Sponsored, Featured)
+    if (activeTabFilter) {
+      result = result.filter((franchise) => {
+        // Check both boolean flags and tags for more robust filtering
+        if (activeTabFilter === 'Top Pick') {
+          return franchise.isTopPick || franchise.tags.some((tag) => tag.name === 'Top Pick')
+        }
+        if (activeTabFilter === 'Sponsored') {
+          return franchise.isSponsored || franchise.tags.some((tag) => tag.name === 'Sponsored')
+        }
+        if (activeTabFilter === 'Featured') {
+          return franchise.isFeatured || franchise.tags.some((tag) => tag.name === 'Featured')
+        }
+        return franchise.tags.some((tag) => tag.name === activeTabFilter)
+      })
+    }
 
     // Apply search filter
     if (search.trim()) {
@@ -274,7 +300,16 @@ export default function FranchiseFiltersGrid({
     })
 
     return result
-  }, [franchises, search, selectedCategories, minPrice, maxPrice, selectedTags, sortBy])
+  }, [
+    franchises,
+    activeTabFilter,
+    search,
+    selectedCategories,
+    minPrice,
+    maxPrice,
+    selectedTags,
+    sortBy,
+  ])
 
   /**
    * Handle category selection toggle
@@ -283,6 +318,7 @@ export default function FranchiseFiltersGrid({
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
     )
+    setDisplayLimit(9) // Reset pagination
   }
 
   /**
@@ -290,51 +326,146 @@ export default function FranchiseFiltersGrid({
    */
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
+    setDisplayLimit(9) // Reset pagination
   }
+
+  /**
+   * Handle tab filter click (mutually exclusive)
+   */
+  const handleTabClick = (tabName: string) => {
+    // Toggle off if clicking the same tab, otherwise set new tab
+    setActiveTabFilter((prev) => (prev === tabName ? null : tabName))
+    // Reset pagination when changing filters
+    setDisplayLimit(9)
+  }
+
+  /**
+   * Load more franchises
+   */
+  const handleLoadMore = () => {
+    setDisplayLimit((prev) => prev + LOAD_MORE_COUNT)
+  }
+
+  // Slice the filtered results for pagination
+  const displayedFranchises = filteredFranchises.slice(0, displayLimit)
+  const hasMore = displayLimit < filteredFranchises.length
+
+  // Reset pagination when search, sort, or price filters change
+  useEffect(() => {
+    setDisplayLimit(9)
+  }, [search, sortBy, minPrice, maxPrice])
+
+  // Infinite scroll: Load more when scrolling near bottom
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if user scrolled near bottom (within 300px of bottom)
+      const scrollTop = window.scrollY
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+
+      if (scrollTop + windowHeight >= documentHeight - 300 && hasMore) {
+        // Load more items
+        setDisplayLimit((prev) => prev + LOAD_MORE_COUNT)
+      }
+    }
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll)
+
+    // Cleanup
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [hasMore, LOAD_MORE_COUNT])
 
   return (
     <div className="bg-white">
       {showHeading && (
-        <div className="lg:sticky lg:top-16 lg:z-10 bg-white flex items-baseline justify-between border-b border-gray-200 pt-6 pb-6">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            {heading ?? 'Browse Franchises'}
-          </h1>
+        <div className="lg:sticky lg:top-16 lg:z-10 bg-white border-b border-gray-200 pt-6 pb-6">
+          <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+                {heading ?? 'Browse Franchises'}
+              </h1>
 
-          <div className="flex items-center gap-4">
-            {/* Results count */}
-            <span className="text-sm text-gray-600">
-              Showing {filteredFranchises.length} of {franchises.length} franchises
-            </span>
-
-            {/* Sort dropdown */}
-            <div className="relative inline-block text-left">
-              <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
-                  <SelectValue placeholder="Sort by..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Most Popular</SelectItem>
-                  <SelectItem value="best">Best Rating</SelectItem>
-                  <SelectItem value="cash">Price: Low to High</SelectItem>
-                </SelectContent>
-              </Select>
+              {/* Filter Tabs - Only show if showTabs is true */}
+              {showTabs && (
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleTabClick('Top Pick')}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                      activeTabFilter === 'Top Pick'
+                        ? 'bg-red-600 text-white border-red-600 shadow-md'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600'
+                    }`}
+                  >
+                    <Award className="w-4 h-4" />
+                    Top Pick
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTabClick('Sponsored')}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                      activeTabFilter === 'Sponsored'
+                        ? 'bg-orange-500 text-white border-orange-500 shadow-md'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
+                    }`}
+                  >
+                    <DollarSign className="w-4 h-4" />
+                    Sponsored
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTabClick('Featured')}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                      activeTabFilter === 'Featured'
+                        ? 'bg-green-600 text-white border-green-600 shadow-md'
+                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400 hover:bg-green-50 hover:text-green-600'
+                    }`}
+                  >
+                    <Star className="w-4 h-4" />
+                    Featured
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Filter toggle button */}
-            <button
-              type="button"
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              className="-m-2 p-2 text-gray-400 hover:text-gray-500"
-              aria-label="Toggle filters"
-            >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                <path
-                  d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                />
-              </svg>
-            </button>
+            <div className="flex items-center gap-4">
+              {/* Results count */}
+              <span className="text-sm text-gray-600">
+                Showing {Math.min(displayLimit, filteredFranchises.length)} of{' '}
+                {filteredFranchises.length} franchises
+              </span>
+
+              {/* Sort dropdown */}
+              <div className="relative inline-block text-left">
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                  <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Most Popular</SelectItem>
+                    <SelectItem value="best">Best Rating</SelectItem>
+                    <SelectItem value="cash">Price: Low to High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Filter toggle button */}
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(!filtersOpen)}
+                className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                aria-label="Toggle filters"
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                  <path
+                    d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -458,13 +589,13 @@ export default function FranchiseFiltersGrid({
           {/* Results grid */}
           <div className="lg:col-span-3 min-h-0">
             <div
-              className={`grid gap-6 justify-items-start ${getGridLayout(filteredFranchises.length)} pb-8`}
+              className={`grid gap-6 justify-items-start ${getGridLayout(displayedFranchises.length)} pb-8`}
             >
-              {filteredFranchises.map((franchise) => (
+              {displayedFranchises.map((franchise) => (
                 <div
                   key={franchise.href ?? franchise.name}
                   className={
-                    filteredFranchises.length <= 1
+                    displayedFranchises.length <= 1
                       ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start'
                       : ''
                   }
@@ -473,6 +604,16 @@ export default function FranchiseFiltersGrid({
                 </div>
               ))}
             </div>
+
+            {/* Loading indicator when more items are available */}
+            {hasMore && (
+              <div className="flex justify-center pb-8 pt-4">
+                <div className="flex items-center gap-2 text-gray-500">
+                  <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                  <span className="text-sm">Loading more franchises...</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

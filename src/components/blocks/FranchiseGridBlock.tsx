@@ -25,6 +25,8 @@ type FranchiseGridBlockProps = {
     selectedFranchises?: Array<string | { id: string; [key: string]: any }> | null
     /** Whether to show filter controls (automatic mode only) */
     showFilters?: boolean | null
+    /** Whether to show filter tabs (Top Pick, Sponsored, Featured) */
+    showTabs?: boolean | null
     /** Filter to only featured franchises (automatic mode only) */
     onlyFeatured?: boolean | null
     /** Filter to only sponsored franchises (automatic mode only) */
@@ -99,7 +101,7 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       collection: 'franchises',
       where: Object.keys(where).length ? where : undefined,
       sort: '-updatedAt',
-      limit: block.limit ?? undefined,
+      limit: block.limit ?? 100, // Default to 100 instead of Payload's default 10
       depth: 2,
     })
 
@@ -205,6 +207,7 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
         <FranchiseFiltersGrid
           franchises={franchises}
           heading={block.heading ?? 'Browse Franchises'}
+          showTabs={block.showTabs ?? true}
         />
       ) : (
         <FranchiseGrid

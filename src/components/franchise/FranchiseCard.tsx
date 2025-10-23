@@ -208,17 +208,27 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
       </CardHeader>
 
       <CardContent className="pt-4 flex-1">
-        <p
-          className="text-sm text-muted-foreground"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {franchise.description}
-        </p>
+        <div>
+          <p
+            className="text-sm text-muted-foreground inline"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {franchise.description}
+          </p>
+          {franchise.href && (
+            <Link
+              href={franchise.href}
+              className="text-sm text-slate-700 hover:text-slate-900 font-medium ml-1 inline-block"
+            >
+              See more
+            </Link>
+          )}
+        </div>
         {/* Assigned Agent display below description */}
         {franchise.agentName && !franchise.useMainContact && (
           <div className="mt-3 text-xs text-muted-foreground flex items-center gap-2">

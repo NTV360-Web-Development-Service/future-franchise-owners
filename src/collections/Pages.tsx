@@ -95,6 +95,15 @@ const Pages: CollectionConfig = {
                 description: 'Show filter controls above the grid',
               },
             },
+            {
+              name: 'showTabs',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Show filter tabs (Top Pick, Sponsored, Featured) next to heading',
+                condition: (data, siblingData) => siblingData?.showFilters === true,
+              },
+            },
             // Automatic filter fields
 
             {

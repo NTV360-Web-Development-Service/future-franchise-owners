@@ -206,6 +206,10 @@ export interface Page {
          */
         showFilters?: boolean | null;
         /**
+         * Show filter tabs (Top Pick, Sponsored, Featured) next to heading
+         */
+        showTabs?: boolean | null;
+        /**
          * Only include Featured franchises
          */
         onlyFeatured?: boolean | null;
@@ -980,6 +984,7 @@ export interface PagesSelect<T extends boolean = true> {
               displayMode?: T;
               selectedFranchises?: T;
               showFilters?: T;
+              showTabs?: T;
               onlyFeatured?: T;
               onlySponsored?: T;
               onlyTopPick?: T;
