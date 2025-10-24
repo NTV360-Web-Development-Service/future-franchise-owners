@@ -1,6 +1,20 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+/**
+ * Initial database schema migration
+ *
+ * Creates all initial tables, types, indexes, and foreign key constraints
+ * for the Payload CMS application including:
+ * - User authentication and sessions
+ * - Media management
+ * - Page blocks (hero, navbar, ribbon, franchise grid, etc.)
+ * - Franchises and agents
+ * - Site settings
+ *
+ * @param {MigrateUpArgs} args - Migration arguments containing db connection
+ * @returns {Promise<void>}
+ */
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_pages_blocks_franchise_grid_category" AS ENUM('all', 'Fitness', 'Food and Beverage', 'Health and Wellness', 'Home Services', 'Senior Care', 'Sports');
   CREATE TYPE "public"."enum_pages_blocks_ribbon_background_color" AS ENUM('blue', 'red', 'green', 'yellow', 'purple', 'orange');
@@ -522,7 +536,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "site_settings_navbar_navbar_logo_idx" ON "site_settings" USING btree ("navbar_logo_id");`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+/**
+ * Rollback initial database schema migration
+ *
+ * Drops all tables and types created in the up migration.
+ *
+ * @param {MigrateDownArgs} args - Migration arguments containing db connection
+ * @returns {Promise<void>}
+ */
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    DROP TABLE "users_sessions" CASCADE;
   DROP TABLE "users" CASCADE;

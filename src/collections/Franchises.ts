@@ -10,6 +10,7 @@
  */
 
 import type { CollectionConfig } from 'payload'
+import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
 
 /**
  * Lightweight slugify helper to convert strings to URL-friendly slugs
@@ -127,8 +128,45 @@ export const Franchises: CollectionConfig = {
     {
       name: 'description',
       type: 'richText',
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          // Enable internal links to other pages and franchises
+          LinkFeature({
+            enabledCollections: ['pages', 'franchises'],
+            fields: ({ defaultFields }) => {
+              return [
+                ...defaultFields,
+                {
+                  name: 'rel',
+                  label: 'Rel Attribute',
+                  type: 'select',
+                  hasMany: true,
+                  options: ['noopener', 'noreferrer', 'nofollow'],
+                  admin: {
+                    description:
+                      'The rel attribute defines the relationship between your page and the linked page',
+                  },
+                },
+                {
+                  name: 'linkColor',
+                  label: 'Link Color',
+                  type: 'text',
+                  admin: {
+                    description: 'Custom color for this link (e.g., #004AAD, blue, rgb(0,74,173))',
+                    placeholder: '#004AAD',
+                  },
+                },
+              ]
+            },
+          }),
+          // Enable HTML converter to allow pasting formatted HTML
+          HTMLConverterFeature({}),
+        ],
+      }),
       admin: {
-        description: 'Detailed description using the rich text editor',
+        description:
+          'Detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.',
       },
     },
     {

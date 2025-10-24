@@ -3,27 +3,47 @@ import Image from 'next/image'
 import { CheckCircle2 } from 'lucide-react'
 
 import { Button } from '@/components'
+import { RichTextRenderer } from '@/components/RichTextRenderer'
 import type { Media } from '@/types/payload'
 
+/**
+ * Configuration for a call-to-action button
+ */
 interface CTAConfig {
+  /** Button text */
   label: string
+  /** Button URL */
   url: string
+  /** Button style variant */
   style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  /** Whether to open link in new tab */
   openInNewTab?: boolean | null
 }
 
+/**
+ * Configuration for a highlight/feature item
+ * @interface HighlightItem
+ */
 interface HighlightItem {
+  /** Highlight title */
   title?: string | null
+  /** Highlight description */
   description?: string | null
+  /** Unique identifier */
   id?: string | null
 }
 
+/**
+ * Props interface for the AboutTeaserBlock component
+ * @interface AboutTeaserBlockProps
+ */
 export interface AboutTeaserBlockProps {
+  /** Block configuration from Payload CMS */
   block: {
     blockType: 'aboutTeaser'
     eyebrow?: string | null
     heading?: string | null
-    description?: string | null
+    description?: any
     highlights?: HighlightItem[] | null
     ctas?: CTAConfig[] | null
     image?: string | Media | null
@@ -32,6 +52,14 @@ export interface AboutTeaserBlockProps {
   }
 }
 
+/**
+ * Resolves button style to shadcn/ui button variant
+ *
+ * Maps CMS button style values to the corresponding shadcn/ui button variants.
+ *
+ * @param style - The button style from CMS ('primary', 'secondary', 'outline', 'ghost')
+ * @returns The corresponding button variant for shadcn/ui
+ */
 const resolveVariant = (style?: CTAConfig['style']) => {
   switch (style) {
     case 'secondary':
@@ -45,6 +73,26 @@ const resolveVariant = (style?: CTAConfig['style']) => {
   }
 }
 
+/**
+ * AboutTeaserBlock - A two-column about/feature section component
+ *
+ * Features:
+ * - Two-column responsive layout (text + image)
+ * - Eyebrow text, heading, and description
+ * - Highlight items with checkmark icons
+ * - Multiple CTA buttons with different styles
+ * - Image support with fallback content card
+ * - Gradient background effects
+ * - Responsive design
+ * - Accessibility support
+ *
+ * Layout:
+ * - Left column: Text content with highlights and CTAs
+ * - Right column: Image or decorative content card
+ *
+ * @param {AboutTeaserBlockProps} props - Component props
+ * @returns {React.ReactElement} Rendered about teaser section
+ */
 const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
   const {
     eyebrow = 'About Future Franchise Owners',
@@ -90,7 +138,11 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
             {heading}
           </h2>
 
-          {description && <p className="mt-6 text-lg text-gray-600">{description}</p>}
+          {description && (
+            <div className="mt-6 text-lg text-gray-600">
+              <RichTextRenderer content={description} />
+            </div>
+          )}
 
           {highlightItems.length > 0 && (
             <div className="mt-10 grid gap-4 sm:grid-cols-2">

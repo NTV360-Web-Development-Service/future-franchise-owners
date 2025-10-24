@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Dev Server Error Monitor",
+  "description": "Monitors key configuration and source files for changes, then runs npm run dev and checks the terminal output for any errors that need to be fixed",
+  "version": "1",
+  "when": {
+    "type": "userTriggered",
+    "patterns": [
+      "package.json",
+      "next.config.mjs",
+      "tsconfig.json",
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/payload.config.ts",
+      ".env"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run 'npm run dev' in the terminal, carefully monitor the output for any errors, warnings, or issues. If you find any errors, analyze them and fix the underlying problems in the codebase. Report what errors you found and what fixes you applied."
+  }
+}

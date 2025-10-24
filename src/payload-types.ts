@@ -429,7 +429,21 @@ export interface Page {
         /**
          * Supporting paragraph introducing your team and value proposition
          */
-        description?: string | null;
+        description?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         /**
          * Key differentiators, credentials, or testimonials to feature
          */
@@ -667,7 +681,7 @@ export interface Franchise {
    */
   isTopPick?: boolean | null;
   /**
-   * Detailed description using the rich text editor
+   * Detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.
    */
   description?: {
     root: {
@@ -812,6 +826,9 @@ export interface Agent {
   email: string;
   phone?: string | null;
   title?: string | null;
+  /**
+   * Agent biography with support for links to pages and franchises. Paste HTML for advanced formatting.
+   */
   bio?: {
     root: {
       type: string;

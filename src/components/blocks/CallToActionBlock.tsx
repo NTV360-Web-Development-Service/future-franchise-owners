@@ -3,14 +3,27 @@ import React from 'react'
 import { Button } from '@/components'
 import type { Media } from '@/types/payload'
 
+/**
+ * Configuration for a call-to-action button
+ * @interface CTAButtonConfig
+ */
 type CTAButtonConfig = {
+  /** Button text */
   label: string
+  /** Button URL */
   url: string
+  /** Button style variant */
   style?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  /** Whether to open link in new tab */
   openInNewTab?: boolean | null
 }
 
+/**
+ * Props interface for the CallToActionBlock component
+ * @interface CallToActionBlockProps
+ */
 export interface CallToActionBlockProps {
+  /** Block configuration from Payload CMS */
   block: {
     blockType: 'callToAction'
     eyebrow?: string | null
@@ -30,6 +43,14 @@ export interface CallToActionBlockProps {
   }
 }
 
+/**
+ * Resolves button style to shadcn/ui button variant
+ *
+ * Maps CMS button style values to the corresponding shadcn/ui button variants.
+ *
+ * @param style - The button style from CMS ('primary', 'secondary', 'outline', 'ghost')
+ * @returns The corresponding button variant for shadcn/ui
+ */
 const resolveVariant = (style?: CTAButtonConfig['style']) => {
   switch (style) {
     case 'secondary':
@@ -43,6 +64,12 @@ const resolveVariant = (style?: CTAButtonConfig['style']) => {
   }
 }
 
+/**
+ * Clamps overlay opacity value to a safe range (0-0.95)
+ *
+ * @param {number | null | undefined} value - The opacity value to clamp
+ * @returns {number} Clamped opacity value between 0 and 0.95
+ */
 const clampOverlay = (value?: number | null) => {
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return 0.45
@@ -51,6 +78,26 @@ const clampOverlay = (value?: number | null) => {
   return Math.min(Math.max(value, 0), 0.95)
 }
 
+/**
+ * CallToActionBlock - A versatile call-to-action section component
+ *
+ * Features:
+ * - Flexible background options: solid color, gradient, or image
+ * - Customizable overlay with adjustable opacity
+ * - Multiple CTA buttons with different styles
+ * - Optional eyebrow text and small print
+ * - Left or center text alignment
+ * - Responsive design
+ * - Accessibility support
+ *
+ * Background styles:
+ * - Color: Solid background color
+ * - Gradient: Linear gradient with customizable stops
+ * - Image: Background image with optional overlay
+ *
+ * @param {CallToActionBlockProps} props - Component props
+ * @returns {React.ReactElement} Rendered call-to-action section
+ */
 export default function CallToActionBlock({ block }: CallToActionBlockProps) {
   const {
     eyebrow,

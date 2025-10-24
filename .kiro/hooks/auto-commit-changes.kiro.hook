@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "name": "Auto Commit Changes",
+  "description": "Automatically stages and commits file changes with an appropriate commit message",
+  "version": "1",
+  "when": {
+    "type": "userTriggered",
+    "patterns": [
+      "src/**/*",
+      "docs/**/*",
+      "*.ts",
+      "*.tsx",
+      "*.js",
+      "*.jsx",
+      "*.json",
+      "*.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Stage all changes using git add, then create a commit with a descriptive message that summarizes the changes made. Use conventional commit format (e.g., feat:, fix:, docs:, refactor:, etc.) based on the type of changes detected."
+  }
+}

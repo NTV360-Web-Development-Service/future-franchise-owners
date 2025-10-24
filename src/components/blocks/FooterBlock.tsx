@@ -17,7 +17,11 @@ import {
   Slack,
 } from 'lucide-react'
 
-// Social media icon mapping
+/**
+ * Social media icon mapping
+ * Maps platform names to their corresponding Lucide icon components
+ * @constant
+ */
 const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   facebook: Facebook,
   twitter: Twitter,
@@ -38,7 +42,12 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
   twitch: MessageCircle, // Using message as fallback
 }
 
+/**
+ * Props interface for the FooterBlock component
+ * @interface FooterBlockProps
+ */
 export interface FooterBlockProps {
+  /** Block configuration from Payload CMS */
   block: {
     blockType: 'footer'
     companyName?: string | null
@@ -74,6 +83,27 @@ export interface FooterBlockProps {
   }
 }
 
+/**
+ * FooterBlock - A comprehensive footer component with multi-column layout
+ *
+ * Features:
+ * - Company branding with name and tagline
+ * - Social media links with icon support
+ * - Multi-column navigation links
+ * - Bottom bar with copyright and legal links
+ * - Customizable colors (background and text)
+ * - Responsive grid layout
+ * - Accessibility support with proper ARIA labels
+ *
+ * Supported social platforms:
+ * - Facebook, Twitter, Instagram, LinkedIn, YouTube
+ * - GitHub, GitLab, Discord, Telegram, Slack
+ * - WhatsApp, TikTok, Pinterest, Reddit, Twitch
+ * - Email and custom URLs
+ *
+ * @param {FooterBlockProps} props - Component props
+ * @returns {React.ReactElement} Rendered footer element
+ */
 export default function FooterBlock({ block }: FooterBlockProps) {
   const {
     companyName = 'Future Franchise Owners',

@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Auto Cleanup & Build",
+  "description": "Automatically cleans up code, optimizes it, adds JSDoc documentation, and runs npm run build when source files are modified, fixes build errors, and removes unnecessary imports and files",
+  "version": "1",
+  "when": {
+    "type": "userTriggered",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.js",
+      "src/**/*.jsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source files have been modified. Please perform the following tasks:\n\n1. Review the changed files and clean up the code by:\n   - Removing unnecessary imports\n   - Removing unused variables and functions\n   - Optimizing code structure and logic\n   - Ensuring consistent code style\n\n2. Add comprehensive JSDoc documentation to:\n   - All functions and methods\n   - Complex types and interfaces\n   - Class definitions\n   - Important variables\n\n3. Run `npm run build` to build the project\n\n4. If the build fails:\n   - Analyze the build error messages\n   - Fix the errors in the source code\n   - Remove any unnecessary files causing issues\n   - Run the build again until successful\n\n5. Provide a summary of:\n   - What was cleaned up\n   - What documentation was added\n   - Any build errors that were fixed\n   - Any files that were removed\n\nFocus on making the code production-ready, well-documented, and ensuring a successful build."
+  }
+}

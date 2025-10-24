@@ -1,6 +1,20 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+/**
+ * Migration: Add text color to tags and introduce industries collection
+ *
+ * This migration:
+ * - Adds text_color field to tags table
+ * - Creates industries collection with icon support
+ * - Replaces category enum with industry relationships
+ * - Adds display mode (automatic/manual) to franchise grid
+ * - Enhances ribbon block with typography controls
+ * - Adds navbar/footer visibility controls to site settings
+ *
+ * @param {MigrateUpArgs} args - Migration arguments containing db connection
+ * @returns {Promise<void>}
+ */
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_pages_blocks_franchise_grid_display_mode" AS ENUM('automatic', 'manual');
   CREATE TYPE "public"."enum_pages_blocks_ribbon_font_weight" AS ENUM('300', '400', '500', '600', '700', '800');
@@ -120,7 +134,16 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   DROP TYPE "public"."enum_franchises_category";`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+/**
+ * Rollback migration: Revert text color and industries changes
+ *
+ * Reverts all changes made in the up migration, restoring the previous
+ * category-based system.
+ *
+ * @param {MigrateDownArgs} args - Migration arguments containing db connection
+ * @returns {Promise<void>}
+ */
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_pages_blocks_franchise_grid_category" AS ENUM('all', 'Fitness', 'Food and Beverage', 'Health and Wellness', 'Home Services', 'Senior Care', 'Sports');
   CREATE TYPE "public"."enum_pages_blocks_ribbon_background_color" AS ENUM('blue', 'red', 'green', 'yellow', 'purple', 'orange');

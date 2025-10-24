@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 
 const Pages: CollectionConfig = {
@@ -427,7 +427,42 @@ const Pages: CollectionConfig = {
               type: 'richText',
               required: true,
               editor: lexicalEditor({
-                features: ({ defaultFeatures }) => [...defaultFeatures, SlateToLexicalFeature({})],
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  SlateToLexicalFeature({}),
+                  // Enable internal links to pages and franchises
+                  LinkFeature({
+                    enabledCollections: ['pages', 'franchises'],
+                    fields: ({ defaultFields }) => {
+                      return [
+                        ...defaultFields,
+                        {
+                          name: 'rel',
+                          label: 'Rel Attribute',
+                          type: 'select',
+                          hasMany: true,
+                          options: ['noopener', 'noreferrer', 'nofollow'],
+                          admin: {
+                            description:
+                              'The rel attribute defines the relationship between your page and the linked page',
+                          },
+                        },
+                        {
+                          name: 'linkColor',
+                          label: 'Link Color',
+                          type: 'text',
+                          admin: {
+                            description:
+                              'Custom color for this link (e.g., #004AAD, blue, rgb(0,74,173))',
+                            placeholder: '#004AAD',
+                          },
+                        },
+                      ]
+                    },
+                  }),
+                  // Enable HTML converter to allow pasting formatted HTML
+                  HTMLConverterFeature({}),
+                ],
               }),
             },
             {
@@ -558,10 +593,44 @@ const Pages: CollectionConfig = {
             },
             {
               name: 'description',
-              type: 'textarea',
+              type: 'richText',
               required: false,
-              defaultValue:
-                'We combine decades of franchise ownership, coaching, and operations experience to help entrepreneurs make confident, informed decisions.',
+              editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  SlateToLexicalFeature({}),
+                  LinkFeature({
+                    enabledCollections: ['pages', 'franchises'],
+                    fields: ({ defaultFields }) => {
+                      return [
+                        ...defaultFields,
+                        {
+                          name: 'rel',
+                          label: 'Rel Attribute',
+                          type: 'select',
+                          hasMany: true,
+                          options: ['noopener', 'noreferrer', 'nofollow'],
+                          admin: {
+                            description:
+                              'The rel attribute defines the relationship between your page and the linked page',
+                          },
+                        },
+                        {
+                          name: 'linkColor',
+                          label: 'Link Color',
+                          type: 'text',
+                          admin: {
+                            description:
+                              'Custom color for this link (e.g., #004AAD, blue, rgb(0,74,173))',
+                            placeholder: '#004AAD',
+                          },
+                        },
+                      ]
+                    },
+                  }),
+                  HTMLConverterFeature({}),
+                ],
+              }),
               admin: {
                 description: 'Supporting paragraph introducing your team and value proposition',
               },

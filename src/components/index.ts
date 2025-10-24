@@ -24,5 +24,8 @@ export type { Franchise } from './franchise/FranchiseCard'
 // Global Layout Components
 export { GlobalNavbarFooter } from './GlobalNavbarFooter'
 
+// RichText Rendering
+export { RichTextRenderer } from './RichTextRenderer'
+
 // Note: Page blocks are exported separately from ./blocks to keep this index client-safe.
 // Import blocks from '@/components/blocks' for server-side page components.

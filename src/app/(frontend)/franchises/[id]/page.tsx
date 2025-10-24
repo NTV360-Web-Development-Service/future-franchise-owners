@@ -7,6 +7,7 @@ import { LucideIcon } from '@/components/ui/lucide-icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { RichTextRenderer } from '@/components/RichTextRenderer'
 import {
   DollarSign,
   TrendingUp,
@@ -76,7 +77,6 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
   const agent = typeof franchise.assignedAgent === 'object' ? franchise.assignedAgent : null
   const logo = typeof franchise.logo === 'object' ? franchise.logo : null
   const agentPhoto = agent && typeof agent.photo === 'object' ? agent.photo : null
-  const description = extractPlainText(franchise.description)
   const tags = Array.isArray(franchise.tags) ? franchise.tags : []
 
   // Investment range
@@ -195,11 +195,14 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Franchise</h2>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {description || 'No description available.'}
-                  </p>
-                </div>
+                {franchise.description ? (
+                  <RichTextRenderer
+                    content={franchise.description}
+                    className="text-gray-700 leading-relaxed"
+                  />
+                ) : (
+                  <p className="text-gray-700">No description available.</p>
+                )}
               </CardContent>
             </Card>
 
