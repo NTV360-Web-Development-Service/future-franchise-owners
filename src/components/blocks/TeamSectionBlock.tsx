@@ -23,19 +23,22 @@ import {
 import { RichTextRenderer } from '@/components/RichTextRenderer'
 
 /**
+ * Media type from Payload CMS
+ */
+interface Media {
+  url?: string | null
+  alt?: string
+  [key: string]: any
+}
+
+/**
  * Team member data structure
  *
  * @interface TeamMember
  */
 interface TeamMember {
   /** Team member photo */
-  photo?:
-    | {
-        url?: string
-        alt?: string
-      }
-    | string
-    | null
+  photo?: (string | null) | Media
   /** Team member name (required) */
   name: string
   /** Job title or role */
@@ -45,7 +48,7 @@ interface TeamMember {
   /** Biography in Lexical rich text format */
   biography?: any
   /** Unique identifier */
-  id?: string
+  id?: string | null
 }
 
 /**
@@ -99,8 +102,10 @@ function getInitials(name: string): string {
  * @returns {JSX.Element} Rendered team member card
  */
 function TeamMemberCard({ member }: { member: TeamMember }) {
-  const photoUrl = typeof member.photo === 'object' ? member.photo?.url : null
-  const photoAlt = typeof member.photo === 'object' ? member.photo?.alt : member.name
+  const photoUrl =
+    typeof member.photo === 'object' && member.photo !== null ? member.photo?.url : null
+  const photoAlt =
+    typeof member.photo === 'object' && member.photo !== null ? member.photo?.alt : member.name
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 bg-white hover:bg-blue-50 border h-full flex flex-col">
