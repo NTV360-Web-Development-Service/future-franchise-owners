@@ -2,6 +2,7 @@ import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import React from 'react'
 import { fileURLToPath } from 'url'
+import type { Metadata } from 'next'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
@@ -18,6 +19,97 @@ import {
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
+
+/**
+ * Generate metadata for the homepage
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  const {
+    docs: [page],
+  } = await payload.find({
+    collection: 'pages',
+    where: {
+      slug: {
+        equals: 'homepage',
+      },
+    },
+  })
+
+  // Get site settings for defaults
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
+  })
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://futurefranchiseowners.com'
+
+  // Use page-specific SEO fields or fall back to site defaults
+  const metaTitle =
+    page?.seo?.metaTitle ||
+    siteSettings?.seo?.defaultTitle ||
+    'Future Franchise Owners - Find Your Perfect Franchise'
+  const metaDescription =
+    page?.seo?.metaDescription ||
+    siteSettings?.seo?.defaultDescription ||
+    'Discover your next franchise opportunity with expert guidance. Browse top franchises across industries and connect with seasoned consultants.'
+  const keywords = page?.seo?.keywords || siteSettings?.seo?.keywords || ''
+  const ogImage =
+    (typeof page?.seo?.ogImage === 'object' ? page?.seo?.ogImage?.url : null) ||
+    (typeof siteSettings?.seo?.ogImage === 'object' ? siteSettings?.seo?.ogImage?.url : null)
+
+  const metadata: Metadata = {
+    title: metaTitle,
+    description: metaDescription,
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription,
+      url: baseUrl,
+      siteName: siteSettings?.siteName || 'Future Franchise Owners',
+      type: 'website',
+      locale: 'en_US',
+      ...(ogImage && { images: [{ url: ogImage }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metaTitle,
+      description: metaDescription,
+      ...(siteSettings?.seo?.twitterHandle && { site: siteSettings.seo.twitterHandle }),
+      ...(ogImage && { images: [ogImage] }),
+    },
+    alternates: {
+      canonical: baseUrl,
+    },
+  }
+
+  // Add keywords if provided
+  if (keywords) {
+    metadata.keywords = keywords.split(',').map((k) => k.trim())
+  }
+
+  // Add verification codes if provided
+  if (siteSettings?.seo?.googleSiteVerification || siteSettings?.seo?.bingSiteVerification) {
+    metadata.verification = {
+      ...(siteSettings?.seo?.googleSiteVerification && {
+        google: siteSettings.seo.googleSiteVerification,
+      }),
+      ...(siteSettings?.seo?.bingSiteVerification && {
+        other: { 'msvalidate.01': siteSettings.seo.bingSiteVerification },
+      }),
+    }
+  }
+
+  // Add noindex if specified
+  if (page?.seo?.noIndex) {
+    metadata.robots = {
+      index: false,
+      follow: false,
+    }
+  }
+
+  return metadata
+}
 
 /**
  * HomePage - The main landing page component for the franchise website

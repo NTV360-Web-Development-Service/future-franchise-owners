@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import '../globals.css'
 import { getSiteSettings } from '@/lib/getSiteSettings'
 import { GlobalNavbarFooter } from '@/components/GlobalNavbarFooter'
+import { generateOrganizationSchema } from '@/lib/schema'
 
 /**
  * Application metadata configuration
@@ -46,6 +48,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className="font-sans">
+        {/* Organization Schema for SEO */}
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateOrganizationSchema()),
+          }}
+        />
+
         {/* Global Navbar - Client component that reacts to route changes */}
         <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />
 

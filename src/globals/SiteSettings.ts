@@ -390,6 +390,95 @@ const SiteSettings: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'SEO',
+          fields: [
+            {
+              name: 'seo',
+              type: 'group',
+              fields: [
+                {
+                  name: 'defaultTitle',
+                  type: 'text',
+                  required: false,
+                  defaultValue: 'Future Franchise Owners - Find Your Perfect Franchise',
+                  admin: {
+                    description:
+                      "Default SEO title (50-60 characters). Used when pages don't have a custom title.",
+                  },
+                },
+                {
+                  name: 'defaultDescription',
+                  type: 'textarea',
+                  required: false,
+                  maxLength: 160,
+                  defaultValue:
+                    'Discover your next franchise opportunity with expert guidance. Browse top franchises across industries and connect with seasoned consultants.',
+                  admin: {
+                    description:
+                      'Default meta description (150-160 characters). Appears in search results.',
+                  },
+                },
+                {
+                  name: 'keywords',
+                  type: 'text',
+                  required: false,
+                  defaultValue:
+                    'franchise opportunities, buy a franchise, franchise business, franchise consultant, franchise investment, best franchises',
+                  admin: {
+                    description:
+                      'Default keywords (comma-separated). Used for pages without specific keywords.',
+                  },
+                },
+                {
+                  name: 'ogImage',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: false,
+                  admin: {
+                    description:
+                      "Default social share image (1200x630px recommended). Used when pages don't have a custom image.",
+                  },
+                },
+                {
+                  name: 'twitterHandle',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Twitter/X handle (e.g., @yourhandle) for Twitter Card metadata',
+                    placeholder: '@yourhandle',
+                  },
+                },
+                {
+                  name: 'facebookAppId',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Facebook App ID for Facebook Open Graph',
+                  },
+                },
+                {
+                  name: 'googleSiteVerification',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description:
+                      'Google Search Console verification code (from <meta name="google-site-verification" content="...">)',
+                  },
+                },
+                {
+                  name: 'bingSiteVerification',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description:
+                      'Bing Webmaster Tools verification code (from <meta name="msvalidate.01" content="...">)',
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

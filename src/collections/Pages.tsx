@@ -1199,6 +1199,66 @@ const Pages: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'seo',
+      type: 'group',
+      label: 'SEO Settings',
+      admin: {
+        position: 'sidebar',
+      },
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
+          admin: {
+            description: 'SEO title (50-60 characters). Leave empty to use page title + site name.',
+            placeholder: 'Leave empty to use default',
+          },
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
+          maxLength: 160,
+          admin: {
+            description:
+              'SEO description (150-160 characters). Appears in search results. Leave empty to use site default.',
+            placeholder: 'Leave empty to use default',
+          },
+        },
+        {
+          name: 'keywords',
+          type: 'text',
+          label: 'Focus Keywords',
+          admin: {
+            description:
+              'Comma-separated keywords for this page (e.g., "food franchises, restaurant opportunities"). Leave empty to use site defaults.',
+            placeholder: 'keyword1, keyword2, keyword3',
+          },
+        },
+        {
+          name: 'ogImage',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'Social Share Image',
+          admin: {
+            description:
+              'Image for social media sharing (1200x630px recommended). Leave empty to use site default.',
+          },
+        },
+        {
+          name: 'noIndex',
+          type: 'checkbox',
+          label: 'No Index',
+          defaultValue: false,
+          admin: {
+            description:
+              '⚠️ Check to prevent search engines from indexing this page (useful for draft/private pages)',
+          },
+        },
+      ],
+    },
   ],
 }
 

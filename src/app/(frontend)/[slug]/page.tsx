@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { fileURLToPath } from 'url'
+import type { Metadata } from 'next'
 
 import config from '@/payload.config'
 import type { Page } from '@/types/payload'
@@ -151,8 +152,62 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
-  return {
-    title: page.title || 'Future Franchise Owners',
-    description: page.title || 'Find your perfect franchise opportunity',
+  // Get site settings for defaults
+  const siteSettings = await payload.findGlobal({
+    slug: 'site-settings',
+  })
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://futurefranchiseowners.com'
+  const pageUrl = `${baseUrl}/${slug}`
+
+  // Use page-specific SEO fields or fall back to site defaults
+  const metaTitle =
+    page?.seo?.metaTitle || `${page.title} | ${siteSettings?.siteName || 'Future Franchise Owners'}`
+  const metaDescription =
+    page?.seo?.metaDescription ||
+    siteSettings?.seo?.defaultDescription ||
+    'Find your perfect franchise opportunity'
+  const keywords = page?.seo?.keywords || siteSettings?.seo?.keywords || ''
+  const ogImage =
+    (typeof page?.seo?.ogImage === 'object' ? page?.seo?.ogImage?.url : null) ||
+    (typeof siteSettings?.seo?.ogImage === 'object' ? siteSettings?.seo?.ogImage?.url : null)
+
+  const metadata: Metadata = {
+    title: metaTitle,
+    description: metaDescription,
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription,
+      url: pageUrl,
+      siteName: siteSettings?.siteName || 'Future Franchise Owners',
+      type: 'website',
+      locale: 'en_US',
+      ...(ogImage && { images: [{ url: ogImage }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metaTitle,
+      description: metaDescription,
+      ...(siteSettings?.seo?.twitterHandle && { site: siteSettings.seo.twitterHandle }),
+      ...(ogImage && { images: [ogImage] }),
+    },
+    alternates: {
+      canonical: pageUrl,
+    },
   }
+
+  // Add keywords if provided
+  if (keywords) {
+    metadata.keywords = keywords.split(',').map((k) => k.trim())
+  }
+
+  // Add noindex if specified
+  if (page?.seo?.noIndex) {
+    metadata.robots = {
+      index: false,
+      follow: false,
+    }
+  }
+
+  return metadata
 }

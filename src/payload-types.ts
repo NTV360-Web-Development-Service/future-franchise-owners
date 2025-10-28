@@ -711,6 +711,28 @@ export interface Page {
         blockType: 'teamSection';
       }
   )[];
+  seo?: {
+    /**
+     * SEO title (50-60 characters). Leave empty to use page title + site name.
+     */
+    metaTitle?: string | null;
+    /**
+     * SEO description (150-160 characters). Appears in search results. Leave empty to use site default.
+     */
+    metaDescription?: string | null;
+    /**
+     * Comma-separated keywords for this page (e.g., "food franchises, restaurant opportunities"). Leave empty to use site defaults.
+     */
+    keywords?: string | null;
+    /**
+     * Image for social media sharing (1200x630px recommended). Leave empty to use site default.
+     */
+    ogImage?: (string | null) | Media;
+    /**
+     * ⚠️ Check to prevent search engines from indexing this page (useful for draft/private pages)
+     */
+    noIndex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1252,6 +1274,15 @@ export interface PagesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        keywords?: T;
+        ogImage?: T;
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1520,6 +1551,40 @@ export interface SiteSetting {
    * Contact phone number
    */
   contactPhone?: string | null;
+  seo?: {
+    /**
+     * Default SEO title (50-60 characters). Used when pages don't have a custom title.
+     */
+    defaultTitle?: string | null;
+    /**
+     * Default meta description (150-160 characters). Appears in search results.
+     */
+    defaultDescription?: string | null;
+    /**
+     * Default keywords (comma-separated). Used for pages without specific keywords.
+     */
+    keywords?: string | null;
+    /**
+     * Default social share image (1200x630px recommended). Used when pages don't have a custom image.
+     */
+    ogImage?: (string | null) | Media;
+    /**
+     * Twitter/X handle (e.g., @yourhandle) for Twitter Card metadata
+     */
+    twitterHandle?: string | null;
+    /**
+     * Facebook App ID for Facebook Open Graph
+     */
+    facebookAppId?: string | null;
+    /**
+     * Google Search Console verification code (from <meta name="google-site-verification" content="...">)
+     */
+    googleSiteVerification?: string | null;
+    /**
+     * Bing Webmaster Tools verification code (from <meta name="msvalidate.01" content="...">)
+     */
+    bingSiteVerification?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1597,6 +1662,18 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   siteDescription?: T;
   contactEmail?: T;
   contactPhone?: T;
+  seo?:
+    | T
+    | {
+        defaultTitle?: T;
+        defaultDescription?: T;
+        keywords?: T;
+        ogImage?: T;
+        twitterHandle?: T;
+        facebookAppId?: T;
+        googleSiteVerification?: T;
+        bingSiteVerification?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
