@@ -31,5 +31,8 @@ export { default as AboutTeaserBlock } from './AboutTeaserBlock'
 /** Call-to-action block for conversion-focused content */
 export { default as CallToActionBlock } from './CallToActionBlock'
 
+/** Team section block for displaying team member profiles */
+export { default as TeamSectionBlock } from './TeamSectionBlock'
+
 /** Footer block with links, contact info, and social media */
 export { default as FooterBlock } from './FooterBlock'

@@ -14,6 +14,7 @@ import {
   MapBlock,
   AboutTeaserBlock,
   CallToActionBlock,
+  TeamSectionBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -93,6 +94,8 @@ export default async function HomePage() {
         return <AboutTeaserBlock block={block as AboutTeaserBlockProps['block']} key={key} />
       case 'callToAction':
         return <CallToActionBlock block={block as CallToActionBlockProps['block']} key={key} />
+      case 'teamSection':
+        return <TeamSectionBlock block={block} key={key} />
       default:
         return null
     }

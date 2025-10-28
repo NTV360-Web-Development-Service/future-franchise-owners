@@ -1063,6 +1063,140 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'teamSection',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Meet Our Team',
+              admin: {
+                description: 'Section heading (e.g., "Our Team", "Meet the Experts")',
+              },
+            },
+            {
+              name: 'subheading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Optional subheading text below the main heading',
+              },
+            },
+            {
+              name: 'layoutMode',
+              type: 'select',
+              required: true,
+              defaultValue: 'grid',
+              options: [
+                { label: 'Grid', value: 'grid' },
+                { label: 'Carousel', value: 'carousel' },
+              ],
+              admin: {
+                description: 'Choose how team members are displayed',
+              },
+            },
+            {
+              name: 'teamMembers',
+              type: 'array',
+              required: false,
+              minRows: 0,
+              maxRows: 50,
+              fields: [
+                {
+                  name: 'photo',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: false,
+                  admin: {
+                    description:
+                      'Team member photo (optional - will show initials if not provided)',
+                  },
+                },
+                {
+                  name: 'name',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Team member full name',
+                  },
+                },
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Job title or role (e.g., "Senior Consultant", "CEO")',
+                  },
+                },
+                {
+                  name: 'location',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Location (e.g., "New York, NY", "Remote", "San Francisco")',
+                  },
+                },
+                {
+                  name: 'biography',
+                  type: 'richText',
+                  required: false,
+                  editor: lexicalEditor({
+                    features: ({ defaultFeatures }) => [
+                      ...defaultFeatures,
+                      SlateToLexicalFeature({}),
+                      LinkFeature({
+                        enabledCollections: ['pages', 'franchises'],
+                        fields: ({ defaultFields }) => {
+                          return [
+                            ...defaultFields,
+                            {
+                              name: 'rel',
+                              label: 'Rel Attribute',
+                              type: 'select',
+                              hasMany: true,
+                              options: ['noopener', 'noreferrer', 'nofollow'],
+                              admin: {
+                                description:
+                                  'The rel attribute defines the relationship between your page and the linked page',
+                              },
+                            },
+                            {
+                              name: 'linkColor',
+                              label: 'Link Color',
+                              type: 'text',
+                              admin: {
+                                description:
+                                  'Custom color for this link (e.g., #004AAD, blue, rgb(0,74,173))',
+                                placeholder: '#004AAD',
+                              },
+                            },
+                          ]
+                        },
+                      }),
+                      HTMLConverterFeature({}),
+                    ],
+                  }),
+                  admin: {
+                    description: 'Team member biography with support for links and formatting',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add team members to display (up to 50 members)',
+              },
+            },
+          ],
+        },
       ],
     },
   ],

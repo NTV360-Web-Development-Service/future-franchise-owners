@@ -647,6 +647,69 @@ export interface Page {
         blockName?: string | null;
         blockType: 'map';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Section heading (e.g., "Our Team", "Meet the Experts")
+         */
+        heading?: string | null;
+        /**
+         * Optional subheading text below the main heading
+         */
+        subheading?: string | null;
+        /**
+         * Choose how team members are displayed
+         */
+        layoutMode: 'grid' | 'carousel';
+        /**
+         * Add team members to display (up to 50 members)
+         */
+        teamMembers?:
+          | {
+              /**
+               * Team member photo (optional - will show initials if not provided)
+               */
+              photo?: (string | null) | Media;
+              /**
+               * Team member full name
+               */
+              name: string;
+              /**
+               * Job title or role (e.g., "Senior Consultant", "CEO")
+               */
+              title?: string | null;
+              /**
+               * Location (e.g., "New York, NY", "Remote", "San Francisco")
+               */
+              location?: string | null;
+              /**
+               * Team member biography with support for links and formatting
+               */
+              biography?: {
+                root: {
+                  type: string;
+                  children: {
+                    type: any;
+                    version: number;
+                    [k: string]: unknown;
+                  }[];
+                  direction: ('ltr' | 'rtl') | null;
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                  indent: number;
+                  version: number;
+                };
+                [k: string]: unknown;
+              } | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'teamSection';
+      }
   )[];
   updatedAt: string;
   createdAt: string;
@@ -1165,6 +1228,26 @@ export interface PagesSelect<T extends boolean = true> {
               height?: T;
               showViewButton?: T;
               buttonText?: T;
+              id?: T;
+              blockName?: T;
+            };
+        teamSection?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              subheading?: T;
+              layoutMode?: T;
+              teamMembers?:
+                | T
+                | {
+                    photo?: T;
+                    name?: T;
+                    title?: T;
+                    location?: T;
+                    biography?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };
