@@ -152,7 +152,10 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
                   key={item.id || index}
                   className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
                 >
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-[#00A1E4]" aria-hidden="true" />
+                  <CheckCircle2
+                    className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#00A1E4]"
+                    aria-hidden="true"
+                  />
                   <div>
                     {item.title && <p className="font-semibold text-gray-900">{item.title}</p>}
                     {item.description && (
