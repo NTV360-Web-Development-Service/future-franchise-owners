@@ -127,3 +127,4 @@ It does NOT handle:
 ## Quick Action
 
 Delete that HTML text from your franchise description and save it as plain text. The link we created earlier will still work fine!
+

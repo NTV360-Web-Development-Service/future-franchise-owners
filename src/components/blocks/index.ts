@@ -36,3 +36,9 @@ export { default as TeamSectionBlock } from './TeamSectionBlock'
 
 /** Footer block with links, contact info, and social media */
 export { default as FooterBlock } from './FooterBlock'
+
+/** Dynamic form builder block for custom forms */
+export { default as FormBuilderBlock } from './FormBuilderBlock'
+
+/** Contact information block displaying business contact details */
+export { default as ContactInfoBlock } from './ContactInfoBlock'

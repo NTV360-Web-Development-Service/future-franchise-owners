@@ -16,9 +16,15 @@ import {
   AboutTeaserBlock,
   CallToActionBlock,
   TeamSectionBlock,
+  FormBuilderBlock,
+  ContactInfoBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
+
+// Force dynamic metadata generation (no caching)
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 /**
  * Generate metadata for the homepage
@@ -188,6 +194,10 @@ export default async function HomePage() {
         return <CallToActionBlock block={block as CallToActionBlockProps['block']} key={key} />
       case 'teamSection':
         return <TeamSectionBlock block={block} key={key} />
+      case 'formBuilder':
+        return <FormBuilderBlock block={block} key={key} />
+      case 'contactInfo':
+        return <ContactInfoBlock block={block} key={key} />
       default:
         return null
     }

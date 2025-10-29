@@ -1197,6 +1197,282 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'formBuilder',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Get in Touch',
+              admin: {
+                description: 'Form heading (e.g., "Contact Us", "Request Information")',
+              },
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              required: false,
+              admin: {
+                description: 'Optional description text above the form',
+              },
+            },
+            {
+              name: 'formFields',
+              type: 'array',
+              label: 'Form Fields',
+              required: true,
+              minRows: 1,
+              maxRows: 20,
+              fields: [
+                {
+                  name: 'fieldType',
+                  type: 'select',
+                  required: true,
+                  defaultValue: 'text',
+                  options: [
+                    { label: 'Text Input', value: 'text' },
+                    { label: 'Email', value: 'email' },
+                    { label: 'Phone', value: 'tel' },
+                    { label: 'Number', value: 'number' },
+                    { label: 'Text Area', value: 'textarea' },
+                    { label: 'Select Dropdown', value: 'select' },
+                  ],
+                  admin: {
+                    description: 'Type of input field',
+                  },
+                },
+                {
+                  name: 'label',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Field label (e.g., "Full Name", "Email Address")',
+                  },
+                },
+                {
+                  name: 'name',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description:
+                      'Field name for form data (e.g., "fullName", "email") - use camelCase, no spaces',
+                  },
+                },
+                {
+                  name: 'placeholder',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Optional placeholder text',
+                  },
+                },
+                {
+                  name: 'required',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description: 'Make this field required',
+                  },
+                },
+                {
+                  name: 'width',
+                  type: 'select',
+                  required: true,
+                  defaultValue: 'full',
+                  options: [
+                    { label: 'Full Width', value: 'full' },
+                    { label: 'Half Width', value: 'half' },
+                    { label: 'One Third', value: 'third' },
+                  ],
+                  admin: {
+                    description: 'Field width - use half or third for side-by-side fields',
+                  },
+                },
+                {
+                  name: 'options',
+                  type: 'array',
+                  required: false,
+                  minRows: 1,
+                  fields: [
+                    {
+                      name: 'label',
+                      type: 'text',
+                      required: true,
+                    },
+                    {
+                      name: 'value',
+                      type: 'text',
+                      required: true,
+                    },
+                  ],
+                  admin: {
+                    description:
+                      'Options for select dropdown (only used when field type is Select)',
+                    condition: (data, siblingData) => siblingData?.fieldType === 'select',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add and configure form fields - drag to reorder',
+              },
+            },
+            {
+              name: 'submitButtonText',
+              type: 'text',
+              required: false,
+              defaultValue: 'Send Message',
+              admin: {
+                description: 'Text for the submit button',
+              },
+            },
+            {
+              name: 'successMessage',
+              type: 'text',
+              required: false,
+              defaultValue: "Thank you! We'll get back to you soon.",
+              admin: {
+                description: 'Message shown after successful form submission',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'contactInfo',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              defaultValue: 'Contact Information',
+              admin: {
+                description: 'Section heading (e.g., "Reach Us", "Get in Touch")',
+              },
+            },
+            {
+              name: 'contactDetails',
+              type: 'group',
+              label: 'Contact Details',
+              fields: [
+                {
+                  name: 'showPhone',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    description: 'Show phone number',
+                  },
+                },
+                {
+                  name: 'phone',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Phone number (e.g., "(555) 123-4567")',
+                    condition: (data, siblingData) => siblingData?.showPhone === true,
+                  },
+                },
+                {
+                  name: 'showEmail',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    description: 'Show email address',
+                  },
+                },
+                {
+                  name: 'email',
+                  type: 'email',
+                  required: false,
+                  admin: {
+                    description: 'Email address',
+                    condition: (data, siblingData) => siblingData?.showEmail === true,
+                  },
+                },
+                {
+                  name: 'showAddress',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    description: 'Show physical address',
+                  },
+                },
+                {
+                  name: 'address',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Physical address (use line breaks for formatting)',
+                    condition: (data, siblingData) => siblingData?.showAddress === true,
+                  },
+                },
+                {
+                  name: 'showHours',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description: 'Show business hours',
+                  },
+                },
+                {
+                  name: 'hours',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Business hours (use line breaks for formatting)',
+                    condition: (data, siblingData) => siblingData?.showHours === true,
+                  },
+                },
+              ],
+            },
+            {
+              name: 'showMap',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                description: 'Show embedded map',
+              },
+            },
+            {
+              name: 'mapUrl',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Google Maps embed URL',
+                condition: (data, siblingData) => siblingData?.showMap === true,
+              },
+            },
+            {
+              name: 'mapHeight',
+              type: 'number',
+              required: false,
+              defaultValue: 300,
+              min: 200,
+              max: 600,
+              admin: {
+                description: 'Map height in pixels (200-600)',
+                condition: (data, siblingData) => siblingData?.showMap === true,
+              },
+            },
+          ],
+        },
       ],
     },
     {

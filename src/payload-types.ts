@@ -74,6 +74,7 @@ export interface Config {
     industries: Industry;
     tags: Tag;
     agents: Agent;
+    contactSubmissions: ContactSubmission;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -87,6 +88,7 @@ export interface Config {
     industries: IndustriesSelect<false> | IndustriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     agents: AgentsSelect<false> | AgentsSelect<true>;
+    contactSubmissions: ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -710,6 +712,130 @@ export interface Page {
         blockName?: string | null;
         blockType: 'teamSection';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Form heading (e.g., "Contact Us", "Request Information")
+         */
+        heading?: string | null;
+        /**
+         * Optional description text above the form
+         */
+        description?: string | null;
+        /**
+         * Add and configure form fields - drag to reorder
+         */
+        formFields: {
+          /**
+           * Type of input field
+           */
+          fieldType: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'select';
+          /**
+           * Field label (e.g., "Full Name", "Email Address")
+           */
+          label: string;
+          /**
+           * Field name for form data (e.g., "fullName", "email") - use camelCase, no spaces
+           */
+          name: string;
+          /**
+           * Optional placeholder text
+           */
+          placeholder?: string | null;
+          /**
+           * Make this field required
+           */
+          required?: boolean | null;
+          /**
+           * Field width - use half or third for side-by-side fields
+           */
+          width: 'full' | 'half' | 'third';
+          /**
+           * Options for select dropdown (only used when field type is Select)
+           */
+          options?:
+            | {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[];
+        /**
+         * Text for the submit button
+         */
+        submitButtonText?: string | null;
+        /**
+         * Message shown after successful form submission
+         */
+        successMessage?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'formBuilder';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Section heading (e.g., "Reach Us", "Get in Touch")
+         */
+        heading?: string | null;
+        contactDetails?: {
+          /**
+           * Show phone number
+           */
+          showPhone?: boolean | null;
+          /**
+           * Phone number (e.g., "(555) 123-4567")
+           */
+          phone?: string | null;
+          /**
+           * Show email address
+           */
+          showEmail?: boolean | null;
+          /**
+           * Email address
+           */
+          email?: string | null;
+          /**
+           * Show physical address
+           */
+          showAddress?: boolean | null;
+          /**
+           * Physical address (use line breaks for formatting)
+           */
+          address?: string | null;
+          /**
+           * Show business hours
+           */
+          showHours?: boolean | null;
+          /**
+           * Business hours (use line breaks for formatting)
+           */
+          hours?: string | null;
+        };
+        /**
+         * Show embedded map
+         */
+        showMap?: boolean | null;
+        /**
+         * Google Maps embed URL
+         */
+        mapUrl?: string | null;
+        /**
+         * Map height in pixels (200-600)
+         */
+        mapHeight?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contactInfo';
+      }
   )[];
   seo?: {
     /**
@@ -950,6 +1076,49 @@ export interface Agent {
   createdAt: string;
 }
 /**
+ * Contact form submissions from site visitors
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactSubmissions".
+ */
+export interface ContactSubmission {
+  id: string;
+  /**
+   * Submitter name
+   */
+  name?: string | null;
+  /**
+   * Submitter email address
+   */
+  email?: string | null;
+  /**
+   * Submitter phone number
+   */
+  phone?: string | null;
+  /**
+   * Company name
+   */
+  company?: string | null;
+  /**
+   * Message subject
+   */
+  subject?: string | null;
+  /**
+   * Message content
+   */
+  message?: string | null;
+  /**
+   * Submitter IP address (captured automatically)
+   */
+  ipAddress?: string | null;
+  /**
+   * Submission status for tracking and organization
+   */
+  status: 'new' | 'read' | 'archived';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
@@ -983,6 +1152,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'agents';
         value: string | Agent;
+      } | null)
+    | ({
+        relationTo: 'contactSubmissions';
+        value: string | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1273,6 +1446,58 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        formBuilder?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              description?: T;
+              formFields?:
+                | T
+                | {
+                    fieldType?: T;
+                    label?: T;
+                    name?: T;
+                    placeholder?: T;
+                    required?: T;
+                    width?: T;
+                    options?:
+                      | T
+                      | {
+                          label?: T;
+                          value?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              submitButtonText?: T;
+              successMessage?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contactInfo?:
+          | T
+          | {
+              published?: T;
+              heading?: T;
+              contactDetails?:
+                | T
+                | {
+                    showPhone?: T;
+                    phone?: T;
+                    showEmail?: T;
+                    email?: T;
+                    showAddress?: T;
+                    address?: T;
+                    showHours?: T;
+                    hours?: T;
+                  };
+              showMap?: T;
+              mapUrl?: T;
+              mapHeight?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   seo?:
     | T
@@ -1357,6 +1582,22 @@ export interface AgentsSelect<T extends boolean = true> {
       };
   isActive?: T;
   ghlWebhook?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactSubmissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  company?: T;
+  subject?: T;
+  message?: T;
+  ipAddress?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }

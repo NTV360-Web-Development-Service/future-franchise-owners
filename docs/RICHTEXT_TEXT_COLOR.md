@@ -256,3 +256,4 @@ Here's a complete example you can paste to test:
 - Check `docs/RICHTEXT_INTERLINKS.md` for link functionality
 - Review `src/components/RichTextRenderer.tsx` for rendering logic
 - Test in the admin panel and view results on your franchise pages
+

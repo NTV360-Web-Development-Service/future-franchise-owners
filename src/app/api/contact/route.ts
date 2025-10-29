@@ -17,21 +17,54 @@ async function postToWebhook(url: string, payload: unknown) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, message, franchiseId } = body as {
-      name: string
-      email: string
-      message: string
+    const { name, email, phone, company, subject, message, franchiseId } = body as {
+      name?: string
+      email?: string
+      phone?: string
+      company?: string
+      subject?: string
+      message?: string
       franchiseId?: string
     }
 
     const config = await configPromise
     const payload = await getPayload({ config })
 
+    // Extract IP address from request headers
+    const ipAddress =
+      req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown'
+
+    // Store submission in database
+    let submissionId: string | undefined
+    try {
+      const submission = await payload.create({
+        collection: 'contactSubmissions',
+        data: {
+          name: name || undefined,
+          email: email || undefined,
+          phone: phone || undefined,
+          company: company || undefined,
+          subject: subject || undefined,
+          message: message || undefined,
+          ipAddress,
+          status: 'new',
+        },
+      })
+      submissionId = submission.id
+    } catch (dbError) {
+      console.error('Failed to store submission:', dbError)
+      // Continue with routing even if database storage fails
+    }
+
     let targetEmail: string | undefined
     let targetWebhook: string | undefined
 
     if (franchiseId) {
-      const franchise = await payload.findByID({ collection: 'franchises', id: franchiseId, depth: 1 })
+      const franchise = await payload.findByID({
+        collection: 'franchises',
+        id: franchiseId,
+        depth: 1,
+      })
 
       const isTopPick = !!franchise?.isTopPick
       // assignedAgent can be an ID or populated doc depending on depth
@@ -55,19 +88,36 @@ export async function POST(req: NextRequest) {
 
     // Prefer webhook when available
     if (targetWebhook) {
-      const ok = await postToWebhook(targetWebhook, { name, email, message, franchiseId })
+      const ok = await postToWebhook(targetWebhook, {
+        name,
+        email,
+        phone,
+        company,
+        subject,
+        message,
+        franchiseId,
+      })
       if (!ok) return NextResponse.json({ error: 'Webhook failed' }, { status: 502 })
-      return NextResponse.json({ ok: true, routed: 'webhook' })
+      return NextResponse.json({ ok: true, routed: 'webhook', submissionId })
     }
 
     if (targetEmail) {
       // TODO: Integrate email provider (e.g., SendGrid, Resend)
-      console.log('Send email to:', targetEmail, { name, email, message, franchiseId })
-      return NextResponse.json({ ok: true, routed: 'email' })
+      console.log('Send email to:', targetEmail, {
+        name,
+        email,
+        phone,
+        company,
+        subject,
+        message,
+        franchiseId,
+      })
+      return NextResponse.json({ ok: true, routed: 'email', submissionId })
     }
 
     return NextResponse.json({ error: 'No routing configured' }, { status: 500 })
   } catch (err) {
+    console.error('Contact API error:', err)
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 }
