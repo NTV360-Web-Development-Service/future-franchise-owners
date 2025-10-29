@@ -47,7 +47,7 @@ export const ContactInfoBlock: React.FC<ContactInfoBlockProps> = ({ block }) => 
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">{heading}</h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Contact Details */}
             <div className="space-y-6">
               {showPhone && phone && (
