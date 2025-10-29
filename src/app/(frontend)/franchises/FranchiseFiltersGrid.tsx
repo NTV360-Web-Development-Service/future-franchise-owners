@@ -355,27 +355,6 @@ export default function FranchiseFiltersGrid({
     setDisplayLimit(9)
   }, [search, sortBy, minPrice, maxPrice])
 
-  // Infinite scroll: Load more when scrolling near bottom
-  useEffect(() => {
-    const handleScroll = () => {
-      // Check if user scrolled near bottom (within 300px of bottom)
-      const scrollTop = window.scrollY
-      const windowHeight = window.innerHeight
-      const documentHeight = document.documentElement.scrollHeight
-
-      if (scrollTop + windowHeight >= documentHeight - 300 && hasMore) {
-        // Load more items
-        setDisplayLimit((prev) => prev + LOAD_MORE_COUNT)
-      }
-    }
-
-    // Add scroll event listener
-    window.addEventListener('scroll', handleScroll)
-
-    // Cleanup
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [hasMore, LOAD_MORE_COUNT])
-
   return (
     <div className="bg-white">
       {showHeading && (
@@ -605,13 +584,15 @@ export default function FranchiseFiltersGrid({
               ))}
             </div>
 
-            {/* Loading indicator when more items are available */}
+            {/* Load More button when more items are available */}
             {hasMore && (
               <div className="flex justify-center pb-8 pt-4">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-                  <span className="text-sm">Loading more franchises...</span>
-                </div>
+                <Button
+                  onClick={handleLoadMore}
+                  className="px-8 py-3 text-base font-semibold bg-[#004AAD] hover:bg-[#003A8C] text-white"
+                >
+                  Load More Franchises
+                </Button>
               </div>
             )}
           </div>
