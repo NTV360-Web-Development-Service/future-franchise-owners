@@ -18,6 +18,7 @@ interface ContactInfoBlockProps {
     showMap?: boolean | null
     mapUrl?: string | null
     mapHeight?: number | null
+    anchorId?: string | null
     id?: string | null
     blockName?: string | null
     blockType?: string
@@ -42,7 +43,7 @@ export const ContactInfoBlock: React.FC<ContactInfoBlockProps> = ({ block }) => 
   const mapHeight = block.mapHeight || 300
 
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-gray-50 py-16" {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">{heading}</h2>

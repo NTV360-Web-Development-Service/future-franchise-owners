@@ -2,10 +2,70 @@ import { CollectionConfig } from 'payload'
 import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
 
+// Reusable anchor ID field for all blocks
+const anchorIdField = {
+  name: 'anchorId',
+  type: 'text' as const,
+  required: false,
+  admin: {
+    description:
+      'Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.',
+    placeholder: 'e.g., contact-form',
+    position: 'sidebar' as const,
+  },
+  validate: (value: string | null | undefined) => {
+    if (!value) return true // Optional field
+
+    // Validate format: lowercase letters, numbers, hyphens only
+    const validFormat = /^[a-z0-9-]+$/
+    if (!validFormat.test(value)) {
+      return 'Anchor ID must contain only lowercase letters, numbers, and hyphens'
+    }
+
+    return true
+  },
+}
+
 const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+  },
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        // Validate unique anchor IDs within the page
+        if (!data?.layout) return data
+
+        const anchorIds = new Map<string, string[]>()
+
+        data.layout.forEach((block: any, index: number) => {
+          if (block.anchorId) {
+            const id = block.anchorId.toLowerCase()
+            if (!anchorIds.has(id)) {
+              anchorIds.set(id, [])
+            }
+            anchorIds.get(id)!.push(`${block.blockType} (position ${index + 1})`)
+          }
+        })
+
+        // Check for duplicates
+        const duplicates: string[] = []
+        anchorIds.forEach((blocks, id) => {
+          if (blocks.length > 1) {
+            duplicates.push(`"${id}" used in: ${blocks.join(', ')}`)
+          }
+        })
+
+        if (duplicates.length > 0) {
+          throw new Error(
+            `Duplicate anchor IDs found:\n${duplicates.join('\n')}\n\nEach anchor ID must be unique within the page.`,
+          )
+        }
+
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -55,6 +115,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -167,6 +228,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'text',
               type: 'text',
@@ -313,6 +375,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'logo',
               type: 'group',
@@ -417,6 +480,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -573,6 +637,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'eyebrow',
               type: 'text',
@@ -737,6 +802,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'eyebrow',
               type: 'text',
@@ -910,6 +976,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -1003,6 +1070,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -1075,6 +1143,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -1209,6 +1278,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',
@@ -1358,6 +1428,7 @@ const Pages: CollectionConfig = {
                 position: 'sidebar',
               },
             },
+            anchorIdField,
             {
               name: 'heading',
               type: 'text',

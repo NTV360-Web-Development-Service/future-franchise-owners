@@ -4,7 +4,7 @@ import { MapPin } from 'lucide-react'
 
 /**
  * Props interface for the MapBlock component
- * 
+ *
  * @interface MapBlockProps
  * @property {Object} block - Configuration object for the map block
  * @property {string} [block.heading] - Optional heading text displayed above the map
@@ -22,6 +22,7 @@ interface MapBlockProps {
     height?: number | null
     showViewButton?: boolean | null
     buttonText?: string | null
+    anchorId?: string | null
     id?: string | null
     blockName?: string | null
     blockType?: string
@@ -30,10 +31,10 @@ interface MapBlockProps {
 
 /**
  * Extracts the full map URL from a Google Maps embed URL
- * 
+ *
  * @param {string} embedUrl - The Google Maps embed URL
  * @returns {string} The full map URL for opening in a new tab
- * 
+ *
  * @example
  * ```typescript
  * const fullUrl = getFullMapUrl('https://www.google.com/maps/d/u/0/embed?mid=123&ehbc=2E312F')
@@ -55,12 +56,12 @@ const getFullMapUrl = (embedUrl: string): string => {
 
 /**
  * MapBlock Component
- * 
+ *
  * A reusable block component for embedding Google Maps or other map services
  * into pages via Payload CMS. This component provides a responsive iframe
  * container with optional heading, description, and call-to-action button
  * for customizing the map display behavior and content.
- * 
+ *
  * Features:
  * - Responsive iframe container with configurable height
  * - Optional heading and description text
@@ -69,15 +70,15 @@ const getFullMapUrl = (embedUrl: string): string => {
  * - Error handling for missing or invalid map URLs
  * - Mobile-responsive design with proper aspect ratios
  * - Automatic extraction of full map URL from embed URL
- * 
+ *
  * @component
  * @param {MapBlockProps} props - The component props
  * @param {Object} props.block - Configuration object from Payload CMS
  * @returns {React.ReactElement} The rendered MapBlock component
- * 
+ *
  * @example
  * ```tsx
- * <MapBlock 
+ * <MapBlock
  *   block={{
  *     heading: "Find Us",
  *     description: "Visit our locations",
@@ -88,11 +89,11 @@ const getFullMapUrl = (embedUrl: string): string => {
  *   }}
  * />
  * ```
- * 
+ *
  * @example
  * // Minimal usage with just map URL
  * ```tsx
- * <MapBlock 
+ * <MapBlock
  *   block={{
  *     mapUrl: "https://www.google.com/maps/embed?..."
  *   }}
@@ -102,8 +103,12 @@ const getFullMapUrl = (embedUrl: string): string => {
 export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
   // Handle null values from CMS and provide defaults
   const heading = block.heading || 'Find Franchise Opportunities Near You'
-  const description = block.description || 'Explore our network of franchise locations and discover opportunities in your area.'
-  const mapUrl = block.mapUrl || 'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F'
+  const description =
+    block.description ||
+    'Explore our network of franchise locations and discover opportunities in your area.'
+  const mapUrl =
+    block.mapUrl ||
+    'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F'
   const height = block.height || 450
   const showViewButton = block.showViewButton ?? true
   const buttonText = block.buttonText || 'View Full Directory'
@@ -120,7 +125,7 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
   const fullMapUrl = getFullMapUrl(mapUrl)
 
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-gray-50 py-16" {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -128,9 +133,7 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
             <MapPin className="w-8 h-8 text-[#004AAD] mr-3" />
             <h2 className="text-3xl font-bold text-gray-900">{heading}</h2>
           </div>
-          {description && (
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">{description}</p>
-          )}
+          {description && <p className="text-lg text-gray-600 max-w-3xl mx-auto">{description}</p>}
         </div>
 
         {/* Map Container */}
@@ -149,7 +152,7 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
                 className="w-full"
               />
             </div>
-            
+
             {/* View Full Map Button */}
             {showViewButton && fullMapUrl && (
               <div className="p-6 bg-white border-t">

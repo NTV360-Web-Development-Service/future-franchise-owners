@@ -38,6 +38,7 @@ export interface CallToActionBlockProps {
     overlayOpacity?: number | null
     ctas?: CTAButtonConfig[] | null
     smallPrint?: string | null
+    anchorId?: string | null
     id?: string | null
     blockName?: string | null
   }
@@ -153,7 +154,12 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
   const validCTAs = (ctas || []).filter((cta) => cta && cta.label && cta.url)
 
   return (
-    <section className="relative overflow-hidden" style={sectionStyle} aria-label="Call to action">
+    <section
+      className="relative overflow-hidden"
+      style={sectionStyle}
+      aria-label="Call to action"
+      {...(block.anchorId && { id: block.anchorId })}
+    >
       {showOverlay && <div className="absolute inset-0" style={overlayStyles} aria-hidden="true" />}
 
       <div className="relative z-10">

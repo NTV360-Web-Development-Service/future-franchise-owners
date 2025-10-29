@@ -47,6 +47,8 @@ interface HeroBlockComponentProps {
           label: string
         }[]
       | null
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -115,6 +117,7 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
         fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
       }}
       aria-label="Hero"
+      {...(block.anchorId && { id: block.anchorId })}
     >
       {/* Optimized Background Image using Next.js Image */}
       <Image

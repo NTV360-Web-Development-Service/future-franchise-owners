@@ -37,6 +37,8 @@ type FranchiseGridBlockProps = {
     industry?: string | { id: string; [key: string]: any } | null
     /** Maximum number of franchises to display (automatic mode only) */
     limit?: number | null
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -202,7 +204,10 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
 
   // Render with or without filters based on showFilters setting (works for both modes)
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section
+      className="container mx-auto px-4 sm:px-6 lg:px-8 py-16"
+      {...(block.anchorId && { id: block.anchorId })}
+    >
       {block.showFilters ? (
         <FranchiseFiltersGrid
           franchises={franchises}

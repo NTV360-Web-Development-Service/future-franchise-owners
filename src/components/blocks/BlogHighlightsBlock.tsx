@@ -79,6 +79,8 @@ interface BlogHighlightsBlockProps {
     viewAllLink?: string | null
     /** Show "View All Posts" button */
     showViewAllButton?: boolean | null
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -236,7 +238,7 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
 
   if (posts.length === 0) {
     return (
-      <section>
+      <section {...(block.anchorId && { id: block.anchorId })}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-slate-800 mb-4">{heading}</h2>
@@ -249,7 +251,7 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
   }
 
   return (
-    <section>
+    <section {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-slate-800 mb-4">{heading}</h2>

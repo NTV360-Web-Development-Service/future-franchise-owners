@@ -47,6 +47,7 @@ export interface AboutTeaserBlockProps {
     highlights?: HighlightItem[] | null
     ctas?: CTAConfig[] | null
     image?: string | Media | null
+    anchorId?: string | null
     id?: string | null
     blockName?: string | null
   }
@@ -125,7 +126,7 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
   const altText: string = imageAlt ?? heading ?? 'Future Franchise Owners consultants'
 
   return (
-    <section className="bg-slate-50 py-16">
+    <section className="bg-slate-50 py-16" {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto grid gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,_1fr)_minmax(320px,_420px)] lg:items-center lg:gap-16 lg:px-8">
         <div>
           {eyebrow && (

@@ -26,6 +26,7 @@ interface FormBuilderBlockProps {
     formFields?: FormField[] | null
     submitButtonText?: string | null
     successMessage?: string | null
+    anchorId?: string | null
     id?: string | null
     blockName?: string | null
     blockType?: string
@@ -187,7 +188,7 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
 
   if (isSuccess) {
     return (
-      <section className="bg-white py-16">
+      <section className="bg-white py-16" {...(block.anchorId && { id: block.anchorId })}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
@@ -208,7 +209,7 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
   }
 
   return (
-    <section className="bg-white py-16">
+    <section className="bg-white py-16" {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">

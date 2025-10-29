@@ -71,6 +71,8 @@ interface TeamSectionBlockProps {
     layoutMode?: 'grid' | 'carousel' | null
     /** Array of team members */
     teamMembers?: TeamMember[] | null
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -189,7 +191,7 @@ export default async function TeamSectionBlock({ block }: TeamSectionBlockProps)
   // Handle empty state
   if (!teamMembers || teamMembers.length === 0) {
     return (
-      <section className="py-16">
+      <section className="py-16" {...(block.anchorId && { id: block.anchorId })}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">{heading}</h2>
@@ -202,7 +204,7 @@ export default async function TeamSectionBlock({ block }: TeamSectionBlockProps)
   }
 
   return (
-    <section className="py-16">
+    <section className="py-16" {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">

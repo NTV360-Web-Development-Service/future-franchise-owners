@@ -192,6 +192,10 @@ export interface Page {
          */
         published?: boolean | null;
         /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
          * Section heading (optional)
          */
         heading?: string | null;
@@ -240,6 +244,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         /**
          * The text to display in the ribbon (e.g., "Special Offer: 50% Off First Month!")
          */
@@ -299,6 +307,10 @@ export interface Page {
          */
         published?: boolean | null;
         /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
          * Logo configuration - either image or text fallback
          */
         logo?: {
@@ -351,6 +363,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         heading: string;
         subheading: {
           root: {
@@ -420,6 +436,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         /**
          * Short label shown above the heading (e.g., "Our Purpose")
          */
@@ -500,6 +520,10 @@ export interface Page {
          */
         published?: boolean | null;
         /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
          * Optional kicker text shown above the heading (e.g., "Let's Talk")
          */
         eyebrow?: string | null;
@@ -577,6 +601,10 @@ export interface Page {
          */
         published?: boolean | null;
         /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
          * Section heading (e.g., "Latest Insights", "Recent Articles")
          */
         heading?: string | null;
@@ -622,6 +650,10 @@ export interface Page {
          */
         published?: boolean | null;
         /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
          * Section heading (e.g., "Explore Our Locations", "Find Opportunities")
          */
         heading?: string | null;
@@ -654,6 +686,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         /**
          * Section heading (e.g., "Our Team", "Meet the Experts")
          */
@@ -717,6 +753,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         /**
          * Form heading (e.g., "Contact Us", "Request Information")
          */
@@ -782,6 +822,10 @@ export interface Page {
          * ✅ Published | ⬜ Unpublished (hidden from visitors)
          */
         published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
         /**
          * Section heading (e.g., "Reach Us", "Get in Touch")
          */
@@ -1255,6 +1299,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               displayMode?: T;
               selectedFranchises?: T;
@@ -1272,6 +1317,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               text?: T;
               backgroundColor?: T;
               textColor?: T;
@@ -1294,6 +1340,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               logo?:
                 | T
                 | {
@@ -1321,6 +1368,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               subheading?: T;
               image?: T;
@@ -1347,6 +1395,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               eyebrow?: T;
               heading?: T;
               description?: T;
@@ -1374,6 +1423,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               eyebrow?: T;
               heading?: T;
               description?: T;
@@ -1401,6 +1451,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               subheading?: T;
               feedUrl?: T;
@@ -1417,6 +1468,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               description?: T;
               mapUrl?: T;
@@ -1430,6 +1482,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               subheading?: T;
               layoutMode?: T;
@@ -1450,6 +1503,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               description?: T;
               formFields?:
@@ -1479,6 +1533,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               published?: T;
+              anchorId?: T;
               heading?: T;
               contactDetails?:
                 | T

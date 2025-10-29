@@ -35,6 +35,8 @@ interface RibbonBlockProps {
     }
     /** Whether the ribbon can be dismissed by users */
     dismissible?: boolean | null
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -95,7 +97,11 @@ export default function RibbonBlock({ block }: RibbonBlockProps) {
   }
 
   const ribbonContent = (
-    <div className="relative w-full overflow-hidden flex items-center py-2" style={ribbonStyle}>
+    <div
+      className="relative w-full overflow-hidden flex items-center py-2"
+      style={ribbonStyle}
+      {...(block.anchorId && { id: block.anchorId })}
+    >
       {isMoving ? (
         <Marquee
           gradient={false}

@@ -13,6 +13,8 @@ import type { Media } from '@/types/payload'
 interface NavbarBlockProps {
   /** Block configuration from Payload CMS */
   block: {
+    /** Optional anchor ID for fragment navigation */
+    anchorId?: string | null
     /** Unique identifier for the block */
     id?: string | null
     /** Optional block name for admin reference */
@@ -49,7 +51,7 @@ interface NavbarBlockProps {
 
 /**
  * NavbarBlock - A responsive navigation header component
- * 
+ *
  * Features:
  * - Responsive design with mobile hamburger menu
  * - Logo support (image or text fallback)
@@ -57,7 +59,7 @@ interface NavbarBlockProps {
  * - Call-to-action button
  * - Sticky positioning
  * - Mobile menu with overlay
- * 
+ *
  * @param props - Component props
  * @returns JSX element containing the navigation header
  */
@@ -94,7 +96,10 @@ export default function NavbarBlock({ block }: NavbarBlockProps) {
   const logoText = block.logo?.text || 'FFO'
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white">
+    <header
+      className="sticky top-0 z-50 border-b bg-white"
+      {...(block.anchorId && { id: block.anchorId })}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Brand */}
