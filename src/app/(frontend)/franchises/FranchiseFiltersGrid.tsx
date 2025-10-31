@@ -184,7 +184,7 @@ export default function FranchiseFiltersGrid({
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [activeTabFilter, setActiveTabFilter] = useState<string | null>(null) // For Top Pick, Sponsored, Featured
-  const [sortBy, setSortBy] = useState<SortOption>('recent')
+  const [sortBy, setSortBy] = useState<SortOption>('alphabetical')
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
   // Pagination state
