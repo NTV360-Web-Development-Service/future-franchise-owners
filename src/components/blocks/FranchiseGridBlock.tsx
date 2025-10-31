@@ -158,8 +158,10 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
     const agentTitle = agent?.title ?? undefined
     const agentPhotoUrl = agent?.photo?.url ?? undefined
 
-    // Extract industry name from relationship
-    const industry = typeof doc?.industry === 'object' ? doc.industry : undefined
+    // Extract industry name from relationship (now an array, use first one)
+    const industries = Array.isArray(doc?.industry) ? doc.industry : []
+    const industry =
+      industries.length > 0 && typeof industries[0] === 'object' ? industries[0] : undefined
     const categoryName = industry?.name ?? 'Uncategorized'
     const categoryIcon = industry?.icon ?? undefined
 

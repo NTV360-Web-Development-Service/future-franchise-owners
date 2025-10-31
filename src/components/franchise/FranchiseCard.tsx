@@ -153,10 +153,10 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col px-4">
       {/* Image: prefer franchise logo, fallback to sample */}
       <Wrapper>
-        <div className="relative w-full aspect-[16/9]">
+        <div className="relative w-full aspect-[16/9] border rounded-md overflow-hidden">
           <Image
             src={franchise.imageUrl || '/images/free-nature-images.jpg'}
             alt={franchise.imageAlt || `${franchise.name} logo`}
