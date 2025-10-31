@@ -127,14 +127,13 @@ export const Franchises: CollectionConfig = {
     },
     {
       name: 'shortDescription',
-      type: 'textarea',
+      type: 'text',
       required: false,
       admin: {
-        description:
-          'Brief summary - Used for cards, previews, and SEO meta descriptions. Character count shown below.',
+        description: 'Brief summary - Used for cards, previews, and SEO meta descriptions.',
         placeholder: 'A concise overview of this franchise opportunity...',
         components: {
-          Field: '@/components/admin/ShortDescriptionField#default',
+          Field: '@/collections/fields/ShortDescriptionField',
         },
       },
     },

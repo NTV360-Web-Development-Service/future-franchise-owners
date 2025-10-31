@@ -936,7 +936,7 @@ export interface Franchise {
    */
   isTopPick?: boolean | null;
   /**
-   * ⚠️ Brief summary (recommended 200 characters or less) - Used for cards, previews, and SEO meta descriptions. Longer text may be truncated in some views.
+   * Brief summary - Used for cards, previews, and SEO meta descriptions.
    */
   shortDescription?: string | null;
   /**
