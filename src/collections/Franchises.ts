@@ -129,11 +129,16 @@ export const Franchises: CollectionConfig = {
       name: 'shortDescription',
       type: 'textarea',
       required: false,
-      maxLength: 200,
       admin: {
         description:
-          'Brief summary (max 200 characters) - Used for cards, previews, and SEO meta descriptions',
+          'Brief summary (recommended 200 characters or less) - Used for cards, previews, and SEO meta descriptions',
         placeholder: 'A concise overview of this franchise opportunity...',
+      },
+      validate: (value) => {
+        if (value && value.length > 200) {
+          return `Warning: ${value.length} characters. Recommended to keep under 200 characters for optimal display.`
+        }
+        return true
       },
     },
     {
