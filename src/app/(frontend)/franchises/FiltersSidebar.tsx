@@ -89,25 +89,25 @@ export default function FiltersSidebar({
           <div className="mt-3">
             <div className="flex flex-wrap gap-2">
               <Button
-                variant={sortBy === 'relevance' ? 'default' : 'outline'}
+                variant={sortBy === 'alphabetical' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => onSortByChange('relevance')}
+                onClick={() => onSortByChange('alphabetical')}
               >
-                Relevance
+                Alphabetically
               </Button>
               <Button
-                variant={sortBy === 'best' ? 'default' : 'outline'}
+                variant={sortBy === 'recent' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => onSortByChange('best')}
+                onClick={() => onSortByChange('recent')}
               >
-                Best Score
+                Recently Added
               </Button>
               <Button
                 variant={sortBy === 'cash' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => onSortByChange('cash')}
               >
-                Cash Required
+                Price: Low to High
               </Button>
             </div>
           </div>

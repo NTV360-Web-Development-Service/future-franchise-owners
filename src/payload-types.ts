@@ -936,7 +936,11 @@ export interface Franchise {
    */
   isTopPick?: boolean | null;
   /**
-   * Detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.
+   * Brief summary (max 200 characters) - Used for cards, previews, and SEO meta descriptions
+   */
+  shortDescription?: string | null;
+  /**
+   * Full detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.
    */
   description?: {
     root: {
@@ -954,9 +958,9 @@ export interface Franchise {
     [k: string]: unknown;
   } | null;
   /**
-   * Primary industry/category for this franchise
+   * Industries/categories for this franchise (can select multiple)
    */
-  industry: string | Industry;
+  industry?: (string | Industry)[] | null;
   /**
    * Feature tags (e.g., Low Cost, Home Based, Financing Available)
    */
@@ -1577,6 +1581,7 @@ export interface FranchisesSelect<T extends boolean = true> {
   isFeatured?: T;
   isSponsored?: T;
   isTopPick?: T;
+  shortDescription?: T;
   description?: T;
   industry?: T;
   tags?: T;

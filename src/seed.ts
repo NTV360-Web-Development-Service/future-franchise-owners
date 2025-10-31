@@ -314,7 +314,7 @@ const seed = async () => {
           min: 150000,
           max: 300000,
         },
-        industry: industryFitness.id,
+        industry: [industryFitness.id],
         tags: [tagLowCost.id, tagFinancing.id],
         assignedAgent: agent1.id,
         isFeatured: true,
@@ -361,7 +361,7 @@ const seed = async () => {
           min: 75000,
           max: 150000,
         },
-        industry: industryFood.id,
+        industry: [industryFood.id],
         tags: [tagHomeBased.id, tagQuickStart.id],
         assignedAgent: agent2.id,
         isFeatured: true,
@@ -408,7 +408,7 @@ const seed = async () => {
           min: 50000,
           max: 100000,
         },
-        industry: industryRetail.id, // Using retail as fallback since we don't have a health category
+        industry: [industryRetail.id], // Using retail as fallback since we don't have a health category
         tags: [tagHighDemand.id, tagRecessionProof.id],
         assignedAgent: agent1.id,
         isTopPick: true,

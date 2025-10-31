@@ -73,7 +73,8 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
   }
 
   // Extract data
-  const industry = typeof franchise.industry === 'object' ? franchise.industry : null
+  const industries = Array.isArray(franchise.industry) ? franchise.industry : []
+  const industry = industries.length > 0 && typeof industries[0] === 'object' ? industries[0] : null
   const agent = typeof franchise.assignedAgent === 'object' ? franchise.assignedAgent : null
   const logo = typeof franchise.logo === 'object' ? franchise.logo : null
   const agentPhoto = agent && typeof agent.photo === 'object' ? agent.photo : null

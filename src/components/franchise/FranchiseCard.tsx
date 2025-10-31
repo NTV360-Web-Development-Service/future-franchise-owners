@@ -66,6 +66,10 @@ export type Franchise = {
   agentTitle?: string
   /** Assigned agent photo URL */
   agentPhotoUrl?: string
+  /** Date when franchise was last updated */
+  updatedAt?: string
+  /** Date when franchise was created */
+  createdAt?: string
 }
 
 /**

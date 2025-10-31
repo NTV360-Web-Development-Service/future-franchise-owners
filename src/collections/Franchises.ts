@@ -126,8 +126,20 @@ export const Franchises: CollectionConfig = {
       },
     },
     {
+      name: 'shortDescription',
+      type: 'textarea',
+      required: false,
+      maxLength: 200,
+      admin: {
+        description:
+          'Brief summary (max 200 characters) - Used for cards, previews, and SEO meta descriptions',
+        placeholder: 'A concise overview of this franchise opportunity...',
+      },
+    },
+    {
       name: 'description',
       type: 'richText',
+      required: false,
       editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
           ...defaultFeatures,
@@ -166,17 +178,17 @@ export const Franchises: CollectionConfig = {
       }),
       admin: {
         description:
-          'Detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.',
+          'Full detailed description with support for links to pages and franchises. Paste HTML for advanced formatting.',
       },
     },
     {
       name: 'industry',
       type: 'relationship',
       relationTo: 'industries',
-      required: true,
-      hasMany: false,
+      required: false,
+      hasMany: true,
       admin: {
-        description: 'Primary industry/category for this franchise',
+        description: 'Industries/categories for this franchise (can select multiple)',
         allowCreate: true,
       },
     },

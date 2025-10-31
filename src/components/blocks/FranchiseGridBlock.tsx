@@ -196,6 +196,8 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       agentTitle,
       agentPhotoUrl,
       href: `/franchises/${doc.id}`,
+      updatedAt: doc.updatedAt,
+      createdAt: doc.createdAt,
     }
   })
 

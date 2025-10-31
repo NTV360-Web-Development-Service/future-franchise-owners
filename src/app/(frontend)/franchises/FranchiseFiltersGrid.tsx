@@ -41,7 +41,7 @@ interface FranchiseFiltersGridProps {
 /**
  * Sort options for franchise listings
  */
-type SortOption = 'relevance' | 'best' | 'cash'
+type SortOption = 'alphabetical' | 'recent' | 'cash'
 
 /**
  * Reusable expand/collapse icon component
@@ -184,7 +184,7 @@ export default function FranchiseFiltersGrid({
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [activeTabFilter, setActiveTabFilter] = useState<string | null>(null) // For Top Pick, Sponsored, Featured
-  const [sortBy, setSortBy] = useState<SortOption>('relevance')
+  const [sortBy, setSortBy] = useState<SortOption>('alphabetical')
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
   // Pagination state
@@ -285,17 +285,19 @@ export default function FranchiseFiltersGrid({
     // Apply sorting
     result.sort((a, b) => {
       switch (sortBy) {
-        case 'best': {
-          const scoreA = extractBestScore(a.tags.map((t) => t.name)) ?? -Infinity
-          const scoreB = extractBestScore(b.tags.map((t) => t.name)) ?? -Infinity
-          return scoreB - scoreA
+        case 'alphabetical': {
+          return a.name.localeCompare(b.name)
+        }
+        case 'recent': {
+          const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime()
+          const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime()
+          return dateB - dateA // Most recent first
         }
         case 'cash': {
           return parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
         }
-        case 'relevance':
         default:
-          return 0 // Keep original order
+          return 0
       }
     })
 
@@ -422,8 +424,8 @@ export default function FranchiseFiltersGrid({
                     <SelectValue placeholder="Sort by..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="relevance">Most Popular</SelectItem>
-                    <SelectItem value="best">Best Rating</SelectItem>
+                    <SelectItem value="alphabetical">Alphabetically</SelectItem>
+                    <SelectItem value="recent">Recently Added</SelectItem>
                     <SelectItem value="cash">Price: Low to High</SelectItem>
                   </SelectContent>
                 </Select>
