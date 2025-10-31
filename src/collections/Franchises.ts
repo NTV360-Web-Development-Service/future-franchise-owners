@@ -131,14 +131,11 @@ export const Franchises: CollectionConfig = {
       required: false,
       admin: {
         description:
-          'Brief summary (recommended 200 characters or less) - Used for cards, previews, and SEO meta descriptions',
+          'Brief summary - Used for cards, previews, and SEO meta descriptions. Character count shown below.',
         placeholder: 'A concise overview of this franchise opportunity...',
-      },
-      validate: (value) => {
-        if (value && value.length > 200) {
-          return `Warning: ${value.length} characters. Recommended to keep under 200 characters for optimal display.`
-        }
-        return true
+        components: {
+          Field: '@/components/admin/ShortDescriptionField#default',
+        },
       },
     },
     {
