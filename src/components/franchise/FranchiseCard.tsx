@@ -22,6 +22,7 @@ import {
   LucideIcon,
 } from '@/components'
 import { extractBestScore } from '@/lib/franchise'
+import { DragScroll } from '@/components/ui/drag-scroll'
 
 /**
  * Franchise data interface for card display
@@ -36,10 +37,12 @@ import { extractBestScore } from '@/lib/franchise'
 export type Franchise = {
   /** Franchise business name */
   name: string
-  /** Business category (e.g., "Food and Beverage") */
+  /** Business category (e.g., "Food and Beverage") - for backward compatibility */
   category: string
   /** Optional Lucide icon name for the category */
   categoryIcon?: string
+  /** Array of categories/industries */
+  categories?: Array<{ name: string; icon?: string }>
   /** Franchise description */
   description: string
   /** Required cash investment (formatted string) */
@@ -153,7 +156,7 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
   }
 
   return (
-    <Card className="h-full flex flex-col px-4">
+    <Card className="h-full flex flex-col px-4 min-w-0">
       {/* Image: prefer franchise logo, fallback to sample */}
       <Wrapper>
         <div className="relative w-full aspect-[16/9] border rounded-md overflow-hidden">
@@ -169,9 +172,9 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
         </div>
       </Wrapper>
 
-      <CardHeader className="border-b">
-        <CardTitle className="flex items-center justify-between">
-          <span>
+      <CardHeader className="border-b min-w-0">
+        <div className="space-y-2">
+          <CardTitle className="text-lg">
             {franchise.href ? (
               <Link href={franchise.href} className="hover:underline">
                 {franchise.name}
@@ -179,8 +182,8 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
             ) : (
               franchise.name
             )}
-          </span>
-          <div className="flex items-center gap-2">
+          </CardTitle>
+          <div className="flex items-center gap-2 flex-wrap">
             {franchise.isTopPick && (
               <Badge className="flex items-center gap-1 bg-red-600 text-white hover:bg-red-700 border-red-600">
                 <LucideIcon name="Flame" size={12} />
@@ -201,19 +204,38 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
             )}
             {bestScore && <Badge variant="secondary">{`Best Score ${bestScore}`}</Badge>}
           </div>
-        </CardTitle>
-        <CardDescription className="flex items-center gap-2">
-          <Badge variant="outline" className="flex items-center gap-1.5">
-            {franchise.categoryIcon && <LucideIcon name={franchise.categoryIcon} size={14} />}
-            {franchise.category}
-          </Badge>
-          {variant === 'featured' && (
-            <span className="text-xs text-muted-foreground">Added recently</span>
-          )}
+        </div>
+        <CardDescription className="w-full overflow-hidden">
+          <DragScroll className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-2 max-w-full">
+            {franchise.categories && franchise.categories.length > 0 ? (
+              <>
+                {franchise.categories.map((cat, idx) => (
+                  <Badge
+                    key={idx}
+                    variant="outline"
+                    className="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                  >
+                    {cat.icon && <LucideIcon name={cat.icon} size={14} />}
+                    {cat.name}
+                  </Badge>
+                ))}
+              </>
+            ) : (
+              <Badge variant="outline" className="flex items-center gap-1.5 flex-shrink-0">
+                {franchise.categoryIcon && <LucideIcon name={franchise.categoryIcon} size={14} />}
+                {franchise.category}
+              </Badge>
+            )}
+            {variant === 'featured' && (
+              <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
+                Added recently
+              </span>
+            )}
+          </DragScroll>
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="pt-4 flex-1">
+      <CardContent className="pt-4 flex-1 min-w-0">
         <div>
           <p
             className="text-sm text-muted-foreground inline"
@@ -263,30 +285,30 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
         )}
       </CardContent>
 
-      <CardFooter className="flex flex-wrap gap-2 border-t">
-        <Badge>Cash Required: {franchise.cashRequired}</Badge>
-        {visibleTags.map((tag) => (
-          <Badge
-            key={tag.name}
-            variant="outline"
-            style={
-              tag.color
-                ? {
-                    backgroundColor: tag.color,
-                    color: tag.textColor || '#ffffff',
-                    borderColor: tag.color,
-                  }
-                : undefined
-            }
-          >
-            {tag.name}
+      <CardFooter className="border-t block p-4 w-full overflow-hidden min-w-0">
+        <DragScroll className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-2 max-w-full">
+          <Badge className="flex-shrink-0 whitespace-nowrap">
+            Cash Required: {franchise.cashRequired}
           </Badge>
-        ))}
-        {remainingCount > 0 && (
-          <Badge variant="secondary" className="text-xs">
-            +{remainingCount} more
-          </Badge>
-        )}
+          {filteredTags.map((tag) => (
+            <Badge
+              key={tag.name}
+              variant="outline"
+              className="flex-shrink-0 whitespace-nowrap"
+              style={
+                tag.color
+                  ? {
+                      backgroundColor: tag.color,
+                      color: tag.textColor || '#ffffff',
+                      borderColor: tag.color,
+                    }
+                  : undefined
+              }
+            >
+              {tag.name}
+            </Badge>
+          ))}
+        </DragScroll>
       </CardFooter>
     </Card>
   )

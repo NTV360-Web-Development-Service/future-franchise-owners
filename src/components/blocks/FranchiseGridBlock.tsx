@@ -158,8 +158,16 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
     const agentTitle = agent?.title ?? undefined
     const agentPhotoUrl = agent?.photo?.url ?? undefined
 
-    // Extract industry name from relationship (now an array, use first one)
+    // Extract industries from relationship (now an array)
     const industries = Array.isArray(doc?.industry) ? doc.industry : []
+    const categoriesArray = industries
+      .filter((ind: any) => typeof ind === 'object' && ind.name)
+      .map((ind: any) => ({
+        name: ind.name,
+        icon: ind.icon || undefined,
+      }))
+
+    // For backward compatibility, use first industry as primary category
     const industry =
       industries.length > 0 && typeof industries[0] === 'object' ? industries[0] : undefined
     const categoryName = industry?.name ?? 'Uncategorized'
@@ -185,6 +193,7 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       name: doc.businessName || 'Untitled Franchise',
       category: categoryName,
       categoryIcon,
+      categories: categoriesArray.length > 0 ? categoriesArray : undefined,
       description: extractPlainText(doc.description) || 'View details for this franchise',
       cashRequired,
       tags,

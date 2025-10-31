@@ -142,3 +142,34 @@
     font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
   }
 }
+
+/* Thin scrollbar for horizontal scroll */
+.scrollbar-thin {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #cbd5e1 transparent; /* Firefox - thumb and track color */
+  cursor: grab;
+  user-select: none;
+}
+
+.scrollbar-thin:active {
+  cursor: grabbing;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 1px; /* Very thin scrollbar height */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Light gray */
+  border-radius: 1px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Darker gray on hover */
+}

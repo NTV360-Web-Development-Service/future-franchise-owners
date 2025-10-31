@@ -575,11 +575,7 @@ export default function FranchiseFiltersGrid({
               {displayedFranchises.map((franchise) => (
                 <div
                   key={franchise.href ?? franchise.name}
-                  className={
-                    displayedFranchises.length <= 1
-                      ? 'max-w-sm sm:max-w-md lg:max-w-md justify-self-start'
-                      : ''
-                  }
+                  className="w-full max-w-sm justify-self-start"
                 >
                   <FranchiseCard franchise={franchise} variant="grid" />
                 </div>
