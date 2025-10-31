@@ -12,7 +12,7 @@ import {
 } from '@/components'
 import FranchiseCard, { type Franchise } from '@/components/franchise/FranchiseCard'
 import { parseCurrencyToNumber, extractBestScore } from '@/lib/franchise'
-import { Award, DollarSign, Star } from 'lucide-react'
+import { Award, DollarSign, Star, ArrowUpDown } from 'lucide-react'
 
 /**
  * Investment range configuration for filtering franchises by cash required
@@ -185,6 +185,7 @@ export default function FranchiseFiltersGrid({
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [activeTabFilter, setActiveTabFilter] = useState<string | null>(null) // For Top Pick, Sponsored, Featured
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical')
+  const [sortAscending, setSortAscending] = useState<boolean>(true)
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
   // Pagination state
@@ -198,9 +199,18 @@ export default function FranchiseFiltersGrid({
 
   /**
    * Extract unique categories from franchise data (sorted alphabetically)
+   * Includes all industries from franchises with multiple industries
    */
   const categories = useMemo(() => {
-    const categorySet = new Set(franchises.map((franchise) => franchise.category))
+    const categorySet = new Set<string>()
+    franchises.forEach((franchise) => {
+      // Add primary category for backward compatibility
+      categorySet.add(franchise.category)
+      // Add all categories from the categories array
+      if (franchise.categories && franchise.categories.length > 0) {
+        franchise.categories.forEach((cat) => categorySet.add(cat.name))
+      }
+    })
     return Array.from(categorySet).sort((a, b) => a.localeCompare(b))
   }, [franchises])
 
@@ -252,18 +262,27 @@ export default function FranchiseFiltersGrid({
     // Apply search filter
     if (search.trim()) {
       const searchQuery = search.toLowerCase()
-      result = result.filter(
-        (franchise) =>
-          franchise.name.toLowerCase().includes(searchQuery) ||
-          franchise.category.toLowerCase().includes(searchQuery) ||
-          franchise.description.toLowerCase().includes(searchQuery),
-      )
+      result = result.filter((franchise) => {
+        const nameMatch = franchise.name.toLowerCase().includes(searchQuery)
+        const descMatch = franchise.description.toLowerCase().includes(searchQuery)
+        const categoryMatch = franchise.category.toLowerCase().includes(searchQuery)
+        const categoriesMatch =
+          franchise.categories?.some((cat) => cat.name.toLowerCase().includes(searchQuery)) || false
+        return nameMatch || descMatch || categoryMatch || categoriesMatch
+      })
     }
 
     // Apply category filter
     if (selectedCategories.length > 0) {
       const allowedCategories = new Set(selectedCategories)
-      result = result.filter((franchise) => allowedCategories.has(franchise.category))
+      result = result.filter((franchise) => {
+        // Check if franchise has any of the selected categories
+        // Support both single category (backward compat) and multiple categories
+        if (franchise.categories && franchise.categories.length > 0) {
+          return franchise.categories.some((cat) => allowedCategories.has(cat.name))
+        }
+        return allowedCategories.has(franchise.category)
+      })
     }
 
     // Apply investment range filter (min/max inputs)
@@ -285,21 +304,24 @@ export default function FranchiseFiltersGrid({
 
     // Apply sorting
     result.sort((a, b) => {
+      let comparison = 0
       switch (sortBy) {
         case 'alphabetical': {
-          return a.name.localeCompare(b.name)
+          comparison = a.name.localeCompare(b.name)
+          break
         }
         case 'recent': {
           const dateA = new Date(a.updatedAt || a.createdAt || 0).getTime()
           const dateB = new Date(b.updatedAt || b.createdAt || 0).getTime()
-          return dateB - dateA // Most recent first
+          comparison = dateB - dateA
+          break
         }
         case 'cash': {
-          return parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
+          comparison = parseCurrencyToNumber(a.cashRequired) - parseCurrencyToNumber(b.cashRequired)
+          break
         }
-        default:
-          return 0
       }
+      return sortAscending ? comparison : -comparison
     })
 
     return result
@@ -312,6 +334,7 @@ export default function FranchiseFiltersGrid({
     maxPrice,
     selectedTags,
     sortBy,
+    sortAscending,
   ])
 
   /**
@@ -419,8 +442,8 @@ export default function FranchiseFiltersGrid({
                 {filteredFranchises.length} franchises
               </span>
 
-              {/* Sort dropdown */}
-              <div className="relative inline-block text-left">
+              {/* Sort dropdown with direction toggle */}
+              <div className="flex items-center gap-2">
                 <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
                   <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
                     <SelectValue placeholder="Sort by..." />
@@ -428,9 +451,18 @@ export default function FranchiseFiltersGrid({
                   <SelectContent>
                     <SelectItem value="alphabetical">Alphabetically</SelectItem>
                     <SelectItem value="recent">Recently Added</SelectItem>
-                    <SelectItem value="cash">Price: Low to High</SelectItem>
+                    <SelectItem value="cash">Price</SelectItem>
                   </SelectContent>
                 </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSortAscending(!sortAscending)}
+                  className="px-2"
+                  title={sortAscending ? 'Ascending' : 'Descending'}
+                >
+                  <ArrowUpDown className="w-4 h-4" />
+                </Button>
               </div>
 
               {/* Filter toggle button */}
@@ -575,7 +607,10 @@ export default function FranchiseFiltersGrid({
               className={`grid gap-6 ${displayedFranchises.length <= 2 ? 'justify-items-center' : 'justify-items-start'} ${getGridLayout(displayedFranchises.length)} pb-8`}
             >
               {displayedFranchises.map((franchise) => (
-                <div key={franchise.href ?? franchise.name} className="w-full">
+                <div
+                  key={franchise.href ?? franchise.name}
+                  className={`w-full ${displayedFranchises.length === 1 ? 'max-w-md mx-auto' : ''}`}
+                >
                   <FranchiseCard franchise={franchise} variant="grid" />
                 </div>
               ))}
