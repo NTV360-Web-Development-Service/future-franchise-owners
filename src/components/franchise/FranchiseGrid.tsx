@@ -120,7 +120,7 @@ export default function FranchiseGrid({
             {filtered.map((franchise) => (
               <div
                 key={franchise.href ?? franchise.id ?? franchise.name}
-                className={`${isSingle ? 'w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto' : 'w-full max-w-sm'} h-full`}
+                className={`${isSingle ? 'w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto' : 'w-full'} h-full`}
               >
                 <FranchiseCard franchise={franchise} />
               </div>

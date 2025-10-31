@@ -374,37 +374,38 @@ export default function FranchiseFiltersGrid({
                   <button
                     type="button"
                     onClick={() => handleTabClick('Top Pick')}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
                       activeTabFilter === 'Top Pick'
                         ? 'bg-red-600 text-white border-red-600 shadow-md'
                         : 'bg-white text-gray-700 border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600'
                     }`}
                   >
-                    <Award className="w-4 h-4" />
-                    Top Pick
+                    <Award className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">Top Pick</span>
+                    <span className="xs:hidden">Top</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleTabClick('Sponsored')}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
                       activeTabFilter === 'Sponsored'
                         ? 'bg-orange-500 text-white border-orange-500 shadow-md'
                         : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
                     }`}
                   >
-                    <DollarSign className="w-4 h-4" />
+                    <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
                     Sponsored
                   </button>
                   <button
                     type="button"
                     onClick={() => handleTabClick('Featured')}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-all ${
+                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
                       activeTabFilter === 'Featured'
                         ? 'bg-green-600 text-white border-green-600 shadow-md'
                         : 'bg-white text-gray-700 border-gray-300 hover:border-green-400 hover:bg-green-50 hover:text-green-600'
                     }`}
                   >
-                    <Star className="w-4 h-4" />
+                    <Star className="w-3 h-3 sm:w-4 sm:h-4" />
                     Featured
                   </button>
                 </div>
@@ -571,13 +572,10 @@ export default function FranchiseFiltersGrid({
           {/* Results grid */}
           <div className="lg:col-span-3 min-h-0">
             <div
-              className={`grid gap-6 justify-items-start ${getGridLayout(displayedFranchises.length)} pb-8`}
+              className={`grid gap-6 ${displayedFranchises.length <= 2 ? 'justify-items-center' : 'justify-items-start'} ${getGridLayout(displayedFranchises.length)} pb-8`}
             >
               {displayedFranchises.map((franchise) => (
-                <div
-                  key={franchise.href ?? franchise.name}
-                  className="w-full max-w-sm justify-self-start"
-                >
+                <div key={franchise.href ?? franchise.name} className="w-full">
                   <FranchiseCard franchise={franchise} variant="grid" />
                 </div>
               ))}
