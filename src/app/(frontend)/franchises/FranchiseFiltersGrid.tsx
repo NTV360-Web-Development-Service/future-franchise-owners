@@ -142,7 +142,7 @@ const FilterSection = ({
       </button>
     </h3>
     <div className={`${isOpen ? 'block' : 'hidden'} pt-6`}>
-      <div className="space-y-4">{children}</div>
+      <div className="space-y-4 max-h-64 overflow-y-auto scrollbar-thin">{children}</div>
     </div>
   </div>
 )
@@ -197,16 +197,16 @@ export default function FranchiseFiltersGrid({
   const [tagsOpen, setTagsOpen] = useState<boolean>(false)
 
   /**
-   * Extract unique categories from franchise data
+   * Extract unique categories from franchise data (sorted alphabetically)
    */
   const categories = useMemo(() => {
     const categorySet = new Set(franchises.map((franchise) => franchise.category))
-    return Array.from(categorySet)
+    return Array.from(categorySet).sort((a, b) => a.localeCompare(b))
   }, [franchises])
 
   /**
    * Extract and rank popular tags from franchise data
-   * Returns the top 8 most frequently used tags
+   * Returns the top 8 most frequently used tags (sorted alphabetically)
    */
   const popularTags = useMemo(() => {
     const tagCounts = new Map<string, number>()
@@ -223,6 +223,7 @@ export default function FranchiseFiltersGrid({
       .sort((a, b) => b[1] - a[1]) // Sort by frequency (descending)
       .slice(0, 8) // Take top 8
       .map(([tag]) => tag)
+      .sort((a, b) => a.localeCompare(b)) // Sort alphabetically
   }, [franchises])
 
   /**
