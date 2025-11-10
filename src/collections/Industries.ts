@@ -93,6 +93,32 @@ export const Industries: CollectionConfig = {
         description: 'Choose an icon to represent this industry',
       },
     },
+    {
+      name: 'color',
+      label: 'Background Color',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'Badge background color (hex code) - Leave empty for default light gray',
+        components: {
+          Field: '@/collections/fields/ColorPickerField',
+        },
+      },
+    },
+    {
+      name: 'textColor',
+      label: 'Text Color',
+      type: 'text',
+      required: false,
+      defaultValue: '#ffffff',
+      admin: {
+        description:
+          'Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)',
+        components: {
+          Field: '@/collections/fields/ColorPickerField',
+        },
+      },
+    },
   ],
 }
 

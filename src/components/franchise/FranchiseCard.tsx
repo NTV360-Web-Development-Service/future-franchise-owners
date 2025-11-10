@@ -42,11 +42,14 @@ export type Franchise = {
   /** Optional Lucide icon name for the category */
   categoryIcon?: string
   /** Array of categories/industries */
-  categories?: Array<{ name: string; icon?: string }>
+  categories?: Array<{ name: string; icon?: string; color?: string; textColor?: string }>
   /** Franchise description */
   description: string
   /** Required cash investment (formatted string) */
   cashRequired: string // e.g. "$50,000"
+  /** Optional custom colors for cash required badge */
+  cashRequiredColor?: string
+  cashRequiredTextColor?: string
   /** Array of feature tags with optional colors */
   tags: Array<{ name: string; color?: string; textColor?: string }> // e.g. [{name: 'Low Cost', color: '#004AAD', textColor: '#ffffff'}]
   /** Optional link to franchise detail page */
@@ -214,6 +217,15 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
                     key={idx}
                     variant="outline"
                     className="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0"
+                    style={
+                      cat.color
+                        ? {
+                            backgroundColor: cat.color,
+                            color: cat.textColor || '#ffffff',
+                            borderColor: cat.color,
+                          }
+                        : undefined
+                    }
                   >
                     {cat.icon && <LucideIcon name={cat.icon} size={14} />}
                     {cat.name}
@@ -287,7 +299,18 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
 
       <CardFooter className="border-t block p-4 w-full overflow-hidden min-w-0">
         <DragScroll className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-2 max-w-full">
-          <Badge className="flex-shrink-0 whitespace-nowrap">
+          <Badge
+            className="flex-shrink-0 whitespace-nowrap"
+            style={
+              franchise.cashRequiredColor
+                ? {
+                    backgroundColor: franchise.cashRequiredColor,
+                    color: franchise.cashRequiredTextColor || '#ffffff',
+                    borderColor: franchise.cashRequiredColor,
+                  }
+                : undefined
+            }
+          >
             Cash Required: {franchise.cashRequired}
           </Badge>
           {filteredTags.map((tag) => (

@@ -165,6 +165,8 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       .map((ind: any) => ({
         name: ind.name,
         icon: ind.icon || undefined,
+        color: ind.color || undefined,
+        textColor: ind.textColor || undefined,
       }))
 
     // For backward compatibility, use first industry as primary category
@@ -196,6 +198,8 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
       categories: categoriesArray.length > 0 ? categoriesArray : undefined,
       description: extractPlainText(doc.description) || 'View details for this franchise',
       cashRequired,
+      cashRequiredColor: doc?.investment?.badgeColor || undefined,
+      cashRequiredTextColor: doc?.investment?.badgeTextColor || undefined,
       tags,
       isFeatured: !!doc.isFeatured,
       isSponsored: !!doc.isSponsored,

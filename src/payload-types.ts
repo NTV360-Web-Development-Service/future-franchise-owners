@@ -971,6 +971,14 @@ export interface Franchise {
   investment?: {
     min?: number | null;
     max?: number | null;
+    /**
+     * Custom background color for the "Cash Required" badge (hex code) - Leave empty for default
+     */
+    badgeColor?: string | null;
+    /**
+     * Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)
+     */
+    badgeTextColor?: string | null;
   };
   /**
    * Franchise logo or primary image
@@ -1037,6 +1045,14 @@ export interface Industry {
         | 'Music'
       )
     | null;
+  /**
+   * Badge background color (hex code) - Leave empty for default light gray
+   */
+  color?: string | null;
+  /**
+   * Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)
+   */
+  textColor?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1590,6 +1606,8 @@ export interface FranchisesSelect<T extends boolean = true> {
     | {
         min?: T;
         max?: T;
+        badgeColor?: T;
+        badgeTextColor?: T;
       };
   logo?: T;
   assignedAgent?: T;
@@ -1606,6 +1624,8 @@ export interface IndustriesSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   icon?: T;
+  color?: T;
+  textColor?: T;
   updatedAt?: T;
   createdAt?: T;
 }

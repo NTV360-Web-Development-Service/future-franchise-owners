@@ -862,6 +862,7 @@ const Pages: CollectionConfig = {
               defaultValue: '#004AAD',
               admin: {
                 description: 'Hex color used when background style is set to "Solid Color"',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'color',
               },
             },
             {
@@ -871,6 +872,7 @@ const Pages: CollectionConfig = {
               defaultValue: 'linear-gradient(135deg, #004AAD 0%, #001C40 50%, #000814 100%)',
               admin: {
                 description: 'CSS gradient value used when background style is "Gradient"',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'gradient',
               },
             },
             {
@@ -880,6 +882,7 @@ const Pages: CollectionConfig = {
               required: false,
               admin: {
                 description: 'Background image used when background style is "Image"',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'image',
               },
             },
             {

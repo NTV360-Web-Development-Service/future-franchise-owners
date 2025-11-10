@@ -213,6 +213,33 @@ export const Franchises: CollectionConfig = {
       fields: [
         { name: 'min', type: 'number' },
         { name: 'max', type: 'number' },
+        {
+          name: 'badgeColor',
+          label: 'Badge Background Color',
+          type: 'text',
+          required: false,
+          admin: {
+            description:
+              'Custom background color for the "Cash Required" badge (hex code) - Leave empty for default',
+            components: {
+              Field: '@/collections/fields/ColorPickerField',
+            },
+          },
+        },
+        {
+          name: 'badgeTextColor',
+          label: 'Badge Text Color',
+          type: 'text',
+          required: false,
+          defaultValue: '#ffffff',
+          admin: {
+            description:
+              'Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)',
+            components: {
+              Field: '@/collections/fields/ColorPickerField',
+            },
+          },
+        },
       ],
     },
     {

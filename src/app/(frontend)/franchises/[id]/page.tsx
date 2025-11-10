@@ -146,10 +146,30 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
 
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">{franchise.businessName}</h1>
 
-              {industry && (
-                <div className="flex items-center gap-2 text-xl text-white/90 mb-6">
-                  {industry.icon && <LucideIcon name={industry.icon} size={24} />}
-                  <span>{industry.name}</span>
+              {industries.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mb-6">
+                  {industries.map((ind: any, idx: number) => (
+                    <Badge
+                      key={idx}
+                      className="text-base px-3 py-1"
+                      style={
+                        ind.color
+                          ? {
+                              backgroundColor: ind.color,
+                              color: ind.textColor || '#ffffff',
+                              borderColor: ind.color,
+                            }
+                          : {
+                              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                              color: 'white',
+                              borderColor: 'rgba(255, 255, 255, 0.3)',
+                            }
+                      }
+                    >
+                      {ind.icon && <LucideIcon name={ind.icon} size={16} className="mr-1.5" />}
+                      {ind.name}
+                    </Badge>
+                  ))}
                 </div>
               )}
 
