@@ -231,7 +231,7 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
             {tags.length > 0 && (
               <Card>
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">Features & Benefits</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Tags</h2>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag: any) => {
                       const tagData = typeof tag === 'object' ? tag : null

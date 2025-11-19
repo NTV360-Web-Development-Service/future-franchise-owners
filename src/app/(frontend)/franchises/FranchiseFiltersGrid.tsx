@@ -182,7 +182,6 @@ export default function FranchiseFiltersGrid({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [minPrice, setMinPrice] = useState<number | undefined>(undefined)
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined)
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [activeTabFilter, setActiveTabFilter] = useState<string | null>(null) // For Top Pick, Sponsored, Featured
   const [sortBy, setSortBy] = useState<SortOption>('alphabetical')
   const [sortAscending, setSortAscending] = useState<boolean>(true)
@@ -195,7 +194,6 @@ export default function FranchiseFiltersGrid({
   // Collapsible section states
   const [categoryOpen, setCategoryOpen] = useState<boolean>(true)
   const [investmentOpen, setInvestmentOpen] = useState<boolean>(false)
-  const [tagsOpen, setTagsOpen] = useState<boolean>(false)
 
   /**
    * Extract unique categories from franchise data (sorted alphabetically)
@@ -212,28 +210,6 @@ export default function FranchiseFiltersGrid({
       }
     })
     return Array.from(categorySet).sort((a, b) => a.localeCompare(b))
-  }, [franchises])
-
-  /**
-   * Extract and rank popular tags from franchise data
-   * Returns the top 8 most frequently used tags (sorted alphabetically)
-   */
-  const popularTags = useMemo(() => {
-    const tagCounts = new Map<string, number>()
-
-    franchises.forEach((franchise) => {
-      franchise.tags.forEach((tag) => {
-        // Tags are now objects with name and color
-        const tagName = tag.name
-        tagCounts.set(tagName, (tagCounts.get(tagName) || 0) + 1)
-      })
-    })
-
-    return Array.from(tagCounts.entries())
-      .sort((a, b) => b[1] - a[1]) // Sort by frequency (descending)
-      .slice(0, 8) // Take top 8
-      .map(([tag]) => tag)
-      .sort((a, b) => a.localeCompare(b)) // Sort alphabetically
   }, [franchises])
 
   /**
@@ -259,7 +235,7 @@ export default function FranchiseFiltersGrid({
       })
     }
 
-    // Apply search filter
+    // Apply search filter (searches franchises and tags)
     if (search.trim()) {
       const searchQuery = search.toLowerCase()
       result = result.filter((franchise) => {
@@ -268,7 +244,8 @@ export default function FranchiseFiltersGrid({
         const categoryMatch = franchise.category.toLowerCase().includes(searchQuery)
         const categoriesMatch =
           franchise.categories?.some((cat) => cat.name.toLowerCase().includes(searchQuery)) || false
-        return nameMatch || descMatch || categoryMatch || categoriesMatch
+        const tagMatch = franchise.tags.some((tag) => tag.name.toLowerCase().includes(searchQuery))
+        return nameMatch || descMatch || categoryMatch || categoriesMatch || tagMatch
       })
     }
 
@@ -293,13 +270,6 @@ export default function FranchiseFiltersGrid({
         const meetsMax = maxPrice === undefined || cashRequired <= maxPrice
         return meetsMin && meetsMax
       })
-    }
-
-    // Apply tags filter
-    if (selectedTags.length > 0) {
-      result = result.filter((franchise) =>
-        selectedTags.some((tag) => franchise.tags.some((t) => t.name === tag)),
-      )
     }
 
     // Apply sorting
@@ -332,7 +302,6 @@ export default function FranchiseFiltersGrid({
     selectedCategories,
     minPrice,
     maxPrice,
-    selectedTags,
     sortBy,
     sortAscending,
   ])
@@ -344,14 +313,6 @@ export default function FranchiseFiltersGrid({
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
     )
-    setDisplayLimit(9) // Reset pagination
-  }
-
-  /**
-   * Handle tag selection toggle
-   */
-  const handleTagToggle = (tag: string) => {
-    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
     setDisplayLimit(9) // Reset pagination
   }
 
@@ -502,7 +463,7 @@ export default function FranchiseFiltersGrid({
               <h3 className="text-sm font-medium text-gray-900 mb-3">Search</h3>
               <Input
                 type="text"
-                placeholder="Search franchises..."
+                placeholder="Search franchises or tags..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full"
@@ -581,23 +542,6 @@ export default function FranchiseFiltersGrid({
                   Clear
                 </Button>
               </div>
-            </FilterSection>
-
-            {/* Tags/Features filter */}
-            <FilterSection
-              title="Features"
-              isOpen={tagsOpen}
-              onToggle={() => setTagsOpen(!tagsOpen)}
-            >
-              {popularTags.map((tag) => (
-                <FilterCheckbox
-                  key={tag}
-                  id={`filter-tag-${tag.replace(/\s+/g, '-').toLowerCase()}`}
-                  checked={selectedTags.includes(tag)}
-                  onChange={() => handleTagToggle(tag)}
-                  label={tag}
-                />
-              ))}
             </FilterSection>
           </form>
 
