@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-import type { AfterChangeHook, AfterDeleteHook } from 'payload'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
 /**
  * Collections to exclude from audit logging
@@ -30,13 +30,19 @@ const EXCLUDED_FIELDS = ['updatedAt', 'createdAt', 'updatedBy', 'createdBy']
  * Check if a value is a plain object (not array, date, etc)
  */
 function isPlainObject(value: any): boolean {
-  return value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)
+  return (
+    value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)
+  )
 }
 
 /**
  * Deep comparison to find changed nested fields
  */
-function getNestedChanges(before: any, after: any, prefix = ''): { field: string; before: any; after: any }[] {
+function getNestedChanges(
+  before: any,
+  after: any,
+  prefix = '',
+): { field: string; before: any; after: any }[] {
   const changed: { field: string; before: any; after: any }[] = []
 
   // Get all unique keys from both objects
@@ -51,7 +57,7 @@ function getNestedChanges(before: any, after: any, prefix = ''): { field: string
     if (isPlainObject(beforeValue) && isPlainObject(afterValue)) {
       const nestedChanges = getNestedChanges(beforeValue, afterValue, fullPath)
       changed.push(...nestedChanges)
-    } 
+    }
     // Otherwise compare the values
     else if (JSON.stringify(beforeValue) !== JSON.stringify(afterValue)) {
       changed.push({
@@ -85,7 +91,7 @@ function getChangedFields(before: any, after: any): { field: string; before: any
     if (isPlainObject(beforeValue) && isPlainObject(afterValue)) {
       const nestedChanges = getNestedChanges(beforeValue, afterValue, key)
       changed.push(...nestedChanges)
-    } 
+    }
     // Otherwise compare the values directly
     else if (JSON.stringify(beforeValue) !== JSON.stringify(afterValue)) {
       changed.push({
@@ -106,19 +112,19 @@ function formatValueForDisplay(value: any, fieldName: string): any {
   // If it's an array of IDs (relationship field), just show count
   if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
     // Check if it looks like UUIDs (relationship IDs)
-    const looksLikeIds = value.every((v: any) => 
-      typeof v === 'string' && (v.includes('-') || v.length > 20)
+    const looksLikeIds = value.every(
+      (v: any) => typeof v === 'string' && (v.includes('-') || v.length > 20),
     )
     if (looksLikeIds) {
       return `[${value.length} item${value.length !== 1 ? 's' : ''}]`
     }
   }
-  
+
   // If it's a single ID string (relationship), simplify it
   if (typeof value === 'string' && value.includes('-') && value.length > 20) {
     return '[ID]'
   }
-  
+
   // For objects, check if they're too large
   if (isPlainObject(value)) {
     const jsonStr = JSON.stringify(value)
@@ -126,7 +132,7 @@ function formatValueForDisplay(value: any, fieldName: string): any {
       return '[Complex Object]'
     }
   }
-  
+
   return value
 }
 
@@ -171,7 +177,7 @@ function getUserAgent(req: any): string | undefined {
 /**
  * After Change Hook - Logs create and update operations
  */
-export const afterChangeHook: AfterChangeHook = async ({
+export const afterChangeHook: CollectionAfterChangeHook = async ({
   doc,
   req,
   operation,
@@ -192,9 +198,8 @@ export const afterChangeHook: AfterChangeHook = async ({
     }
 
     // Build compact changes object (only changed fields with before/after values)
-    const changes = operation === 'update' 
-      ? buildCompactChanges(changedFields)
-      : { summary: 'Record created' }
+    const changes =
+      operation === 'update' ? buildCompactChanges(changedFields) : { summary: 'Record created' }
 
     // Create audit log entry
     await req.payload.create({
@@ -223,7 +228,7 @@ export const afterChangeHook: AfterChangeHook = async ({
 /**
  * After Delete Hook - Logs delete operations
  */
-export const afterDeleteHook: AfterDeleteHook = async ({ req, id, doc, collection }) => {
+export const afterDeleteHook: CollectionAfterDeleteHook = async ({ req, id, doc, collection }) => {
   // Skip if collection is excluded
   if (EXCLUDED_COLLECTIONS.includes(collection.slug)) {
     return doc
@@ -233,9 +238,9 @@ export const afterDeleteHook: AfterDeleteHook = async ({ req, id, doc, collectio
     // For deletes, store a summary with key identifying fields only
     const keyFields = ['id', 'name', 'title', 'businessName', 'email']
     const deletedSummary: any = { summary: 'Record deleted' }
-    
+
     // Include key identifying fields if they exist
-    keyFields.forEach(field => {
+    keyFields.forEach((field) => {
       if (doc?.[field] !== undefined) {
         deletedSummary[field] = doc[field]
       }
