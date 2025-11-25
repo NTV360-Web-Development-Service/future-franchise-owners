@@ -19,6 +19,8 @@ import {
   Calendar,
   MapPin,
 } from 'lucide-react'
+import { FranchiseDetailActions } from './FranchiseDetailActions'
+import { ConsultationButton } from './ConsultationButton'
 
 import config from '@/payload.config'
 
@@ -173,19 +175,7 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="bg-white text-slate-900 hover:bg-gray-100">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Request Information
-                </Button>
-                <Button
-                  size="lg"
-                  className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-slate-900 transition-colors"
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Schedule Call
-                </Button>
-              </div>
+              <FranchiseDetailActions franchise={franchise} />
             </div>
           </div>
         </div>
@@ -343,9 +333,7 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
                 <p className="text-white/90 text-sm mb-4">
                   Connect with us today to learn more about this franchise opportunity.
                 </p>
-                <Button className="w-full bg-white text-slate-900 hover:bg-gray-100">
-                  Request Free Consultation
-                </Button>
+                <ConsultationButton />
               </CardContent>
             </Card>
           </div>

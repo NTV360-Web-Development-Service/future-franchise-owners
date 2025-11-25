@@ -880,6 +880,43 @@ export interface Page {
         blockName?: string | null;
         blockType: 'contactInfo';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Select the franchise to add
+         */
+        franchise: string | Franchise;
+        /**
+         * Choose which list to add the franchise to
+         */
+        listType?: ('wishlist' | 'cart') | null;
+        /**
+         * Custom button text (optional, auto-generated based on list type)
+         */
+        buttonText?: string | null;
+        /**
+         * Button style
+         */
+        buttonVariant?: ('default' | 'outline' | 'ghost') | null;
+        /**
+         * Button size
+         */
+        buttonSize?: ('sm' | 'default' | 'lg') | null;
+        /**
+         * Button alignment
+         */
+        alignment?: ('left' | 'center' | 'right') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'addToCart';
+      }
   )[];
   seo?: {
     /**
@@ -1573,6 +1610,20 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        addToCart?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              franchise?: T;
+              listType?: T;
+              buttonText?: T;
+              buttonVariant?: T;
+              buttonSize?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   seo?:
     | T
@@ -1857,6 +1908,18 @@ export interface SiteSetting {
     textColor?: string | null;
   };
   /**
+   * ✅ Enable floating cart button | ⬜ Disable cart feature site-wide
+   */
+  enableCart?: boolean | null;
+  /**
+   * ✅ Show wishlist button on franchise cards | ⬜ Hide wishlist button
+   */
+  showWishlistButton?: boolean | null;
+  /**
+   * ✅ Show cart button on franchise cards | ⬜ Hide cart button
+   */
+  showCartButton?: boolean | null;
+  /**
    * Site name used in meta tags
    */
   siteName?: string | null;
@@ -1979,6 +2042,9 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         backgroundColor?: T;
         textColor?: T;
       };
+  enableCart?: T;
+  showWishlistButton?: T;
+  showCartButton?: T;
   siteName?: T;
   siteDescription?: T;
   contactEmail?: T;

@@ -42,3 +42,6 @@ export { default as FormBuilderBlock } from './FormBuilderBlock'
 
 /** Contact information block displaying business contact details */
 export { default as ContactInfoBlock } from './ContactInfoBlock'
+
+/** Add to cart block for adding franchises to cart */
+export { default as AddToCartBlock } from './AddToCartBlock'

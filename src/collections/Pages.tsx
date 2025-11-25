@@ -1547,6 +1547,93 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'addToCart',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'franchise',
+              type: 'relationship',
+              relationTo: 'franchises',
+              required: true,
+              admin: {
+                description: 'Select the franchise to add',
+              },
+            },
+            {
+              name: 'listType',
+              type: 'select',
+              required: false,
+              defaultValue: 'wishlist',
+              options: [
+                { label: 'Wishlist (Save for later)', value: 'wishlist' },
+                { label: 'Cart (Ready to pursue)', value: 'cart' },
+              ],
+              admin: {
+                description: 'Choose which list to add the franchise to',
+              },
+            },
+            {
+              name: 'buttonText',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Custom button text (optional, auto-generated based on list type)',
+              },
+            },
+            {
+              name: 'buttonVariant',
+              type: 'select',
+              required: false,
+              defaultValue: 'default',
+              options: [
+                { label: 'Default (Solid)', value: 'default' },
+                { label: 'Outline', value: 'outline' },
+                { label: 'Ghost', value: 'ghost' },
+              ],
+              admin: {
+                description: 'Button style',
+              },
+            },
+            {
+              name: 'buttonSize',
+              type: 'select',
+              required: false,
+              defaultValue: 'default',
+              options: [
+                { label: 'Small', value: 'sm' },
+                { label: 'Default', value: 'default' },
+                { label: 'Large', value: 'lg' },
+              ],
+              admin: {
+                description: 'Button size',
+              },
+            },
+            {
+              name: 'alignment',
+              type: 'select',
+              required: false,
+              defaultValue: 'center',
+              options: [
+                { label: 'Left', value: 'left' },
+                { label: 'Center', value: 'center' },
+                { label: 'Right', value: 'right' },
+              ],
+              admin: {
+                description: 'Button alignment',
+              },
+            },
+          ],
+        },
       ],
     },
     {

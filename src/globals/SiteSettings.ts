@@ -356,6 +356,33 @@ const SiteSettings: GlobalConfig = {
           label: 'General',
           fields: [
             {
+              name: 'enableCart',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Enable floating cart button | ⬜ Disable cart feature site-wide',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'showWishlistButton',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Show wishlist button on franchise cards | ⬜ Hide wishlist button',
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'showCartButton',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Show cart button on franchise cards | ⬜ Hide cart button',
+                position: 'sidebar',
+              },
+            },
+            {
               name: 'siteName',
               type: 'text',
               required: false,

@@ -9,6 +9,8 @@
  * @version 1.0.0
  */
 
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -23,6 +25,9 @@ import {
 } from '@/components'
 import { extractBestScore } from '@/lib/franchise'
 import { DragScroll } from '@/components/ui/drag-scroll'
+import { useCart, type CartItem } from '@/contexts/CartContext'
+import { Heart, ShoppingCart, ExternalLink } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 /**
  * Franchise data interface for card display
@@ -87,12 +92,18 @@ export type Franchise = {
  * @interface FranchiseCardProps
  * @property {Franchise & { href?: string }} franchise - Franchise data to render with optional navigation link
  * @property {'default' | 'featured' | 'grid'} [variant='default'] - Visual variant for card styling
+ * @property {boolean} [showWishlistButton=true] - Whether to show wishlist button
+ * @property {boolean} [showCartButton=true] - Whether to show cart button
  */
 interface FranchiseCardProps {
   /** Franchise data with optional href for linking */
   franchise: Franchise & { href?: string }
   /** Visual variant of the card */
   variant?: 'default' | 'featured' | 'grid'
+  /** Whether to show wishlist button */
+  showWishlistButton?: boolean
+  /** Whether to show cart button */
+  showCartButton?: boolean
 }
 
 /**
@@ -129,7 +140,12 @@ interface FranchiseCardProps {
  * />
  * ```
  */
-export default function FranchiseCard({ franchise, variant = 'default' }: FranchiseCardProps) {
+export default function FranchiseCard({
+  franchise,
+  variant = 'default',
+  showWishlistButton = true,
+  showCartButton = true,
+}: FranchiseCardProps) {
   // Extract tag names for best score calculation
   const tagNames = franchise.tags.map((t) => t.name)
   const bestScore = extractBestScore(tagNames)
@@ -297,7 +313,7 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
         )}
       </CardContent>
 
-      <CardFooter className="border-t block p-4 w-full overflow-hidden min-w-0">
+      <CardFooter className="border-t block p-4 w-full overflow-hidden min-w-0 space-y-3">
         <DragScroll className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-2 max-w-full">
           <Badge
             className="flex-shrink-0 whitespace-nowrap"
@@ -332,7 +348,104 @@ export default function FranchiseCard({ franchise, variant = 'default' }: Franch
             </Badge>
           ))}
         </DragScroll>
+
+        {/* Action Buttons */}
+        <FranchiseCardActions
+          franchise={franchise}
+          showWishlist={showWishlistButton}
+          showCart={showCartButton}
+        />
       </CardFooter>
     </Card>
+  )
+}
+
+/**
+ * Action buttons for franchise card (wishlist, cart, view more)
+ */
+function FranchiseCardActions({
+  franchise,
+  showWishlist = true,
+  showCart = true,
+}: {
+  franchise: Franchise & { href?: string }
+  showWishlist?: boolean
+  showCart?: boolean
+}) {
+  const { addToWishlist, addToCart, removeFromWishlist, removeFromCart, isInWishlist, isInCart } =
+    useCart()
+
+  // Extract ID from href or use name as fallback
+  const franchiseId = franchise.href?.replace('/franchises/', '') || franchise.name
+
+  const cartItem: CartItem = {
+    id: franchiseId,
+    name: franchise.name,
+    category: franchise.category,
+    cashRequired: franchise.cashRequired,
+    image: franchise.imageUrl,
+    slug: franchiseId,
+  }
+
+  const inWishlist = isInWishlist(cartItem.id)
+  const inCart = isInCart(cartItem.id)
+
+  // If both buttons are hidden, only show View button
+  const hasActionButtons = showWishlist || showCart
+
+  const handleWishlistClick = () => {
+    if (inWishlist) {
+      removeFromWishlist(cartItem.id)
+    } else {
+      addToWishlist(cartItem)
+    }
+  }
+
+  const handleCartClick = () => {
+    if (inCart) {
+      removeFromCart(cartItem.id)
+    } else {
+      addToCart(cartItem)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {/* Wishlist Button */}
+      {showWishlist && (
+        <Button
+          variant={inWishlist ? 'default' : 'outline'}
+          size="sm"
+          onClick={handleWishlistClick}
+          className={`flex-1 cursor-pointer ${inWishlist ? 'bg-red-600 hover:bg-red-700 border-red-600' : 'hover:bg-red-50'}`}
+          title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+        >
+          <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
+        </Button>
+      )}
+
+      {/* Cart Button */}
+      {showCart && (
+        <Button
+          variant={inCart ? 'default' : 'outline'}
+          size="sm"
+          onClick={handleCartClick}
+          className={`flex-1 cursor-pointer ${inCart ? 'bg-[#004AAD] hover:bg-[#003A8C] border-[#004AAD]' : 'hover:bg-blue-50'}`}
+          title={inCart ? 'Remove from Cart' : 'Add to Cart'}
+        >
+          <ShoppingCart className="w-4 h-4" />
+        </Button>
+      )}
+
+      {/* View More Button */}
+      {franchise.href && (
+        <Button asChild variant="default" size="sm" className="flex-1">
+          <Link href={franchise.href}>
+            <ExternalLink className="w-4 h-4 mr-1" />
+            View
+          </Link>
+        </Button>
+      )}
+    </div>
   )
 }

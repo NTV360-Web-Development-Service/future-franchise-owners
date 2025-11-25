@@ -1,242 +1,226 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
 import { Resend } from 'resend'
-import configPromise from '@/payload.config'
-import { getUserConfirmationEmail } from '@/lib/email-templates'
 
-const MAIN_CONTACT_EMAIL = process.env.MAIN_CONTACT_EMAIL
-const GHL_WEBHOOK_URL = process.env.GHL_WEBHOOK_URL
-const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@yourdomain.com'
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null
-
-async function postToWebhook(url: string, payload: unknown) {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-  return res.ok
-}
-
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json()
-    const franchiseId = body.franchiseId
+    const body = await request.json()
+    const { name, email, phone, subject, message } = body
 
-    const config = await configPromise
-    const payload = await getPayload({ config })
+    // Validate required fields
+    if (!name || !email || !phone || !subject || !message) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
-    // Extract IP address from request headers
-    const ipAddress =
-      req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown'
+    // Email to admin
+    const adminEmailSubject = `New Contact: ${subject}`
+    const adminEmailHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <tr>
+            <td style="background: linear-gradient(135deg, #004AAD 0%, #003A8C 100%); padding: 30px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px;">📞 New Contact Request</h1>
+            </td>
+          </tr>
 
-    // Smart field mapping - automatically detect common field name variations
-    const name =
-      body.name || body.fullName || body.firstName || body.contactName || body.yourName || ''
-    const email = body.email || body.emailAddress || body.contactEmail || ''
-    const phone =
-      body.phone || body.phoneNumber || body.telephone || body.contactPhone || body.mobile || ''
-    const company =
-      body.company ||
-      body.companyName ||
-      body.organization ||
-      (body.city && body.state ? `${body.city}, ${body.state}` : body.city || body.state) ||
-      ''
-    const subject = body.subject || body.topic || body.regarding || ''
+          <tr>
+            <td style="padding: 30px;">
+              <h2 style="margin: 0 0 20px 0; color: #111827; font-size: 18px;">Contact Information</h2>
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <strong style="color: #374151;">Name:</strong>
+                    <span style="color: #111827; margin-left: 10px;">${name}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <strong style="color: #374151;">Email:</strong>
+                    <a href="mailto:${email}" style="color: #004AAD; margin-left: 10px; text-decoration: none;">${email}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <strong style="color: #374151;">Phone:</strong>
+                    <a href="tel:${phone}" style="color: #004AAD; margin-left: 10px; text-decoration: none;">${phone}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <strong style="color: #374151;">Subject:</strong>
+                    <span style="color: #111827; margin-left: 10px;">${subject}</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
-    // Combine all non-standard fields into message
-    const standardFields = [
-      'name',
-      'fullName',
-      'firstName',
-      'contactName',
-      'yourName',
-      'email',
-      'emailAddress',
-      'contactEmail',
-      'phone',
-      'phoneNumber',
-      'telephone',
-      'contactPhone',
-      'mobile',
-      'company',
-      'companyName',
-      'organization',
-      'city',
-      'state',
-      'subject',
-      'topic',
-      'regarding',
-      'message',
-      'comments',
-      'inquiry',
-      'details',
-      'franchiseId',
-    ]
-    const customFields = Object.entries(body)
-      .filter(([key]) => !standardFields.includes(key))
-      .map(([key, value]) => `${key}: ${value}`)
-      .join('\n')
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <h2 style="margin: 0 0 15px 0; color: #111827; font-size: 18px;">Message</h2>
+              <div style="background-color: #f9fafb; border-left: 4px solid #004AAD; padding: 15px; border-radius: 4px;">
+                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+              </div>
+            </td>
+          </tr>
 
-    const message = [
-      body.message || body.comments || body.inquiry || body.details || '',
-      customFields ? `\n\nAdditional Information:\n${customFields}` : '',
-    ]
-      .filter(Boolean)
-      .join('')
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 10px;">
+                    <a href="mailto:${email}" style="display: inline-block; background-color: #004AAD; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: 600;">
+                      📧 Reply to ${name}
+                    </a>
+                  </td>
+                  <td align="center" style="padding: 10px;">
+                    <a href="tel:${phone}" style="display: inline-block; background-color: #10b981; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: 600;">
+                      📞 Call ${name}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
-    // Store submission in database
-    let submissionId: string | undefined
+          <tr>
+            <td style="background-color: #f9fafb; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; color: #6b7280; font-size: 12px;">
+                Submitted on ${new Date().toLocaleString()}
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `.trim()
+
+    // Confirmation email to user
+    const userEmailSubject = 'We Received Your Message'
+    const userEmailHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <tr>
+            <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px;">✅ Message Received!</h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 30px;">
+              <p style="margin: 0 0 20px 0; color: #111827; font-size: 16px;">
+                Hi <strong>${name}</strong>,
+              </p>
+              <p style="margin: 0 0 20px 0; color: #374151; font-size: 15px; line-height: 1.6;">
+                Thank you for reaching out! We've received your message and will get back to you within 24 hours.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <div style="background-color: #eff6ff; border-left: 4px solid #004AAD; padding: 20px; border-radius: 4px;">
+                <h3 style="margin: 0 0 10px 0; color: #004AAD; font-size: 16px;">Your Message:</h3>
+                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <div style="background-color: #f9fafb; padding: 20px; border-radius: 6px; text-align: center;">
+                <h3 style="margin: 0 0 15px 0; color: #111827; font-size: 16px;">Need Immediate Assistance?</h3>
+                <p style="margin: 0 0 15px 0; color: #6b7280; font-size: 14px;">
+                  Feel free to reach out directly:
+                </p>
+                <p style="margin: 0;">
+                  <a href="mailto:info@yourcompany.com" style="color: #004AAD; text-decoration: none;">📧 info@yourcompany.com</a>
+                  <span style="color: #d1d5db; margin: 0 10px;">|</span>
+                  <a href="tel:+15551234567" style="color: #004AAD; text-decoration: none;">📞 (555) 123-4567</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 30px 30px 30px;">
+              <p style="margin: 0; color: #374151; font-size: 15px;">
+                Best regards,<br>
+                <strong>The Franchise Team</strong>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background-color: #f9fafb; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; color: #6b7280; font-size: 12px;">
+                Submitted on ${new Date().toLocaleString()}
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `.trim()
+
+    // Send emails
     try {
-      const submission = await payload.create({
-        collection: 'contactSubmissions',
-        data: {
-          name: name || undefined,
-          email: email || undefined,
-          phone: phone || undefined,
-          company: company || undefined,
-          subject: subject || undefined,
-          message: message || undefined,
-          ipAddress,
-          status: 'new',
-        },
+      await resend.emails.send({
+        from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
+        to: process.env.MAIN_CONTACT_EMAIL || 'efraimg@n-compass.biz',
+        subject: adminEmailSubject,
+        html: adminEmailHTML,
       })
-      submissionId = submission.id
-    } catch (dbError) {
-      console.error('Failed to store submission:', dbError)
-      // Continue with routing even if database storage fails
+    } catch (emailError) {
+      console.error('Failed to send admin email:', emailError)
     }
 
-    let targetEmail: string | undefined
-    let targetWebhook: string | undefined
-
-    if (franchiseId) {
-      const franchise = await payload.findByID({
-        collection: 'franchises',
-        id: franchiseId,
-        depth: 1,
+    try {
+      await resend.emails.send({
+        from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
+        to: email,
+        subject: userEmailSubject,
+        html: userEmailHTML,
       })
-
-      const isTopPick = !!franchise?.isTopPick
-      const assignedAgent: any = (franchise as any)?.assignedAgent
-      const useMainContact = !!(franchise as any)?.useMainContact
-
-      if (isTopPick && assignedAgent && !useMainContact) {
-        let agentDoc = assignedAgent
-        if (typeof assignedAgent === 'string') {
-          agentDoc = await payload.findByID({ collection: 'agents' as any, id: assignedAgent })
-        }
-        targetEmail = agentDoc?.email
-        targetWebhook = agentDoc?.ghlWebhook
-      }
+    } catch (emailError) {
+      console.error('Failed to send user confirmation email:', emailError)
     }
 
-    // Fallback routing to global settings
-    if (!targetEmail && MAIN_CONTACT_EMAIL) targetEmail = MAIN_CONTACT_EMAIL
-    if (!targetWebhook && GHL_WEBHOOK_URL) targetWebhook = GHL_WEBHOOK_URL
-
-    // Prefer webhook when available
-    if (targetWebhook) {
-      const ok = await postToWebhook(targetWebhook, body)
-      if (!ok) {
-        console.warn('Webhook failed, but submission was saved')
-        return NextResponse.json({
-          ok: true,
-          routed: 'database',
-          submissionId,
-          warning: 'Webhook delivery failed',
-        })
-      }
-      return NextResponse.json({ ok: true, routed: 'webhook', submissionId })
-    }
-
-    // Send emails if Resend is configured
-    if (resend) {
-      try {
-        // Send notification to business owner/agent if configured
-        if (targetEmail) {
-          const emailBody = Object.entries(body)
-            .filter(([key]) => key !== 'franchiseId')
-            .map(([key, value]) => `<strong>${key}:</strong> ${value}`)
-            .join('<br/>')
-
-          await resend.emails.send({
-            from: FROM_EMAIL,
-            to: targetEmail,
-            subject: subject || 'New Contact Form Submission',
-            html: `
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <meta charset="utf-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                </head>
-                <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
-                  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
-                    <tr>
-                      <td align="center">
-                        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                          <tr>
-                            <td style="background: linear-gradient(135deg, #004AAD 0%, #001C40 100%); padding: 40px; text-align: center; border-radius: 8px 8px 0 0;">
-                              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600;">New Contact Submission</h1>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 40px;">
-                              <div style="background-color: #f8f9fa; border-left: 4px solid #004AAD; padding: 20px; margin-bottom: 30px; border-radius: 4px;">
-                                ${emailBody}
-                              </div>
-                              <p style="color: #6c757d; font-size: 12px; margin: 0; padding-top: 20px; border-top: 1px solid #e9ecef;">
-                                Submission ID: ${submissionId}
-                              </p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                  </table>
-                </body>
-              </html>
-            `,
-          })
-        }
-
-        // ALWAYS send confirmation email to the user if they provided an email
-        if (email) {
-          console.log('Sending confirmation email to:', email)
-          const result = await resend.emails.send({
-            from: FROM_EMAIL,
-            to: email,
-            subject: 'Thank you for contacting Future Franchise Owners',
-            html: getUserConfirmationEmail({ name, message }),
-          })
-          console.log('Confirmation email sent:', result)
-        } else {
-          console.log('No email provided, skipping confirmation email')
-        }
-
-        return NextResponse.json({ ok: true, routed: 'email', submissionId })
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError)
-        return NextResponse.json({
-          ok: true,
-          routed: 'database',
-          submissionId,
-          warning: 'Email delivery failed',
-        })
-      }
-    }
-
-    // No routing configured, but submission was saved successfully
-    console.log(
-      'Contact submission saved to database (no email/webhook routing configured):',
-      submissionId,
-    )
-    return NextResponse.json({ ok: true, routed: 'database', submissionId })
-  } catch (err) {
-    console.error('Contact API error:', err)
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+    return NextResponse.json({
+      success: true,
+      message: 'Message sent successfully',
+    })
+  } catch (error) {
+    console.error('Error processing contact form:', error)
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 })
   }
 }

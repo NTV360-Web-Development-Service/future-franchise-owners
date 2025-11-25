@@ -4,6 +4,8 @@ import '../globals.css'
 import { getSiteSettings } from '@/lib/getSiteSettings'
 import { GlobalNavbarFooter } from '@/components/GlobalNavbarFooter'
 import { generateOrganizationSchema } from '@/lib/schema'
+import { CartProvider } from '@/contexts/CartContext'
+import { FloatingCartButton } from '@/components/cart/FloatingCartButton'
 
 /**
  * Application metadata configuration
@@ -48,23 +50,28 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className="font-sans">
-        {/* Organization Schema for SEO */}
-        <Script
-          id="organization-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateOrganizationSchema()),
-          }}
-        />
+        <CartProvider>
+          {/* Organization Schema for SEO */}
+          <Script
+            id="organization-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(generateOrganizationSchema()),
+            }}
+          />
 
-        {/* Global Navbar - Client component that reacts to route changes */}
-        <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />
+          {/* Global Navbar - Client component that reacts to route changes */}
+          <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />
 
-        {/* Main Content */}
-        <main>{children}</main>
+          {/* Main Content */}
+          <main>{children}</main>
 
-        {/* Global Footer - Client component that reacts to route changes */}
-        <GlobalNavbarFooter siteSettings={siteSettings} position="footer" />
+          {/* Global Footer - Client component that reacts to route changes */}
+          <GlobalNavbarFooter siteSettings={siteSettings} position="footer" />
+
+          {/* Floating Cart Button - Fixed bottom right (conditionally rendered) */}
+          {siteSettings?.enableCart !== false && <FloatingCartButton />}
+        </CartProvider>
       </body>
     </html>
   )
