@@ -75,6 +75,7 @@ export interface Config {
     tags: Tag;
     agents: Agent;
     contactSubmissions: ContactSubmission;
+    auditLogs: AuditLog;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     agents: AgentsSelect<false> | AgentsSelect<true>;
     contactSubmissions: ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    auditLogs: AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -940,6 +942,14 @@ export interface Page {
      */
     noIndex?: boolean | null;
   };
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1029,6 +1039,14 @@ export interface Franchise {
    * Force use main contact even if agent is assigned (overrides agent assignment)
    */
   useMainContact?: boolean | null;
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1090,6 +1108,14 @@ export interface Industry {
    * Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)
    */
   textColor?: string | null;
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1123,6 +1149,14 @@ export interface Tag {
    * Badge text color (hex code) - Only used when background color is set. Default is white (#ffffff)
    */
   textColor?: string | null;
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1173,6 +1207,14 @@ export interface Agent {
    * GoHighLevel webhook URL (optional)
    */
   ghlWebhook?: string | null;
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1216,6 +1258,70 @@ export interface ContactSubmission {
    * Submission status for tracking and organization
    */
   status: 'new' | 'read' | 'archived';
+  /**
+   * User who created this record
+   */
+  createdBy?: (string | null) | User;
+  /**
+   * User who last updated this record
+   */
+  updatedBy?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * System-wide activity log tracking all changes
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLogs".
+ */
+export interface AuditLog {
+  id: string;
+  /**
+   * Which collection was modified
+   */
+  collection: string;
+  /**
+   * ID of the record that was modified
+   */
+  recordId: string;
+  /**
+   * Type of operation performed
+   */
+  operation: 'create' | 'update' | 'delete';
+  /**
+   * User who performed the action
+   */
+  user?: (string | null) | User;
+  /**
+   * Detailed changes (before/after values)
+   */
+  changes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * List of fields that were modified
+   */
+  changedFields?:
+    | {
+        field: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * IP address of the user
+   */
+  ipAddress?: string | null;
+  /**
+   * Browser/client information
+   */
+  userAgent?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1257,6 +1363,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contactSubmissions';
         value: string | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'auditLogs';
+        value: string | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1634,6 +1744,8 @@ export interface PagesSelect<T extends boolean = true> {
         ogImage?: T;
         noIndex?: T;
       };
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1663,6 +1775,8 @@ export interface FranchisesSelect<T extends boolean = true> {
   logo?: T;
   assignedAgent?: T;
   useMainContact?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1677,6 +1791,8 @@ export interface IndustriesSelect<T extends boolean = true> {
   icon?: T;
   color?: T;
   textColor?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1691,6 +1807,8 @@ export interface TagsSelect<T extends boolean = true> {
   description?: T;
   color?: T;
   textColor?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1713,6 +1831,8 @@ export interface AgentsSelect<T extends boolean = true> {
       };
   isActive?: T;
   ghlWebhook?: T;
+  createdBy?: T;
+  updatedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1729,6 +1849,29 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   message?: T;
   ipAddress?: T;
   status?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLogs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  collection?: T;
+  recordId?: T;
+  operation?: T;
+  user?: T;
+  changes?: T;
+  changedFields?:
+    | T
+    | {
+        field?: T;
+        id?: T;
+      };
+  ipAddress?: T;
+  userAgent?: T;
   updatedAt?: T;
   createdAt?: T;
 }

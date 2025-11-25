@@ -68,9 +68,11 @@ const seed = async () => {
 
     /**
      * Create sample agents used to associate franchises.
+     * Pass user context for audit tracking (createdBy/updatedBy)
      */
     const agent1 = await payload.create({
       collection: 'agents',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'John Smith',
@@ -113,6 +115,7 @@ const seed = async () => {
 
     const agent2 = await payload.create({
       collection: 'agents',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Sarah Johnson',
@@ -156,9 +159,11 @@ const seed = async () => {
 
     /**
      * Create industries for franchise categorization
+     * Pass user context for audit tracking (createdBy/updatedBy)
      */
     const industryFitness = await payload.create({
       collection: 'industries',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Fitness',
@@ -170,6 +175,7 @@ const seed = async () => {
 
     const industryFood = await payload.create({
       collection: 'industries',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Food and Beverage',
@@ -181,6 +187,7 @@ const seed = async () => {
 
     const industryRetail = await payload.create({
       collection: 'industries',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Retail',
@@ -193,9 +200,11 @@ const seed = async () => {
 
     /**
      * Create tags for franchise filtering
+     * Pass user context for audit tracking (createdBy/updatedBy)
      */
     const tagLowCost = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Low Cost',
@@ -207,6 +216,7 @@ const seed = async () => {
 
     const tagFinancing = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Financing Available',
@@ -218,6 +228,7 @@ const seed = async () => {
 
     const tagHomeBased = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Home Based',
@@ -229,6 +240,7 @@ const seed = async () => {
 
     const tagHighROI = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'High ROI',
@@ -240,6 +252,7 @@ const seed = async () => {
 
     const tagQuickStart = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Quick Start',
@@ -251,6 +264,7 @@ const seed = async () => {
 
     const tagHighDemand = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'High Demand',
@@ -262,6 +276,7 @@ const seed = async () => {
 
     const tagRecessionProof = await payload.create({
       collection: 'tags',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         name: 'Recession Proof',
@@ -274,9 +289,11 @@ const seed = async () => {
 
     /**
      * Create sample franchises across categories with investment ranges and tags.
+     * Pass user context for audit tracking (createdBy/updatedBy)
      */
     const franchise1 = await payload.create({
       collection: 'franchises',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         businessName: 'FitLife Gym',
@@ -324,6 +341,7 @@ const seed = async () => {
 
     const franchise2 = await payload.create({
       collection: 'franchises',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         businessName: 'Healthy Bites Cafe',
@@ -371,6 +389,7 @@ const seed = async () => {
 
     const franchise3 = await payload.create({
       collection: 'franchises',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         businessName: 'Senior Care Plus',
@@ -419,9 +438,11 @@ const seed = async () => {
     /**
      * Create a sample landing page with Ribbon, Navbar, and Hero blocks.
      * Displays a featured grid of franchises with filters.
+     * Pass user context for audit tracking (createdBy/updatedBy)
      */
     const landingPage = await payload.create({
       collection: 'pages',
+      user, // Add user context for audit tracking
       data: {
         id: uuidv7(),
         title: 'Future Franchise Owners',

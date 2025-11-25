@@ -1,6 +1,8 @@
 import { CollectionConfig } from 'payload'
 import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
 import { SlateToLexicalFeature } from '@payloadcms/richtext-lexical/migrate'
+import { auditFields } from './fields/auditFields'
+import { afterChangeHook, afterDeleteHook } from '../hooks/auditLogger'
 
 // Reusable anchor ID field for all blocks
 const anchorIdField = {
@@ -32,6 +34,8 @@ const Pages: CollectionConfig = {
     useAsTitle: 'title',
   },
   hooks: {
+    afterChange: [afterChangeHook],
+    afterDelete: [afterDeleteHook],
     beforeValidate: [
       ({ data }) => {
         // Validate unique anchor IDs within the page
@@ -1696,6 +1700,8 @@ const Pages: CollectionConfig = {
         },
       ],
     },
+    // Audit fields
+    ...auditFields,
   ],
 }
 

@@ -24,6 +24,7 @@ import Industries from './collections/Industries'
 import Tags from './collections/Tags'
 import Agents from './collections/Agents'
 import ContactSubmissions from './collections/ContactSubmissions'
+import AuditLogs from './collections/AuditLogs'
 import SiteSettings from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -40,7 +41,17 @@ export default buildConfig({
       afterNavLinks: ['app/(payload)/components/AdminImportLink.tsx'],
     },
   },
-  collections: [Users, Media, Pages, Franchises, Industries, Tags, Agents, ContactSubmissions],
+  collections: [
+    Users,
+    Media,
+    Pages,
+    Franchises,
+    Industries,
+    Tags,
+    Agents,
+    ContactSubmissions,
+    AuditLogs,
+  ],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

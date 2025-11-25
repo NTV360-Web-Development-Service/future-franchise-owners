@@ -11,6 +11,8 @@
 
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
+import { auditFields } from './fields/auditFields'
+import { afterChangeHook, afterDeleteHook } from '../hooks/auditLogger'
 
 /**
  * Lightweight slugify helper to convert strings to URL-friendly slugs
@@ -66,8 +68,14 @@ export const Franchises: CollectionConfig = {
       'isFeatured',
       'isSponsored',
       'isTopPick',
+      'createdBy',
+      'updatedBy',
       'updatedAt',
     ],
+  },
+  hooks: {
+    afterChange: [afterChangeHook],
+    afterDelete: [afterDeleteHook],
   },
   // No slug auto-generation; prefer ID-only URLs
   fields: [
@@ -270,6 +278,8 @@ export const Franchises: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    // Audit fields
+    ...auditFields,
   ],
 }
 

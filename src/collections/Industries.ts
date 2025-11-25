@@ -1,4 +1,6 @@
 import { CollectionConfig } from 'payload'
+import { auditFields } from './fields/auditFields'
+import { afterChangeHook, afterDeleteHook } from '../hooks/auditLogger'
 
 /**
  * Industries Collection
@@ -14,6 +16,10 @@ export const Industries: CollectionConfig = {
   },
   access: {
     read: () => true, // Public access for reading
+  },
+  hooks: {
+    afterChange: [afterChangeHook],
+    afterDelete: [afterDeleteHook],
   },
   fields: [
     {
@@ -119,6 +125,8 @@ export const Industries: CollectionConfig = {
         },
       },
     },
+    // Audit fields
+    ...auditFields,
   ],
 }
 

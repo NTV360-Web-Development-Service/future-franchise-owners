@@ -11,6 +11,8 @@
 
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor, LinkFeature, HTMLConverterFeature } from '@payloadcms/richtext-lexical'
+import { auditFields } from './fields/auditFields'
+import { afterChangeHook, afterDeleteHook } from '../hooks/auditLogger'
 
 /**
  * Agents Collection Configuration
@@ -39,6 +41,10 @@ const Agents: CollectionConfig = {
     useAsTitle: 'name',
     description: 'Manage franchise consultants and agents',
     defaultColumns: ['name', 'email', 'phone', 'isActive', 'updatedAt'],
+  },
+  hooks: {
+    afterChange: [afterChangeHook],
+    afterDelete: [afterDeleteHook],
   },
   fields: [
     { name: 'name', type: 'text', required: true },
@@ -106,6 +112,8 @@ const Agents: CollectionConfig = {
       type: 'text',
       admin: { description: 'GoHighLevel webhook URL (optional)' },
     },
+    // Audit fields
+    ...auditFields,
   ],
 }
 

@@ -10,6 +10,8 @@
  */
 
 import type { CollectionConfig } from 'payload'
+import { auditFields } from './fields/auditFields'
+import { afterChangeHook, afterDeleteHook } from '../hooks/auditLogger'
 
 /**
  * Contact Submissions Collection Configuration
@@ -40,6 +42,10 @@ const ContactSubmissions: CollectionConfig = {
     create: () => true, // Allow API to create submissions
     update: () => true, // Admins only
     delete: () => true, // Admins only
+  },
+  hooks: {
+    afterChange: [afterChangeHook],
+    afterDelete: [afterDeleteHook],
   },
   fields: [
     {
@@ -115,6 +121,8 @@ const ContactSubmissions: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    // Audit fields
+    ...auditFields,
   ],
   timestamps: true,
 }
