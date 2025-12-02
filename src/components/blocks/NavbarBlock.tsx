@@ -135,6 +135,7 @@ export default function NavbarBlock({ block }: NavbarBlockProps) {
               href={block.ctaButton.url}
               target={block.ctaButton.openInNewTab ? '_blank' : undefined}
               rel={block.ctaButton.openInNewTab ? 'noopener noreferrer' : undefined}
+              className="cursor-pointer"
             >
               <Button>{block.ctaButton.label}</Button>
             </Link>
@@ -173,6 +174,7 @@ export default function NavbarBlock({ block }: NavbarBlockProps) {
                 target={block.ctaButton.openInNewTab ? '_blank' : undefined}
                 rel={block.ctaButton.openInNewTab ? 'noopener noreferrer' : undefined}
                 onClick={() => setOpen(false)}
+                className="cursor-pointer"
               >
                 <Button className="w-full">{block.ctaButton.label}</Button>
               </Link>

@@ -6,6 +6,7 @@ import { GlobalNavbarFooter } from '@/components/GlobalNavbarFooter'
 import { generateOrganizationSchema } from '@/lib/schema'
 import { CartProvider } from '@/contexts/CartContext'
 import { FloatingCartButton } from '@/components/cart/FloatingCartButton'
+import GlobalTicker from '@/components/GlobalTicker'
 
 /**
  * Application metadata configuration
@@ -59,6 +60,22 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               __html: JSON.stringify(generateOrganizationSchema()),
             }}
           />
+
+          {/* Global Ticker - Shows above everything when enabled */}
+          {siteSettings?.tickerEnabled && siteSettings?.ticker?.text && (
+            <GlobalTicker
+              text={siteSettings.ticker.text}
+              backgroundColor={siteSettings.ticker.backgroundColor}
+              textColor={siteSettings.ticker.textColor}
+              fontSize={siteSettings.ticker.fontSize}
+              fontWeight={siteSettings.ticker.fontWeight}
+              isMoving={siteSettings.ticker.isMoving}
+              speed={siteSettings.ticker.speed}
+              textAlign={siteSettings.ticker.textAlign}
+              link={siteSettings.ticker.link}
+              dismissible={siteSettings.ticker.dismissible}
+            />
+          )}
 
           {/* Global Navbar - Client component that reacts to route changes */}
           <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />

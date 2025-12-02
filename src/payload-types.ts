@@ -2227,6 +2227,61 @@ export interface SiteSetting {
     textColor?: string | null;
   };
   /**
+   * ✅ Show ticker on all pages | ⬜ Hide ticker
+   */
+  tickerEnabled?: boolean | null;
+  ticker?: {
+    /**
+     * The text to display in the ticker
+     */
+    text: string;
+    /**
+     * Background color (hex code)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Text color (hex code)
+     */
+    textColor?: string | null;
+    /**
+     * Font size in pixels (10-32px)
+     */
+    fontSize?: number | null;
+    /**
+     * Font weight/thickness
+     */
+    fontWeight?: ('300' | '400' | '500' | '600' | '700' | '800') | null;
+    /**
+     * Enable scrolling ticker animation
+     */
+    isMoving?: boolean | null;
+    /**
+     * Animation speed (10-200, higher = faster)
+     */
+    speed?: number | null;
+    /**
+     * Text alignment (only when not moving)
+     */
+    textAlign?: ('left' | 'center' | 'right') | null;
+    /**
+     * Optional link to make the ticker clickable
+     */
+    link?: {
+      /**
+       * URL to navigate to when ticker is clicked (optional)
+       */
+      url?: string | null;
+      /**
+       * Open link in a new tab
+       */
+      openInNewTab?: boolean | null;
+    };
+    /**
+     * Allow users to dismiss/close the ticker
+     */
+    dismissible?: boolean | null;
+  };
+  /**
    * ✅ Enable floating cart button | ⬜ Disable cart feature site-wide
    */
   enableCart?: boolean | null;
@@ -2360,6 +2415,26 @@ export interface SiteSettingsSelect<T extends boolean = true> {
             };
         backgroundColor?: T;
         textColor?: T;
+      };
+  tickerEnabled?: T;
+  ticker?:
+    | T
+    | {
+        text?: T;
+        backgroundColor?: T;
+        textColor?: T;
+        fontSize?: T;
+        fontWeight?: T;
+        isMoving?: T;
+        speed?: T;
+        textAlign?: T;
+        link?:
+          | T
+          | {
+              url?: T;
+              openInNewTab?: T;
+            };
+        dismissible?: T;
       };
   enableCart?: T;
   showWishlistButton?: T;
