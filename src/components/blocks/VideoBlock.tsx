@@ -7,7 +7,7 @@ type VideoBlockProps = {
   block: {
     blockType: 'video'
     videoType?: 'upload' | 'link' | null
-    videoFile?: { url?: string } | string | null
+    videoFile?: { url?: string | null } | string | null
     videoUrl?: string | null
     buttonText?: string | null
     buttonLink?: string | null
@@ -21,7 +21,7 @@ export default function VideoBlock({ block }: VideoBlockProps) {
   let videoSrc: string | undefined
 
   if (block.videoType === 'upload' && block.videoFile) {
-    videoSrc = typeof block.videoFile === 'object' ? block.videoFile.url : undefined
+    videoSrc = typeof block.videoFile === 'object' ? (block.videoFile.url ?? undefined) : undefined
   } else if (block.videoType === 'link' && block.videoUrl) {
     videoSrc = block.videoUrl
   }

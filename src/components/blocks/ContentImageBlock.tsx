@@ -9,7 +9,7 @@ type ContentImageBlockProps = {
     blockType: 'contentImage'
     heading?: string | null
     content?: string | null
-    image?: { url?: string; alt?: string } | string | null
+    image?: { url?: string | null; alt?: string | null } | string | null
     imagePosition?: 'left' | 'right' | null
     buttonText?: string | null
     buttonLink?: string | null

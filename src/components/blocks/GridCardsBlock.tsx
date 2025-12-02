@@ -11,7 +11,7 @@ type GridCardsBlockProps = {
       content?: string | null
       backgroundColor?: string | null
       textColor?: string | null
-      id?: string
+      id?: string | null
     }> | null
     buttonText?: string | null
     buttonLink?: string | null
