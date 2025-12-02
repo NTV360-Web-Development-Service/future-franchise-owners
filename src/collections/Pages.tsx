@@ -218,6 +218,34 @@ const Pages: CollectionConfig = {
                 condition: (data, siblingData) => siblingData?.displayMode === 'automatic',
               },
             },
+            {
+              name: 'showAllButton',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                description: 'Show a "See All" button below the grid when items are limited',
+              },
+            },
+            {
+              name: 'showAllButtonText',
+              type: 'text',
+              required: false,
+              defaultValue: 'See All',
+              admin: {
+                description: 'Text for the "See All" button',
+                condition: (data, siblingData) => siblingData?.showAllButton === true,
+              },
+            },
+            {
+              name: 'showAllButtonLink',
+              type: 'text',
+              required: false,
+              admin: {
+                description:
+                  'URL for the "See All" button (e.g., /find-a-franchise?filter=featured)',
+                condition: (data, siblingData) => siblingData?.showAllButton === true,
+              },
+            },
           ],
         },
         {
@@ -1634,6 +1662,221 @@ const Pages: CollectionConfig = {
               ],
               admin: {
                 description: 'Button alignment',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'contentImage',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Main heading text',
+              },
+            },
+            {
+              name: 'content',
+              type: 'textarea',
+              required: false,
+              admin: {
+                description: 'Content text (supports multiple paragraphs)',
+              },
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description: 'Image to display',
+              },
+            },
+            {
+              name: 'imagePosition',
+              type: 'select',
+              required: false,
+              defaultValue: 'right',
+              options: [
+                { label: 'Left', value: 'left' },
+                { label: 'Right', value: 'right' },
+              ],
+              admin: {
+                description: 'Choose which side to display the image',
+              },
+            },
+            {
+              name: 'buttonText',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button text (optional)',
+              },
+            },
+            {
+              name: 'buttonLink',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button link URL (optional)',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'gridCards',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'cards',
+              type: 'array',
+              required: false,
+              minRows: 1,
+              maxRows: 12,
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    description: 'Card title',
+                  },
+                },
+                {
+                  name: 'content',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Card content text',
+                  },
+                },
+                {
+                  name: 'backgroundColor',
+                  type: 'text',
+                  required: false,
+                  defaultValue: '#1e3a5f',
+                  admin: {
+                    description: 'Card background color (hex code)',
+                    components: {
+                      Field: '@/collections/fields/ColorPickerField',
+                    },
+                  },
+                },
+                {
+                  name: 'textColor',
+                  type: 'text',
+                  required: false,
+                  defaultValue: '#ffffff',
+                  admin: {
+                    description: 'Card text color (hex code)',
+                    components: {
+                      Field: '@/collections/fields/ColorPickerField',
+                    },
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add cards to display in a grid (up to 12 cards)',
+              },
+            },
+            {
+              name: 'buttonText',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button text below the grid (optional)',
+              },
+            },
+            {
+              name: 'buttonLink',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button link URL (optional)',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'video',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'videoType',
+              type: 'select',
+              required: true,
+              defaultValue: 'link',
+              options: [
+                { label: 'YouTube/Vimeo Link', value: 'link' },
+                { label: 'Upload Video File', value: 'upload' },
+              ],
+              admin: {
+                description: 'Choose video source type',
+              },
+            },
+            {
+              name: 'videoUrl',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'YouTube or Vimeo video URL',
+                condition: (data, siblingData) => siblingData?.videoType === 'link',
+              },
+            },
+            {
+              name: 'videoFile',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description: 'Upload a video file',
+                condition: (data, siblingData) => siblingData?.videoType === 'upload',
+              },
+            },
+            {
+              name: 'buttonText',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button text below the video (optional)',
+              },
+            },
+            {
+              name: 'buttonLink',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Button link URL (optional)',
               },
             },
           ],

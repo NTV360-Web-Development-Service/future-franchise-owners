@@ -36,6 +36,14 @@ interface FranchiseFiltersGridProps {
   showHeading?: boolean
   /** Whether to show filter tabs (Top Pick, Sponsored, Featured) */
   showTabs?: boolean
+  /** Maximum number of items to display initially */
+  maxItems?: number
+  /** Show "See All" button when items are limited */
+  showAllButton?: boolean
+  /** Text for the "See All" button */
+  showAllButtonText?: string
+  /** URL for the "See All" button */
+  showAllButtonLink?: string
 }
 
 /**
@@ -176,6 +184,10 @@ export default function FranchiseFiltersGrid({
   heading,
   showHeading = true,
   showTabs = true,
+  maxItems,
+  showAllButton,
+  showAllButtonText = 'See All',
+  showAllButtonLink,
 }: FranchiseFiltersGridProps) {
   // Filter and sort state
   const [search, setSearch] = useState('')
@@ -187,8 +199,29 @@ export default function FranchiseFiltersGrid({
   const [sortAscending, setSortAscending] = useState<boolean>(true)
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
+  // Read URL parameters on mount to set initial filter state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const filterParam = params.get('filter')
+
+      // Map URL filter parameter to tab filter
+      if (filterParam) {
+        const filterMap: Record<string, string> = {
+          'top-pick': 'Top Pick',
+          sponsored: 'Sponsored',
+          featured: 'Featured',
+        }
+        const tabFilter = filterMap[filterParam.toLowerCase()]
+        if (tabFilter) {
+          setActiveTabFilter(tabFilter)
+        }
+      }
+    }
+  }, [])
+
   // Pagination state
-  const [displayLimit, setDisplayLimit] = useState(9) // Show 9 items initially
+  const [displayLimit, setDisplayLimit] = useState(maxItems ?? 9) // Show maxItems or 9 items initially
   const LOAD_MORE_COUNT = 9 // Load 9 more items each time
 
   // Collapsible section states
@@ -339,108 +372,110 @@ export default function FranchiseFiltersGrid({
 
   // Reset pagination when search, sort, or price filters change
   useEffect(() => {
-    setDisplayLimit(9)
-  }, [search, sortBy, minPrice, maxPrice])
+    setDisplayLimit(maxItems ?? 9)
+  }, [search, sortBy, minPrice, maxPrice, maxItems])
 
   return (
     <div className="bg-white">
       {showHeading && (
         <div className="lg:sticky lg:top-16 lg:z-10 bg-white border-b border-gray-200 pt-6 pb-6">
-          <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-                {heading ?? 'Browse Franchises'}
-              </h1>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+                  {heading ?? 'Browse Franchises'}
+                </h1>
 
-              {/* Filter Tabs - Only show if showTabs is true */}
-              {showTabs && (
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleTabClick('Top Pick')}
-                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
-                      activeTabFilter === 'Top Pick'
-                        ? 'bg-red-600 text-white border-red-600 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600'
-                    }`}
-                  >
-                    <Award className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden xs:inline">Top Pick</span>
-                    <span className="xs:hidden">Top</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleTabClick('Sponsored')}
-                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
-                      activeTabFilter === 'Sponsored'
-                        ? 'bg-orange-500 text-white border-orange-500 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
-                    }`}
-                  >
-                    <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Sponsored
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleTabClick('Featured')}
-                    className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
-                      activeTabFilter === 'Featured'
-                        ? 'bg-green-600 text-white border-green-600 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-green-400 hover:bg-green-50 hover:text-green-600'
-                    }`}
-                  >
-                    <Star className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Featured
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-4">
-              {/* Results count */}
-              <span className="text-sm text-gray-600">
-                Showing {Math.min(displayLimit, filteredFranchises.length)} of{' '}
-                {filteredFranchises.length} franchises
-              </span>
-
-              {/* Sort dropdown with direction toggle */}
-              <div className="flex items-center gap-2">
-                <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                  <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
-                    <SelectValue placeholder="Sort by..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="alphabetical">Alphabetically</SelectItem>
-                    <SelectItem value="recent">Recently Added</SelectItem>
-                    <SelectItem value="cash">Price</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSortAscending(!sortAscending)}
-                  className="px-2"
-                  title={sortAscending ? 'Ascending' : 'Descending'}
-                >
-                  <ArrowUpDown className="w-4 h-4" />
-                </Button>
+                {/* Filter Tabs - Only show if showTabs is true */}
+                {showTabs && (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleTabClick('Top Pick')}
+                      className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
+                        activeTabFilter === 'Top Pick'
+                          ? 'bg-red-600 text-white border-red-600 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600'
+                      }`}
+                    >
+                      <Award className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden xs:inline">Top Pick</span>
+                      <span className="xs:hidden">Top</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTabClick('Sponsored')}
+                      className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
+                        activeTabFilter === 'Sponsored'
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
+                      }`}
+                    >
+                      <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
+                      Sponsored
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTabClick('Featured')}
+                      className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
+                        activeTabFilter === 'Featured'
+                          ? 'bg-green-600 text-white border-green-600 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-green-400 hover:bg-green-50 hover:text-green-600'
+                      }`}
+                    >
+                      <Star className="w-3 h-3 sm:w-4 sm:h-4" />
+                      Featured
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Filter toggle button */}
-              <button
-                type="button"
-                onClick={() => setFiltersOpen(!filtersOpen)}
-                className="-m-2 p-2 text-gray-400 hover:text-gray-500"
-                aria-label="Toggle filters"
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor" className="size-5">
-                  <path
-                    d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
-                    clipRule="evenodd"
-                    fillRule="evenodd"
-                  />
-                </svg>
-              </button>
+              <div className="flex items-center gap-4">
+                {/* Results count */}
+                <span className="text-sm text-gray-600">
+                  Showing {Math.min(displayLimit, filteredFranchises.length)} of{' '}
+                  {filteredFranchises.length} franchises
+                </span>
+
+                {/* Sort dropdown with direction toggle */}
+                <div className="flex items-center gap-2">
+                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                    <SelectTrigger className="w-[180px] text-sm font-medium text-gray-700 hover:text-gray-900">
+                      <SelectValue placeholder="Sort by..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="alphabetical">Alphabetically</SelectItem>
+                      <SelectItem value="recent">Recently Added</SelectItem>
+                      <SelectItem value="cash">Price</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSortAscending(!sortAscending)}
+                    className="px-2"
+                    title={sortAscending ? 'Ascending' : 'Descending'}
+                  >
+                    <ArrowUpDown className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Filter toggle button */}
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                  aria-label="Toggle filters"
+                >
+                  <svg viewBox="0 0 20 20" fill="currentColor" className="size-5">
+                    <path
+                      d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
+                      clipRule="evenodd"
+                      fillRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -451,126 +486,137 @@ export default function FranchiseFiltersGrid({
           Franchises
         </h2>
 
-        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-          {/* Filters sidebar */}
-          <form
-            className={`${filtersOpen ? 'block' : 'hidden'} lg:block lg:sticky lg:top-[184px] px-4 lg:self-start lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto`}
-          >
-            <h3 className="sr-only">Filters</h3>
-
-            {/* Search filter (at top) */}
-            <div className="border-b border-gray-200 py-6">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">Search</h3>
-              <Input
-                type="text"
-                placeholder="Search franchises or tags..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full"
-              />
-            </div>
-
-            {/* Industries (Categories) - collapsible */}
-            <FilterSection
-              title="Industries"
-              isOpen={categoryOpen}
-              onToggle={() => setCategoryOpen(!categoryOpen)}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
+            {/* Filters sidebar */}
+            <form
+              className={`${filtersOpen ? 'block' : 'hidden'} lg:block lg:sticky lg:top-[184px] px-4 lg:self-start lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto`}
             >
-              {categories.map((category) => (
-                <FilterCheckbox
-                  key={category}
-                  id={`filter-category-${category.replace(/\s+/g, '-').toLowerCase()}`}
-                  checked={selectedCategories.includes(category)}
-                  onChange={() => handleCategoryToggle(category)}
-                  label={category}
-                />
-              ))}
-            </FilterSection>
+              <h3 className="sr-only">Filters</h3>
 
-            {/* Investment range filter (min/max inputs) */}
-            <FilterSection
-              title="Investment Range"
-              isOpen={investmentOpen}
-              onToggle={() => setInvestmentOpen(!investmentOpen)}
-            >
-              <div className="space-y-3">
-                <div>
-                  <label
-                    htmlFor="min-price"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Minimum Investment
-                  </label>
-                  <Input
-                    id="min-price"
-                    type="number"
-                    placeholder="$0"
-                    value={minPrice ?? ''}
-                    onChange={(e) =>
-                      setMinPrice(e.target.value ? Number(e.target.value) : undefined)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="max-price"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Maximum Investment
-                  </label>
-                  <Input
-                    id="max-price"
-                    type="number"
-                    placeholder="No limit"
-                    value={maxPrice ?? ''}
-                    onChange={(e) =>
-                      setMaxPrice(e.target.value ? Number(e.target.value) : undefined)
-                    }
-                    className="w-full"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setMinPrice(undefined)
-                    setMaxPrice(undefined)
-                  }}
+              {/* Search filter (at top) */}
+              <div className="border-b border-gray-200 py-6">
+                <h3 className="text-sm font-medium text-gray-900 mb-3">Search</h3>
+                <Input
+                  type="text"
+                  placeholder="Search franchises or tags..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="w-full"
-                >
-                  Clear
-                </Button>
+                />
               </div>
-            </FilterSection>
-          </form>
 
-          {/* Results grid */}
-          <div className="lg:col-span-3 min-h-0">
-            <div
-              className={`grid gap-6 ${displayedFranchises.length <= 2 ? 'justify-items-center' : 'justify-items-start'} ${getGridLayout(displayedFranchises.length)} pb-8`}
-            >
-              {displayedFranchises.map((franchise) => (
-                <div
-                  key={franchise.href ?? franchise.name}
-                  className={`w-full ${displayedFranchises.length === 1 ? 'max-w-md mx-auto' : ''}`}
-                >
-                  <FranchiseCard franchise={franchise} variant="grid" />
+              {/* Industries (Categories) - collapsible */}
+              <FilterSection
+                title="Industries"
+                isOpen={categoryOpen}
+                onToggle={() => setCategoryOpen(!categoryOpen)}
+              >
+                {categories.map((category) => (
+                  <FilterCheckbox
+                    key={category}
+                    id={`filter-category-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => handleCategoryToggle(category)}
+                    label={category}
+                  />
+                ))}
+              </FilterSection>
+
+              {/* Investment range filter (min/max inputs) */}
+              <FilterSection
+                title="Investment Range"
+                isOpen={investmentOpen}
+                onToggle={() => setInvestmentOpen(!investmentOpen)}
+              >
+                <div className="space-y-3">
+                  <div>
+                    <label
+                      htmlFor="min-price"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Minimum Investment
+                    </label>
+                    <Input
+                      id="min-price"
+                      type="number"
+                      placeholder="$0"
+                      value={minPrice ?? ''}
+                      onChange={(e) =>
+                        setMinPrice(e.target.value ? Number(e.target.value) : undefined)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="max-price"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Maximum Investment
+                    </label>
+                    <Input
+                      id="max-price"
+                      type="number"
+                      placeholder="No limit"
+                      value={maxPrice ?? ''}
+                      onChange={(e) =>
+                        setMaxPrice(e.target.value ? Number(e.target.value) : undefined)
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setMinPrice(undefined)
+                      setMaxPrice(undefined)
+                    }}
+                    className="w-full"
+                  >
+                    Clear
+                  </Button>
                 </div>
-              ))}
-            </div>
+              </FilterSection>
+            </form>
 
-            {/* Load More button when more items are available */}
-            {hasMore && (
-              <div className="flex justify-center pb-8 pt-4">
-                <Button
-                  onClick={handleLoadMore}
-                  className="px-8 py-3 text-base font-semibold bg-[#004AAD] hover:bg-[#003A8C] text-white"
-                >
-                  Load More Franchises
-                </Button>
+            {/* Results grid */}
+            <div className="lg:col-span-3 min-h-0">
+              <div
+                className={`grid gap-6 ${displayedFranchises.length <= 2 ? 'justify-items-center' : 'justify-items-start'} ${getGridLayout(displayedFranchises.length)} pb-8`}
+              >
+                {displayedFranchises.map((franchise) => (
+                  <div
+                    key={franchise.href ?? franchise.name}
+                    className={`w-full ${displayedFranchises.length === 1 ? 'max-w-md mx-auto' : ''}`}
+                  >
+                    <FranchiseCard franchise={franchise} variant="grid" />
+                  </div>
+                ))}
               </div>
-            )}
+
+              {/* Show "See All" button or "Load More" button */}
+              {showAllButton && hasMore && showAllButtonLink ? (
+                <div className="flex justify-center pb-8 pt-4">
+                  <a
+                    href={showAllButtonLink}
+                    className="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white bg-[#004AAD] hover:bg-[#003A8C] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                  >
+                    {showAllButtonText}
+                  </a>
+                </div>
+              ) : hasMore ? (
+                <div className="flex justify-center pb-8 pt-4">
+                  <Button
+                    onClick={handleLoadMore}
+                    className="px-8 py-3 text-base font-semibold bg-[#004AAD] hover:bg-[#003A8C] text-white"
+                  >
+                    Load More Franchises
+                  </Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </section>

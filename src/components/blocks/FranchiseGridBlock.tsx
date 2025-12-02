@@ -37,6 +37,12 @@ type FranchiseGridBlockProps = {
     industry?: string | { id: string; [key: string]: any } | null
     /** Maximum number of franchises to display (automatic mode only) */
     limit?: number | null
+    /** Show "See All" button below the grid */
+    showAllButton?: boolean | null
+    /** Text for the "See All" button */
+    showAllButtonText?: string | null
+    /** URL for the "See All" button */
+    showAllButtonLink?: string | null
     /** Optional anchor ID for fragment navigation */
     anchorId?: string | null
     /** Unique identifier for the block */
@@ -230,11 +236,19 @@ export default async function FranchiseGridBlock({ block }: FranchiseGridBlockPr
           franchises={franchises}
           heading={block.heading ?? 'Browse Franchises'}
           showTabs={block.showTabs ?? true}
+          maxItems={block.limit ?? undefined}
+          showAllButton={block.showAllButton ?? false}
+          showAllButtonText={block.showAllButtonText ?? 'See All'}
+          showAllButtonLink={block.showAllButtonLink ?? undefined}
         />
       ) : (
         <FranchiseGrid
           franchises={franchises}
           heading={block.heading ?? 'Franchise Opportunities'}
+          maxItems={block.limit ?? undefined}
+          showAllButton={block.showAllButton ?? false}
+          showAllButtonText={block.showAllButtonText ?? 'See All'}
+          showAllButtonLink={block.showAllButtonLink ?? undefined}
         />
       )}
     </section>

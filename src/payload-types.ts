@@ -237,6 +237,18 @@ export interface Page {
          * Maximum number of items to show (optional)
          */
         limit?: number | null;
+        /**
+         * Show a "See All" button below the grid when items are limited
+         */
+        showAllButton?: boolean | null;
+        /**
+         * Text for the "See All" button
+         */
+        showAllButtonText?: string | null;
+        /**
+         * URL for the "See All" button (e.g., /find-a-franchise?filter=featured)
+         */
+        showAllButtonLink?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'franchiseGrid';
@@ -919,6 +931,121 @@ export interface Page {
         blockName?: string | null;
         blockType: 'addToCart';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Main heading text
+         */
+        heading?: string | null;
+        /**
+         * Content text (supports multiple paragraphs)
+         */
+        content?: string | null;
+        /**
+         * Image to display
+         */
+        image?: (string | null) | Media;
+        /**
+         * Choose which side to display the image
+         */
+        imagePosition?: ('left' | 'right') | null;
+        /**
+         * Button text (optional)
+         */
+        buttonText?: string | null;
+        /**
+         * Button link URL (optional)
+         */
+        buttonLink?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contentImage';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Add cards to display in a grid (up to 12 cards)
+         */
+        cards?:
+          | {
+              /**
+               * Card title
+               */
+              title: string;
+              /**
+               * Card content text
+               */
+              content?: string | null;
+              /**
+               * Card background color (hex code)
+               */
+              backgroundColor?: string | null;
+              /**
+               * Card text color (hex code)
+               */
+              textColor?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Button text below the grid (optional)
+         */
+        buttonText?: string | null;
+        /**
+         * Button link URL (optional)
+         */
+        buttonLink?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'gridCards';
+      }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Choose video source type
+         */
+        videoType: 'link' | 'upload';
+        /**
+         * YouTube or Vimeo video URL
+         */
+        videoUrl?: string | null;
+        /**
+         * Upload a video file
+         */
+        videoFile?: (string | null) | Media;
+        /**
+         * Button text below the video (optional)
+         */
+        buttonText?: string | null;
+        /**
+         * Button link URL (optional)
+         */
+        buttonLink?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'video';
+      }
   )[];
   seo?: {
     /**
@@ -1477,6 +1604,9 @@ export interface PagesSelect<T extends boolean = true> {
               onlyTopPick?: T;
               industry?: T;
               limit?: T;
+              showAllButton?: T;
+              showAllButtonText?: T;
+              showAllButtonLink?: T;
               id?: T;
               blockName?: T;
             };
@@ -1731,6 +1861,52 @@ export interface PagesSelect<T extends boolean = true> {
               buttonVariant?: T;
               buttonSize?: T;
               alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        contentImage?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              heading?: T;
+              content?: T;
+              image?: T;
+              imagePosition?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gridCards?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              cards?:
+                | T
+                | {
+                    title?: T;
+                    content?: T;
+                    backgroundColor?: T;
+                    textColor?: T;
+                    id?: T;
+                  };
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        video?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              videoType?: T;
+              videoUrl?: T;
+              videoFile?: T;
+              buttonText?: T;
+              buttonLink?: T;
               id?: T;
               blockName?: T;
             };

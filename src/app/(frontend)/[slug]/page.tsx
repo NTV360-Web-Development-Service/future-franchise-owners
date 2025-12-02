@@ -19,6 +19,9 @@ import {
   TeamSectionBlock,
   FormBuilderBlock,
   ContactInfoBlock,
+  ContentImageBlock,
+  GridCardsBlock,
+  VideoBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -98,6 +101,12 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         return <FormBuilderBlock block={block} key={key} />
       case 'contactInfo':
         return <ContactInfoBlock block={block} key={key} />
+      case 'contentImage':
+        return <ContentImageBlock block={block} key={key} />
+      case 'gridCards':
+        return <GridCardsBlock block={block} key={key} />
+      case 'video':
+        return <VideoBlock block={block} key={key} />
       default:
         return null
     }

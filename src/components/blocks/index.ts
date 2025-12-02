@@ -45,3 +45,12 @@ export { default as ContactInfoBlock } from './ContactInfoBlock'
 
 /** Add to cart block for adding franchises to cart */
 export { default as AddToCartBlock } from './AddToCartBlock'
+
+/** Content with image block - text on left, image on right */
+export { default as ContentImageBlock } from './ContentImageBlock'
+
+/** Grid cards block - 3-column grid of cards */
+export { default as GridCardsBlock } from './GridCardsBlock'
+
+/** Video block - embedded video with optional button */
+export { default as VideoBlock } from './VideoBlock'

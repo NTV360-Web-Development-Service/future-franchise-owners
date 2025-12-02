@@ -16,9 +16,17 @@ const TAB_DEFS = [
 export default function FranchiseGrid({
   franchises,
   heading = 'Best Franchise Opportunities',
+  maxItems,
+  showAllButton,
+  showAllButtonText = 'See All',
+  showAllButtonLink,
 }: {
   franchises: (Franchise & { href?: string; id?: string })[]
   heading?: string
+  maxItems?: number
+  showAllButton?: boolean
+  showAllButtonText?: string
+  showAllButtonLink?: string
 }) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [search, setSearch] = useState('')
@@ -94,6 +102,8 @@ export default function FranchiseGrid({
     return list
   }, [franchises, activeTab, search, category, maxCash, sortBy])
 
+  const displayedFranchises = maxItems ? filtered.slice(0, maxItems) : filtered
+
   /**
    * Render the responsive franchise grid.
    *
@@ -113,11 +123,11 @@ export default function FranchiseGrid({
       {/* Tabs and filters will move to the dedicated franchises page */}
 
       {(() => {
-        const isSingle = filtered.length <= 1
+        const isSingle = displayedFranchises.length <= 1
         const colsClass = isSingle ? 'grid-cols-1' : 'sm:grid-cols-2 lg:grid-cols-3'
         return (
           <div className={`grid gap-6 auto-rows-fr ${colsClass}`}>
-            {filtered.map((franchise) => (
+            {displayedFranchises.map((franchise) => (
               <div
                 key={franchise.href ?? franchise.id ?? franchise.name}
                 className={`${isSingle ? 'w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto' : 'w-full'} h-full`}
@@ -128,6 +138,17 @@ export default function FranchiseGrid({
           </div>
         )
       })()}
+
+      {showAllButton && showAllButtonLink && (
+        <div className="flex justify-center mt-8">
+          <a
+            href={showAllButtonLink}
+            className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+          >
+            {showAllButtonText}
+          </a>
+        </div>
+      )}
     </section>
   )
 }
