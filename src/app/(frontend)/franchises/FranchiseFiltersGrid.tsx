@@ -404,18 +404,6 @@ export default function FranchiseFiltersGrid({
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleTabClick('Sponsored')}
-                      className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
-                        activeTabFilter === 'Sponsored'
-                          ? 'bg-orange-500 text-white border-orange-500 shadow-md'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
-                      }`}
-                    >
-                      <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
-                      Sponsored
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => handleTabClick('Featured')}
                       className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
                         activeTabFilter === 'Featured'
@@ -425,6 +413,18 @@ export default function FranchiseFiltersGrid({
                     >
                       <Star className="w-3 h-3 sm:w-4 sm:h-4" />
                       Featured
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTabClick('Sponsored')}
+                      className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
+                        activeTabFilter === 'Sponsored'
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-600'
+                      }`}
+                    >
+                      <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
+                      Sponsored
                     </button>
                   </div>
                 )}
