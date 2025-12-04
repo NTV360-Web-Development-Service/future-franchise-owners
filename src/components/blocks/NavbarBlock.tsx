@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -65,6 +66,18 @@ interface NavbarBlockProps {
  */
 export default function NavbarBlock({ block }: NavbarBlockProps) {
   const [open, setOpen] = React.useState(false)
+  const pathname = usePathname()
+
+  /**
+   * Check if a link is active based on current pathname
+   */
+  const isActive = (url: string) => {
+    // Homepage check
+    if (url === '/' && pathname === '/') return true
+    // Other pages - exact match or starts with the URL
+    if (url !== '/' && pathname.startsWith(url)) return true
+    return false
+  }
 
   /**
    * Close mobile menu when navigating
@@ -126,7 +139,11 @@ export default function NavbarBlock({ block }: NavbarBlockProps) {
               <Link
                 key={link.id || link.url}
                 href={link.url}
-                className="text-sm font-medium text-gray-700 transition-colors hover:text-black"
+                className={`text-sm font-medium transition-colors hover:text-black ${
+                  isActive(link.url)
+                    ? 'text-black font-semibold border-b-2 border-primary'
+                    : 'text-gray-700'
+                }`}
               >
                 {link.label}
               </Link>
@@ -163,7 +180,11 @@ export default function NavbarBlock({ block }: NavbarBlockProps) {
                 <Link
                   key={link.id || link.url}
                   href={link.url}
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-black"
+                  className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-black ${
+                    isActive(link.url)
+                      ? 'bg-primary/10 text-black font-semibold border-l-4 border-primary'
+                      : 'text-gray-700'
+                  }`}
                   onClick={() => setOpen(false)}
                 >
                   {link.label}

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Facebook,
   Instagram,
@@ -119,6 +120,8 @@ export interface FooterBlockProps {
  * @returns {React.ReactElement} Rendered footer element
  */
 export default function FooterBlock({ block }: FooterBlockProps) {
+  const pathname = usePathname()
+
   const {
     companyName = 'Future Franchise Owners',
     tagline = 'Your partner in franchise success',
@@ -130,6 +133,17 @@ export default function FooterBlock({ block }: FooterBlockProps) {
     backgroundColor = '#0F172A',
     textColor = '#F1F5F9',
   } = block
+
+  /**
+   * Check if a link is active based on current pathname
+   */
+  const isActive = (url: string) => {
+    // Homepage check
+    if (url === '/' && pathname === '/') return true
+    // Other pages - exact match or starts with the URL
+    if (url !== '/' && pathname.startsWith(url)) return true
+    return false
+  }
 
   const currentYear = new Date().getFullYear()
   const copyright = copyrightText || `© ${currentYear} ${companyName}. All rights reserved.`
@@ -187,7 +201,11 @@ export default function FooterBlock({ block }: FooterBlockProps) {
                           href={link.url}
                           target={link.openInNewTab ? '_blank' : undefined}
                           rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
-                          className="text-sm opacity-70 hover:opacity-100 transition-opacity inline-block"
+                          className={`text-sm transition-opacity inline-block ${
+                            isActive(link.url)
+                              ? 'opacity-100 font-semibold underline underline-offset-4'
+                              : 'opacity-70 hover:opacity-100'
+                          }`}
                         >
                           {link.label}
                         </Link>
@@ -215,7 +233,11 @@ export default function FooterBlock({ block }: FooterBlockProps) {
                   <Link
                     key={index}
                     href={link.url}
-                    className="text-sm opacity-60 hover:opacity-100 transition-opacity"
+                    className={`text-sm transition-opacity ${
+                      isActive(link.url)
+                        ? 'opacity-100 font-semibold underline underline-offset-4'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
                   >
                     {link.label}
                   </Link>
