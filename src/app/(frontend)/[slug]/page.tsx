@@ -148,9 +148,8 @@ export async function generateStaticParams() {
     }))
 }
 
-// Force dynamic metadata generation (no caching)
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable static generation with revalidation
+export const revalidate = 60 // Revalidate every 60 seconds
 
 /**
  * Generate metadata for the page

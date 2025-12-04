@@ -23,9 +23,8 @@ import {
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
 
-// Force dynamic metadata generation (no caching)
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Enable static generation with revalidation
+export const revalidate = 60 // Revalidate every 60 seconds
 
 /**
  * Generate metadata for the homepage

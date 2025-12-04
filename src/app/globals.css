@@ -177,8 +177,9 @@
 /* View Transitions - Smooth crossfade like Astro */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.25s;
-  animation-timing-function: ease-in-out;
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  mix-blend-mode: normal;
 }
 
 /* Fade out old page */
@@ -189,6 +190,11 @@
 /* Fade in new page */
 ::view-transition-new(root) {
   animation-name: fade-in;
+}
+
+/* Ensure smooth crossfade */
+::view-transition-group(root) {
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fade-out {
