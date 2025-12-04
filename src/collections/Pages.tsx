@@ -1118,10 +1118,44 @@ const Pages: CollectionConfig = {
             },
             {
               name: 'description',
-              type: 'text',
+              type: 'richText',
               required: false,
-              defaultValue:
-                'Explore our network of franchise locations and discover opportunities in your area.',
+              editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  SlateToLexicalFeature({}),
+                  LinkFeature({
+                    enabledCollections: ['pages', 'franchises'],
+                    fields: ({ defaultFields }) => {
+                      return [
+                        ...defaultFields,
+                        {
+                          name: 'rel',
+                          label: 'Rel Attribute',
+                          type: 'select',
+                          hasMany: true,
+                          options: ['noopener', 'noreferrer', 'nofollow'],
+                          admin: {
+                            description:
+                              'The rel attribute defines the relationship between your page and the linked page',
+                          },
+                        },
+                        {
+                          name: 'linkColor',
+                          label: 'Link Color',
+                          type: 'text',
+                          admin: {
+                            description:
+                              'Custom color for this link (e.g., #004AAD, blue, rgb(0,74,173))',
+                            placeholder: '#004AAD',
+                          },
+                        },
+                      ]
+                    },
+                  }),
+                  HTMLConverterFeature({}),
+                ],
+              }),
               admin: {
                 description: 'Optional description text below the heading',
               },

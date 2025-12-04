@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { MapPin } from 'lucide-react'
+import { RichTextRenderer } from '@/components/RichTextRenderer'
 
 /**
  * Props interface for the MapBlock component
@@ -8,7 +9,7 @@ import { MapPin } from 'lucide-react'
  * @interface MapBlockProps
  * @property {Object} block - Configuration object for the map block
  * @property {string} [block.heading] - Optional heading text displayed above the map
- * @property {string} [block.description] - Optional description text displayed below the heading
+ * @property {any} [block.description] - Optional richtext description displayed below the heading
  * @property {string} block.mapUrl - Required URL for the map embed (e.g., Google Maps embed URL)
  * @property {number} [block.height=400] - Optional height of the map iframe in pixels
  * @property {boolean} [block.showViewButton=false] - Whether to show the "View Full Map" button
@@ -17,7 +18,7 @@ import { MapPin } from 'lucide-react'
 interface MapBlockProps {
   block: {
     heading?: string | null
-    description?: string | null
+    description?: any
     mapUrl?: string | null
     height?: number | null
     showViewButton?: boolean | null
@@ -103,9 +104,7 @@ const getFullMapUrl = (embedUrl: string): string => {
 export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
   // Handle null values from CMS and provide defaults
   const heading = block.heading || 'Find Franchise Opportunities Near You'
-  const description =
-    block.description ||
-    'Explore our network of franchise locations and discover opportunities in your area.'
+  const description = block.description
   const mapUrl =
     block.mapUrl ||
     'https://www.google.com/maps/d/u/0/embed?mid=1WvsN2zVD73ijJA6Kmyrv72IN36qRZxo&ehbc=2E312F'
@@ -133,7 +132,11 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block }) => {
             <MapPin className="w-8 h-8 text-[#004AAD] mr-3" />
             <h2 className="text-3xl font-bold text-gray-900">{heading}</h2>
           </div>
-          {description && <p className="text-lg text-gray-600 max-w-3xl mx-auto">{description}</p>}
+          {description && (
+            <div className="text-lg text-gray-600 max-w-3xl mx-auto">
+              <RichTextRenderer content={description} />
+            </div>
+          )}
         </div>
 
         {/* Map Container */}
