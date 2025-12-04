@@ -1,4 +1,4 @@
-import { headers as getHeaders } from 'next/headers'
+import { headers as getHeaders, draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -22,6 +22,7 @@ import {
   ContentImageBlock,
   GridCardsBlock,
   VideoBlock,
+  AddToCartBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -38,6 +39,7 @@ import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlo
 export default async function DynamicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const headers = await getHeaders()
+  const { isEnabled: isDraftMode } = await draftMode()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
@@ -53,6 +55,8 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         equals: slug,
       },
     },
+    draft: isDraftMode,
+    depth: 2, // Populate relationships like franchise in addToCart block
   })
 
   if (!page) {
@@ -107,6 +111,8 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         return <GridCardsBlock block={block} key={key} />
       case 'video':
         return <VideoBlock block={block} key={key} />
+      case 'addToCart':
+        return <AddToCartBlock block={block} key={key} />
       default:
         return null
     }
@@ -151,6 +157,7 @@ export const revalidate = 0
  */
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  const { isEnabled: isDraftMode } = await draftMode()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -163,6 +170,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         equals: slug,
       },
     },
+    draft: isDraftMode,
   })
 
   if (!page) {

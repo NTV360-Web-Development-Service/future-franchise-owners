@@ -1,4 +1,4 @@
-import { headers as getHeaders } from 'next/headers'
+import { headers as getHeaders, draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import React from 'react'
 import { fileURLToPath } from 'url'
@@ -18,6 +18,7 @@ import {
   TeamSectionBlock,
   FormBuilderBlock,
   ContactInfoBlock,
+  AddToCartBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -30,6 +31,7 @@ export const revalidate = 0
  * Generate metadata for the homepage
  */
 export async function generateMetadata(): Promise<Metadata> {
+  const { isEnabled: isDraftMode } = await draftMode()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
@@ -42,6 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
         equals: 'homepage',
       },
     },
+    draft: isDraftMode,
   })
 
   // Get site settings for defaults
@@ -135,6 +138,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function HomePage() {
   const headers = await getHeaders()
+  const { isEnabled: isDraftMode } = await draftMode()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
@@ -150,6 +154,8 @@ export default async function HomePage() {
         equals: 'homepage',
       },
     },
+    draft: isDraftMode,
+    depth: 2, // Populate relationships like franchise in addToCart block
   })
 
   if (!page) {
@@ -198,6 +204,8 @@ export default async function HomePage() {
         return <FormBuilderBlock block={block} key={key} />
       case 'contactInfo':
         return <ContactInfoBlock block={block} key={key} />
+      case 'addToCart':
+        return <AddToCartBlock block={block} key={key} />
       default:
         return null
     }

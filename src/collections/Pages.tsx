@@ -32,6 +32,13 @@ const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
     useAsTitle: 'title',
+    livePreview: {
+      url: ({ data }) => {
+        const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+        const path = data.slug === 'homepage' ? '' : data.slug
+        return `${baseUrl}/${path}`
+      },
+    },
   },
   hooks: {
     afterChange: [afterChangeHook],

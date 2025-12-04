@@ -2,29 +2,31 @@
 
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import type { CartItem, ListType } from '@/contexts/CartContext'
+import type { Franchise, Media } from '@/payload-types'
 
 interface AddToCartBlockProps {
   block: {
     blockType: 'addToCart'
-    franchise: {
-      id: string
-      name: string
-      category: string
-      cashRequired: string
-      image?: string
-      slug?: string
-    }
-    listType?: ListType
-    buttonText?: string
-    buttonVariant?: 'default' | 'outline' | 'ghost'
-    buttonSize?: 'default' | 'sm' | 'lg'
-    alignment?: 'left' | 'center' | 'right'
-    published?: boolean
+    franchise: string | Franchise
+    listType?: ListType | null
+    buttonText?: string | null
+    buttonVariant?: 'default' | 'outline' | 'ghost' | null
+    buttonSize?: 'default' | 'sm' | 'lg' | null
+    alignment?: 'left' | 'center' | 'right' | null
+    published?: boolean | null
   }
 }
 
 export default function AddToCartBlock({ block }: AddToCartBlockProps) {
   if (block.published === false) return null
+
+  // Handle case where franchise is just an ID string
+  if (typeof block.franchise === 'string') {
+    console.warn('AddToCartBlock: franchise not populated, skipping render')
+    return null
+  }
+
+  const franchise = block.franchise
 
   const alignmentClasses = {
     left: 'justify-start',
@@ -32,13 +34,32 @@ export default function AddToCartBlock({ block }: AddToCartBlockProps) {
     right: 'justify-end',
   }
 
+  // Extract industry name for category
+  const category =
+    franchise.industry && Array.isArray(franchise.industry) && franchise.industry.length > 0
+      ? typeof franchise.industry[0] === 'string'
+        ? franchise.industry[0]
+        : franchise.industry[0]?.name || 'Franchise'
+      : 'Franchise'
+
+  // Extract image URL from logo
+  const image =
+    franchise.logo && typeof franchise.logo === 'object'
+      ? (franchise.logo as Media).url || undefined
+      : undefined
+
+  // Format investment as cash required
+  const cashRequired = franchise.investment?.min
+    ? `$${franchise.investment.min.toLocaleString()}${franchise.investment.max ? ` - $${franchise.investment.max.toLocaleString()}` : '+'}`
+    : 'Contact for details'
+
   const cartItem: CartItem = {
-    id: block.franchise.id,
-    name: block.franchise.name,
-    category: block.franchise.category,
-    cashRequired: block.franchise.cashRequired,
-    image: block.franchise.image,
-    slug: block.franchise.slug,
+    id: franchise.id,
+    name: franchise.businessName,
+    category,
+    cashRequired,
+    image,
+    slug: franchise.slug || undefined,
   }
 
   return (
@@ -46,8 +67,8 @@ export default function AddToCartBlock({ block }: AddToCartBlockProps) {
       <AddToCartButton
         franchise={cartItem}
         listType={block.listType || 'wishlist'}
-        variant={block.buttonVariant}
-        size={block.buttonSize}
+        variant={block.buttonVariant || undefined}
+        size={block.buttonSize || undefined}
       />
     </div>
   )
