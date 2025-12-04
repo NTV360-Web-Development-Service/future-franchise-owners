@@ -7,6 +7,7 @@ import { generateOrganizationSchema } from '@/lib/schema'
 import { CartProvider } from '@/contexts/CartContext'
 import { FloatingCartButton } from '@/components/cart/FloatingCartButton'
 import GlobalTicker from '@/components/GlobalTicker'
+import { PageTransition } from '@/components/PageTransition'
 
 /**
  * Application metadata configuration
@@ -52,42 +53,44 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body className="font-sans">
         <CartProvider>
-          {/* Organization Schema for SEO */}
-          <Script
-            id="organization-schema"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(generateOrganizationSchema()),
-            }}
-          />
-
-          {/* Global Ticker - Shows above everything when enabled */}
-          {siteSettings?.tickerEnabled && siteSettings?.ticker?.text && (
-            <GlobalTicker
-              text={siteSettings.ticker.text}
-              backgroundColor={siteSettings.ticker.backgroundColor}
-              textColor={siteSettings.ticker.textColor}
-              fontSize={siteSettings.ticker.fontSize}
-              fontWeight={siteSettings.ticker.fontWeight}
-              isMoving={siteSettings.ticker.isMoving}
-              speed={siteSettings.ticker.speed}
-              textAlign={siteSettings.ticker.textAlign}
-              link={siteSettings.ticker.link}
-              dismissible={siteSettings.ticker.dismissible}
+          <PageTransition>
+            {/* Organization Schema for SEO */}
+            <Script
+              id="organization-schema"
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(generateOrganizationSchema()),
+              }}
             />
-          )}
 
-          {/* Global Navbar - Client component that reacts to route changes */}
-          <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />
+            {/* Global Ticker - Shows above everything when enabled */}
+            {siteSettings?.tickerEnabled && siteSettings?.ticker?.text && (
+              <GlobalTicker
+                text={siteSettings.ticker.text}
+                backgroundColor={siteSettings.ticker.backgroundColor}
+                textColor={siteSettings.ticker.textColor}
+                fontSize={siteSettings.ticker.fontSize}
+                fontWeight={siteSettings.ticker.fontWeight}
+                isMoving={siteSettings.ticker.isMoving}
+                speed={siteSettings.ticker.speed}
+                textAlign={siteSettings.ticker.textAlign}
+                link={siteSettings.ticker.link}
+                dismissible={siteSettings.ticker.dismissible}
+              />
+            )}
 
-          {/* Main Content */}
-          <main>{children}</main>
+            {/* Global Navbar - Client component that reacts to route changes */}
+            <GlobalNavbarFooter siteSettings={siteSettings} position="navbar" />
 
-          {/* Global Footer - Client component that reacts to route changes */}
-          <GlobalNavbarFooter siteSettings={siteSettings} position="footer" />
+            {/* Main Content */}
+            <main>{children}</main>
 
-          {/* Floating Cart Button - Fixed bottom right (conditionally rendered) */}
-          {siteSettings?.enableCart !== false && <FloatingCartButton />}
+            {/* Global Footer - Client component that reacts to route changes */}
+            <GlobalNavbarFooter siteSettings={siteSettings} position="footer" />
+
+            {/* Floating Cart Button - Fixed bottom right (conditionally rendered) */}
+            {siteSettings?.enableCart !== false && <FloatingCartButton />}
+          </PageTransition>
         </CartProvider>
       </body>
     </html>
