@@ -3,6 +3,7 @@ import * as migration_20251020_060257_add_text_color_to_tags from './20251020_06
 import * as migration_20251024_071255_change_about_teaser_description_to_richtext from './20251024_071255_change_about_teaser_description_to_richtext';
 import * as migration_20251029_022654 from './20251029_022654';
 import * as migration_20251110_020002 from './20251110_020002';
+import * as migration_20251205_031318 from './20251205_031318';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20251110_020002.up,
     down: migration_20251110_020002.down,
-    name: '20251110_020002'
+    name: '20251110_020002',
+  },
+  {
+    up: migration_20251205_031318.up,
+    down: migration_20251205_031318.down,
+    name: '20251205_031318'
   },
 ];

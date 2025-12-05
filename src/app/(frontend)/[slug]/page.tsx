@@ -23,6 +23,7 @@ import {
   GridCardsBlock,
   VideoBlock,
   AddToCartBlock,
+  ImageCardBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -111,6 +112,8 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
         return <GridCardsBlock block={block} key={key} />
       case 'video':
         return <VideoBlock block={block} key={key} />
+      case 'imageCard':
+        return <ImageCardBlock block={block} key={key} />
       case 'addToCart':
         return <AddToCartBlock block={block} key={key} />
       default:

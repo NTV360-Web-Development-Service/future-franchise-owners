@@ -1060,6 +1060,65 @@ export interface Page {
         blockName?: string | null;
         blockType: 'video';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Section heading (optional)
+         */
+        heading?: string | null;
+        /**
+         * Add as many image cards as you want
+         */
+        cards: {
+          /**
+           * Card image
+           */
+          image: string | Media;
+          /**
+           * Card title (optional)
+           */
+          title?: string | null;
+          /**
+           * Card description (optional)
+           */
+          description?: string | null;
+          /**
+           * Button text (optional)
+           */
+          buttonText?: string | null;
+          /**
+           * Button link URL (optional)
+           */
+          buttonLink?: string | null;
+          id?: string | null;
+        }[];
+        /**
+         * Number of cards to show initially (default: 6)
+         */
+        initialCardsToShow?: number | null;
+        /**
+         * Number of cards to load when "Show More" is clicked (default: 6)
+         */
+        cardsPerLoad?: number | null;
+        /**
+         * Text for the "Show More" button
+         */
+        showMoreButtonText?: string | null;
+        /**
+         * Number of columns in the grid
+         */
+        columns?: ('1' | '2' | '3' | '4') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'imageCard';
+      }
   )[];
   seo?: {
     /**
@@ -1921,6 +1980,29 @@ export interface PagesSelect<T extends boolean = true> {
               videoFile?: T;
               buttonText?: T;
               buttonLink?: T;
+              id?: T;
+              blockName?: T;
+            };
+        imageCard?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              heading?: T;
+              cards?:
+                | T
+                | {
+                    image?: T;
+                    title?: T;
+                    description?: T;
+                    buttonText?: T;
+                    buttonLink?: T;
+                    id?: T;
+                  };
+              initialCardsToShow?: T;
+              cardsPerLoad?: T;
+              showMoreButtonText?: T;
+              columns?: T;
               id?: T;
               blockName?: T;
             };

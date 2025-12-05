@@ -54,3 +54,6 @@ export { default as GridCardsBlock } from './GridCardsBlock'
 
 /** Video block - embedded video with optional button */
 export { default as VideoBlock } from './VideoBlock'
+
+/** Image card block - card with image, optional title, description, and button */
+export { default as ImageCardBlock } from './ImageCardBlock'

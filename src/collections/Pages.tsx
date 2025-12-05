@@ -1922,6 +1922,123 @@ const Pages: CollectionConfig = {
             },
           ],
         },
+        {
+          slug: 'imageCard',
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Section heading (optional)',
+              },
+            },
+            {
+              name: 'cards',
+              type: 'array',
+              required: true,
+              minRows: 1,
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: true,
+                  admin: {
+                    description: 'Card image',
+                  },
+                },
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Card title (optional)',
+                  },
+                },
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Card description (optional)',
+                  },
+                },
+                {
+                  name: 'buttonText',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Button text (optional)',
+                  },
+                },
+                {
+                  name: 'buttonLink',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Button link URL (optional)',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add as many image cards as you want',
+              },
+            },
+            {
+              name: 'initialCardsToShow',
+              type: 'number',
+              required: false,
+              defaultValue: 6,
+              admin: {
+                description: 'Number of cards to show initially (default: 6)',
+              },
+            },
+            {
+              name: 'cardsPerLoad',
+              type: 'number',
+              required: false,
+              defaultValue: 6,
+              admin: {
+                description: 'Number of cards to load when "Show More" is clicked (default: 6)',
+              },
+            },
+            {
+              name: 'showMoreButtonText',
+              type: 'text',
+              required: false,
+              defaultValue: 'Show More',
+              admin: {
+                description: 'Text for the "Show More" button',
+              },
+            },
+            {
+              name: 'columns',
+              type: 'select',
+              required: false,
+              defaultValue: '3',
+              options: [
+                { label: '1 Column', value: '1' },
+                { label: '2 Columns', value: '2' },
+                { label: '3 Columns', value: '3' },
+                { label: '4 Columns', value: '4' },
+              ],
+              admin: {
+                description: 'Number of columns in the grid',
+              },
+            },
+          ],
+        },
       ],
     },
     {
