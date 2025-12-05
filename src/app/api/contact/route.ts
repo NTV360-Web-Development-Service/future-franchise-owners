@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -27,6 +29,35 @@ export async function POST(request: NextRequest) {
         label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
         value: String(value),
       }))
+
+    // Save to database
+    try {
+      const payloadConfig = await config
+      const payload = await getPayload({ config: payloadConfig })
+
+      // Get IP address
+      const ipAddress =
+        request.headers.get('x-forwarded-for')?.split(',')[0] ||
+        request.headers.get('x-real-ip') ||
+        'unknown'
+
+      await payload.create({
+        collection: 'contactSubmissions',
+        data: {
+          name: contactName,
+          email,
+          phone,
+          company: body.company || null,
+          subject: contactSubject,
+          message: contactMessage,
+          ipAddress,
+          status: 'new',
+        },
+      })
+    } catch (dbError) {
+      console.error('Failed to save contact submission to database:', dbError)
+      // Continue even if database save fails - at least send the email
+    }
 
     // Email to admin
     const adminEmailSubject = `New Contact: ${contactSubject}`
