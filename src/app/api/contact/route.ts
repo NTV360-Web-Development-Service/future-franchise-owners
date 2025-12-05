@@ -6,15 +6,30 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, phone, subject, message } = body
+
+    // Extract common fields (support both 'name' and 'fullName')
+    const contactName = body.name || body.fullName || 'Unknown'
+    const email = body.email
+    const phone = body.phone
+    const contactSubject = body.subject || 'Contact Form Submission'
+    const contactMessage = body.message || ''
 
     // Validate required fields
-    if (!name || !email || !phone || !subject || !message) {
+    if (!email || !phone) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Build dynamic field list for email (exclude common fields we already handle)
+    const excludeFields = ['name', 'fullName', 'email', 'phone', 'subject', 'message']
+    const additionalFields = Object.entries(body)
+      .filter(([key]) => !excludeFields.includes(key))
+      .map(([key, value]) => ({
+        label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+        value: String(value),
+      }))
+
     // Email to admin
-    const adminEmailSubject = `New Contact: ${subject}`
+    const adminEmailSubject = `New Contact: ${contactSubject}`
     const adminEmailHTML = `
 <!DOCTYPE html>
 <html>
@@ -41,7 +56,7 @@ export async function POST(request: NextRequest) {
                 <tr>
                   <td style="padding: 10px 0;">
                     <strong style="color: #374151;">Name:</strong>
-                    <span style="color: #111827; margin-left: 10px;">${name}</span>
+                    <span style="color: #111827; margin-left: 10px;">${contactName}</span>
                   </td>
                 </tr>
                 <tr>
@@ -56,24 +71,42 @@ export async function POST(request: NextRequest) {
                     <a href="tel:${phone}" style="color: #004AAD; margin-left: 10px; text-decoration: none;">${phone}</a>
                   </td>
                 </tr>
-                <tr>
+                ${
+                  contactSubject !== 'Contact Form Submission'
+                    ? `<tr>
                   <td style="padding: 10px 0;">
                     <strong style="color: #374151;">Subject:</strong>
-                    <span style="color: #111827; margin-left: 10px;">${subject}</span>
+                    <span style="color: #111827; margin-left: 10px;">${contactSubject}</span>
                   </td>
-                </tr>
+                </tr>`
+                    : ''
+                }
+                ${additionalFields
+                  .map(
+                    (field) => `<tr>
+                  <td style="padding: 10px 0;">
+                    <strong style="color: #374151;">${field.label}:</strong>
+                    <span style="color: #111827; margin-left: 10px;">${field.value}</span>
+                  </td>
+                </tr>`,
+                  )
+                  .join('')}
               </table>
             </td>
           </tr>
 
-          <tr>
+          ${
+            contactMessage
+              ? `<tr>
             <td style="padding: 0 30px 30px 30px;">
               <h2 style="margin: 0 0 15px 0; color: #111827; font-size: 18px;">Message</h2>
               <div style="background-color: #f9fafb; border-left: 4px solid #004AAD; padding: 15px; border-radius: 4px;">
-                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${contactMessage}</p>
               </div>
             </td>
-          </tr>
+          </tr>`
+              : ''
+          }
 
           <tr>
             <td style="padding: 0 30px 30px 30px;">
@@ -81,12 +114,12 @@ export async function POST(request: NextRequest) {
                 <tr>
                   <td align="center" style="padding: 10px;">
                     <a href="mailto:${email}" style="display: inline-block; background-color: #004AAD; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: 600;">
-                      📧 Reply to ${name}
+                      📧 Reply to ${contactName}
                     </a>
                   </td>
                   <td align="center" style="padding: 10px;">
                     <a href="tel:${phone}" style="display: inline-block; background-color: #10b981; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 6px; font-weight: 600;">
-                      📞 Call ${name}
+                      📞 Call ${contactName}
                     </a>
                   </td>
                 </tr>
@@ -134,7 +167,7 @@ export async function POST(request: NextRequest) {
           <tr>
             <td style="padding: 30px;">
               <p style="margin: 0 0 20px 0; color: #111827; font-size: 16px;">
-                Hi <strong>${name}</strong>,
+                Hi <strong>${contactName}</strong>,
               </p>
               <p style="margin: 0 0 20px 0; color: #374151; font-size: 15px; line-height: 1.6;">
                 Thank you for reaching out! We've received your message and will get back to you within 24 hours.
@@ -142,14 +175,18 @@ export async function POST(request: NextRequest) {
             </td>
           </tr>
 
-          <tr>
+          ${
+            contactMessage
+              ? `<tr>
             <td style="padding: 0 30px 30px 30px;">
               <div style="background-color: #eff6ff; border-left: 4px solid #004AAD; padding: 20px; border-radius: 4px;">
                 <h3 style="margin: 0 0 10px 0; color: #004AAD; font-size: 16px;">Your Message:</h3>
-                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${contactMessage}</p>
               </div>
             </td>
-          </tr>
+          </tr>`
+              : ''
+          }
 
           <tr>
             <td style="padding: 0 30px 30px 30px;">
