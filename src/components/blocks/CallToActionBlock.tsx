@@ -102,18 +102,31 @@ const clampOverlay = (value?: number | null) => {
 export default function CallToActionBlock({ block }: CallToActionBlockProps) {
   const {
     eyebrow,
-    heading = 'Ready to explore your franchise future?',
-    description = 'Schedule a strategy call with our consultants to uncover opportunities that match your goals, capital, and timeline.',
-    alignment = 'center',
-    backgroundStyle = 'gradient',
-    backgroundColor = '#004AAD',
-    backgroundGradient = 'linear-gradient(135deg, #004AAD 0%, #001C40 50%, #000814 100%)',
+    heading,
+    description,
+    alignment,
+    backgroundStyle,
+    backgroundColor,
+    backgroundGradient,
     backgroundImage,
-    overlayColor = '#000000',
+    overlayColor,
     overlayOpacity,
-    ctas = [],
+    ctas,
     smallPrint,
   } = block
+
+  // Use defaults only if values are null/undefined
+  const finalHeading = heading ?? 'Ready to explore your franchise future?'
+  const finalDescription =
+    description ??
+    'Schedule a strategy call with our consultants to uncover opportunities that match your goals, capital, and timeline.'
+  const finalAlignment = alignment ?? 'center'
+  const finalBackgroundStyle = backgroundStyle ?? 'gradient'
+  const finalBackgroundColor = backgroundColor ?? '#004AAD'
+  const finalBackgroundGradient =
+    backgroundGradient ?? 'linear-gradient(135deg, #004AAD 0%, #001C40 50%, #000814 100%)'
+  const finalOverlayColor = overlayColor ?? '#000000'
+  const finalCtas = ctas ?? []
 
   let backgroundImageUrl: string | null = null
   if (typeof backgroundImage === 'string') {
@@ -127,31 +140,31 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
     fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
   }
 
-  if (backgroundStyle === 'color') {
-    sectionStyle.backgroundColor = backgroundColor || '#004AAD'
-  } else if (backgroundStyle === 'gradient') {
-    sectionStyle.backgroundImage =
-      backgroundGradient || 'linear-gradient(135deg, #004AAD 0%, #001C40 50%, #000814 100%)'
-  } else if (backgroundStyle === 'image' && backgroundImageUrl) {
+  if (finalBackgroundStyle === 'color') {
+    sectionStyle.backgroundColor = finalBackgroundColor
+  } else if (finalBackgroundStyle === 'gradient') {
+    sectionStyle.backgroundImage = finalBackgroundGradient
+  } else if (finalBackgroundStyle === 'image' && backgroundImageUrl) {
     sectionStyle.backgroundImage = `url(${backgroundImageUrl})`
     sectionStyle.backgroundSize = 'cover'
     sectionStyle.backgroundPosition = 'center'
   } else {
-    sectionStyle.backgroundColor = backgroundColor || '#004AAD'
+    sectionStyle.backgroundColor = finalBackgroundColor
   }
 
   const overlayValue = clampOverlay(overlayOpacity)
-  const showOverlay = backgroundStyle === 'gradient' || backgroundStyle === 'image'
+  const showOverlay = finalBackgroundStyle === 'gradient' || finalBackgroundStyle === 'image'
   const overlayStyles: React.CSSProperties = {
-    backgroundColor: overlayColor || '#000000',
+    backgroundColor: finalOverlayColor,
     opacity: overlayValue,
   }
 
-  const textAlignment = alignment === 'left' ? 'text-left items-start' : 'text-center items-center'
+  const textAlignment =
+    finalAlignment === 'left' ? 'text-left items-start' : 'text-center items-center'
   const containerAlignment =
-    alignment === 'left' ? 'md:items-center md:text-left' : 'md:items-center md:text-center'
+    finalAlignment === 'left' ? 'md:items-center md:text-left' : 'md:items-center md:text-center'
 
-  const validCTAs = (ctas || []).filter((cta) => cta && cta.label && cta.url)
+  const validCTAs = finalCtas.filter((cta) => cta && cta.label && cta.url)
 
   return (
     <section
@@ -173,17 +186,17 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
               </p>
             )}
 
-            {heading && (
+            {finalHeading && (
               <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                {heading}
+                {finalHeading}
               </h2>
             )}
 
-            {description && <p className="text-lg text-white/85">{description}</p>}
+            {finalDescription && <p className="text-lg text-white/85">{finalDescription}</p>}
 
             {validCTAs.length > 0 && (
               <div
-                className={`mt-4 flex flex-wrap gap-3 ${alignment === 'left' ? 'justify-start' : 'justify-center'}`}
+                className={`mt-4 flex flex-wrap gap-3 ${finalAlignment === 'left' ? 'justify-start' : 'justify-center'}`}
               >
                 {validCTAs.map((cta, index) => (
                   <Button
