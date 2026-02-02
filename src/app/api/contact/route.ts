@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     const contactMessage = body.message || ''
 
     // Validate required fields
-    if (!email || !phone) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
     // Build dynamic field list for email (exclude common fields we already handle)
