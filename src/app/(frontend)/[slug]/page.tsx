@@ -151,8 +151,8 @@ export async function generateStaticParams() {
     }))
 }
 
-// Enable static generation with revalidation
-export const revalidate = 60 // Revalidate every 60 seconds
+// Enable dynamic rendering for this page
+export const dynamic = 'force-dynamic'
 
 /**
  * Generate metadata for the page

@@ -91,8 +91,7 @@ const Pages: CollectionConfig = {
       unique: true,
       admin: {
         description:
-          'URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title.',
-        readOnly: true,
+          'URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title but can be edited.',
         position: 'sidebar',
       },
       hooks: {
