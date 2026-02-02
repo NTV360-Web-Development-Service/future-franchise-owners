@@ -71,6 +71,7 @@ export function GlobalNavbarFooter({ siteSettings, position }: GlobalNavbarFoote
         <FooterBlock
           block={{
             blockType: 'footer',
+            logo: siteSettings.footer.logo || null,
             companyName: siteSettings.footer.companyName || 'Future Franchise Owners',
             tagline: siteSettings.footer.tagline || 'Your partner in franchise success',
             copyrightText: siteSettings.footer.copyrightText || null,
@@ -79,6 +80,10 @@ export function GlobalNavbarFooter({ siteSettings, position }: GlobalNavbarFoote
             footerColumns: siteSettings.footer.footerColumns || [],
             bottomLinks: siteSettings.footer.bottomLinks || [],
             backgroundColor: siteSettings.footer.backgroundColor || '#0F172A',
+            useGradient: siteSettings.footer.useGradient ?? false,
+            gradientFrom: siteSettings.footer.gradientFrom || '#0F172A',
+            gradientTo: siteSettings.footer.gradientTo || '#1E3A5F',
+            gradientDirection: siteSettings.footer.gradientDirection || 'to-b',
             textColor: siteSettings.footer.textColor || '#F1F5F9',
             backgroundImage: siteSettings.footer.backgroundImage || null,
             backgroundBlur: siteSettings.footer.backgroundBlur ?? 0,

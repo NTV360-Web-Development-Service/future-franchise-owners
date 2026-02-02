@@ -980,7 +980,8 @@ const Pages: CollectionConfig = {
               required: false,
               defaultValue: '#000000',
               admin: {
-                description: 'Overlay color shown on top of gradient or image backgrounds',
+                description: 'Overlay color shown on top of image background',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'image',
               },
             },
             {
@@ -989,11 +990,8 @@ const Pages: CollectionConfig = {
               required: false,
               defaultValue: 0.45,
               admin: {
-                description:
-                  'Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.',
-                condition: (data, siblingData) =>
-                  siblingData?.backgroundStyle === 'gradient' ||
-                  siblingData?.backgroundStyle === 'image',
+                description: 'Overlay opacity (0 - 0.95). Applies to image backgrounds.',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'image',
               },
               min: 0,
               max: 0.95,

@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import { Button } from '@/components'
@@ -152,7 +154,7 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
   }
 
   const overlayValue = clampOverlay(overlayOpacity)
-  const showOverlay = finalBackgroundStyle === 'gradient' || finalBackgroundStyle === 'image'
+  const showOverlay = finalBackgroundStyle === 'image' && backgroundImageUrl
   const overlayStyles: React.CSSProperties = {
     backgroundColor: finalOverlayColor,
     opacity: overlayValue,
@@ -181,6 +183,7 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
 
   return (
     <section
+      key={block.id || block.anchorId || 'cta'}
       className="relative overflow-hidden"
       style={sectionStyle}
       aria-label="Call to action"

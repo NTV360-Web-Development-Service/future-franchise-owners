@@ -258,15 +258,14 @@ export default function FooterBlock({ block }: FooterBlockProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-4">
-            {logoUrl ? (
+            {logoUrl && (
               <img
                 src={logoUrl}
                 alt={companyName || 'Logo'}
                 className="h-12 w-auto mb-4 object-contain"
               />
-            ) : (
-              <h3 className="text-2xl font-bold mb-3">{companyName}</h3>
             )}
+            <h3 className="text-2xl font-bold mb-3">{companyName}</h3>
             {tagline && <p className="text-sm opacity-80 mb-6 max-w-sm">{tagline}</p>}
 
             {/* Social Links */}
