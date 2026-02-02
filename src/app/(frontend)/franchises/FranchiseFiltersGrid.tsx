@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   Input,
   Button,
@@ -199,26 +200,30 @@ export default function FranchiseFiltersGrid({
   const [sortAscending, setSortAscending] = useState<boolean>(true)
   const [filtersOpen, setFiltersOpen] = useState<boolean>(false)
 
-  // Read URL parameters on mount to set initial filter state
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const filterParam = params.get('filter')
+  // Get search params using Next.js hook (reactive to URL changes)
+  const searchParams = useSearchParams()
 
-      // Map URL filter parameter to tab filter
-      if (filterParam) {
-        const filterMap: Record<string, string> = {
-          'top-pick': 'Top Pick',
-          sponsored: 'Sponsored',
-          featured: 'Featured',
-        }
-        const tabFilter = filterMap[filterParam.toLowerCase()]
-        if (tabFilter) {
-          setActiveTabFilter(tabFilter)
-        }
+  // Read URL parameters and update filter state when URL changes
+  useEffect(() => {
+    const filterParam = searchParams.get('filter')
+
+    // Map URL filter parameter to tab filter
+    if (filterParam) {
+      const filterMap: Record<string, string> = {
+        'top-pick': 'Top Pick',
+        sponsored: 'Sponsored',
+        featured: 'Featured',
       }
+      const tabFilter = filterMap[filterParam.toLowerCase()]
+      if (tabFilter) {
+        setActiveTabFilter(tabFilter)
+      } else {
+        setActiveTabFilter(null)
+      }
+    } else {
+      setActiveTabFilter(null)
     }
-  }, [])
+  }, [searchParams])
 
   // Pagination state
   const [displayLimit, setDisplayLimit] = useState(maxItems ?? 9) // Show maxItems or 9 items initially
