@@ -1418,6 +1418,16 @@ const Pages: CollectionConfig = {
                     description: 'Team member biography with support for links and formatting',
                   },
                 },
+                {
+                  name: 'contactUrl',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description:
+                      'URL for the "Work with" button (e.g., "/contact?agent=john", "https://calendly.com/john")',
+                    placeholder: '/contact',
+                  },
+                },
               ],
               admin: {
                 description: 'Add team members to display (up to 50 members)',

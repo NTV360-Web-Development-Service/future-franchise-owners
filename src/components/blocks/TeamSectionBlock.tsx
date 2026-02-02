@@ -11,6 +11,7 @@
 
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Carousel,
@@ -47,6 +48,8 @@ interface TeamMember {
   location?: string | null
   /** Biography in Lexical rich text format */
   biography?: any
+  /** Contact URL for the "Work with" button */
+  contactUrl?: string | null
   /** Unique identifier */
   id?: string | null
 }
@@ -149,9 +152,14 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
         </div>
 
         {/* Work With Button - Always at bottom */}
-        <button className="mt-4 px-4 py-2 bg-[#004AAD] text-white rounded-lg hover:bg-[#003a89] transition-colors font-medium text-sm">
-          Work with {member.name.split(' ')[0]}
-        </button>
+        {member.contactUrl && (
+          <Link
+            href={member.contactUrl}
+            className="mt-4 px-4 py-2 bg-[#004AAD] text-white rounded-lg hover:bg-[#003a89] transition-colors font-medium text-sm inline-block"
+          >
+            Work with {member.name.split(' ')[0]}
+          </Link>
+        )}
       </CardContent>
     </Card>
   )
