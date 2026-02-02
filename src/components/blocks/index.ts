@@ -43,9 +43,6 @@ export { default as FormBuilderBlock } from './FormBuilderBlock'
 /** Contact information block displaying business contact details */
 export { default as ContactInfoBlock } from './ContactInfoBlock'
 
-/** Add to cart block for adding franchises to cart */
-export { default as AddToCartBlock } from './AddToCartBlock'
-
 /** Content with image block - text on left, image on right */
 export { default as ContentImageBlock } from './ContentImageBlock'
 
@@ -57,3 +54,6 @@ export { default as VideoBlock } from './VideoBlock'
 
 /** Image card block - card with image, optional title, description, and button */
 export { default as ImageCardBlock } from './ImageCardBlock'
+
+/** Resources grid block - flexible grid of resource cards with images, titles, content, and buttons */
+export { default as ResourcesGridBlock } from './ResourcesGridBlock'

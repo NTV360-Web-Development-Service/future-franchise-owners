@@ -276,6 +276,19 @@ export const Franchises: CollectionConfig = {
         description:
           'Force use main contact even if agent is assigned (overrides agent assignment)',
         position: 'sidebar',
+        condition: (data, siblingData) => !!siblingData?.assignedAgent,
+      },
+    },
+    {
+      name: 'ccMainContact',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description:
+          'Also send a copy to the main contact email when sending to the assigned agent',
+        position: 'sidebar',
+        condition: (data, siblingData) =>
+          !!siblingData?.assignedAgent && !siblingData?.useMainContact,
       },
     },
     // Audit fields

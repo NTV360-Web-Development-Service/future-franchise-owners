@@ -80,6 +80,10 @@ export function GlobalNavbarFooter({ siteSettings, position }: GlobalNavbarFoote
             bottomLinks: siteSettings.footer.bottomLinks || [],
             backgroundColor: siteSettings.footer.backgroundColor || '#0F172A',
             textColor: siteSettings.footer.textColor || '#F1F5F9',
+            backgroundImage: siteSettings.footer.backgroundImage || null,
+            backgroundBlur: siteSettings.footer.backgroundBlur ?? 0,
+            overlayColor: siteSettings.footer.overlayColor || '#000000',
+            overlayOpacity: siteSettings.footer.overlayOpacity ?? 0.6,
           }}
         />
       )}

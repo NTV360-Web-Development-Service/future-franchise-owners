@@ -18,8 +18,8 @@ import {
   TeamSectionBlock,
   FormBuilderBlock,
   ContactInfoBlock,
-  AddToCartBlock,
   ImageCardBlock,
+  ResourcesGridBlock,
 } from '@/components/blocks'
 import type { AboutTeaserBlockProps } from '@/components/blocks/AboutTeaserBlock'
 import type { CallToActionBlockProps } from '@/components/blocks/CallToActionBlock'
@@ -206,8 +206,8 @@ export default async function HomePage() {
         return <ContactInfoBlock block={block} key={key} />
       case 'imageCard':
         return <ImageCardBlock block={block} key={key} />
-      case 'addToCart':
-        return <AddToCartBlock block={block} key={key} />
+      case 'resourcesGrid':
+        return <ResourcesGridBlock block={block} key={key} />
       default:
         return null
     }

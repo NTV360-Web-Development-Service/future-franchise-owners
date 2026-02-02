@@ -578,6 +578,10 @@ export interface Page {
          */
         overlayOpacity?: number | null;
         /**
+         * Background blur amount in pixels (0-20). Only applies to image backgrounds.
+         */
+        backgroundBlur?: number | null;
+        /**
          * Add up to three CTA buttons
          */
         ctas?:
@@ -918,43 +922,6 @@ export interface Page {
          */
         anchorId?: string | null;
         /**
-         * Select the franchise to add
-         */
-        franchise: string | Franchise;
-        /**
-         * Choose which list to add the franchise to
-         */
-        listType?: ('wishlist' | 'cart') | null;
-        /**
-         * Custom button text (optional, auto-generated based on list type)
-         */
-        buttonText?: string | null;
-        /**
-         * Button style
-         */
-        buttonVariant?: ('default' | 'outline' | 'ghost') | null;
-        /**
-         * Button size
-         */
-        buttonSize?: ('sm' | 'default' | 'lg') | null;
-        /**
-         * Button alignment
-         */
-        alignment?: ('left' | 'center' | 'right') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'addToCart';
-      }
-    | {
-        /**
-         * ✅ Published | ⬜ Unpublished (hidden from visitors)
-         */
-        published?: boolean | null;
-        /**
-         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
-         */
-        anchorId?: string | null;
-        /**
          * Main heading text
          */
         heading?: string | null;
@@ -1119,6 +1086,107 @@ export interface Page {
         blockName?: string | null;
         blockType: 'imageCard';
       }
+    | {
+        /**
+         * ✅ Published | ⬜ Unpublished (hidden from visitors)
+         */
+        published?: boolean | null;
+        /**
+         * Optional anchor ID for direct linking (e.g., "contact-form" creates #contact-form). Use lowercase letters, numbers, and hyphens only.
+         */
+        anchorId?: string | null;
+        /**
+         * Section heading (e.g., "Free Resources", "Downloads")
+         */
+        heading?: string | null;
+        /**
+         * Optional subheading text below the main heading
+         */
+        subheading?: string | null;
+        /**
+         * Maximum number of columns in the grid
+         */
+        columns?: ('2' | '3' | '4') | null;
+        /**
+         * Add resource cards (up to 20)
+         */
+        resources?:
+          | {
+              /**
+               * Resource image (optional)
+               */
+              image?: (string | null) | Media;
+              /**
+               * URL to link the image to (optional)
+               */
+              imageLink?: string | null;
+              /**
+               * Open image link in a new tab
+               */
+              imageLinkOpenInNewTab?: boolean | null;
+              /**
+               * Resource title (optional)
+               */
+              title?: string | null;
+              /**
+               * Resource description (optional)
+               */
+              content?: string | null;
+              /**
+               * Button text (optional, e.g., "Download Your PDF")
+               */
+              buttonText?: string | null;
+              /**
+               * What happens when the button is clicked
+               */
+              buttonAction?: ('link' | 'popup') | null;
+              /**
+               * Button URL (required if action is "Open Link")
+               */
+              buttonUrl?: string | null;
+              /**
+               * Open button link in a new tab
+               */
+              buttonOpenInNewTab?: boolean | null;
+              /**
+               * Popup heading text
+               */
+              popupHeading?: string | null;
+              /**
+               * Popup submit button text
+               */
+              popupSubmitText?: string | null;
+              /**
+               * Message shown after successful submission
+               */
+              popupSuccessMessage?: string | null;
+              /**
+               * URL to the downloadable file (sent via email or shown after submission)
+               */
+              popupDownloadUrl?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Section background color (hex code)
+         */
+        backgroundColor?: string | null;
+        /**
+         * Card background color (hex code)
+         */
+        cardBackgroundColor?: string | null;
+        /**
+         * Text color (hex code)
+         */
+        textColor?: string | null;
+        /**
+         * Button style for all resource cards
+         */
+        buttonStyle?: ('primary' | 'secondary' | 'outline') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'resourcesGrid';
+      }
   )[];
   seo?: {
     /**
@@ -1239,6 +1307,10 @@ export interface Franchise {
    * Force use main contact even if agent is assigned (overrides agent assignment)
    */
   useMainContact?: boolean | null;
+  /**
+   * Also send a copy to the main contact email when sending to the assigned agent
+   */
+  ccMainContact?: boolean | null;
   /**
    * User who created this record
    */
@@ -1804,6 +1876,7 @@ export interface PagesSelect<T extends boolean = true> {
               backgroundImage?: T;
               overlayColor?: T;
               overlayOpacity?: T;
+              backgroundBlur?: T;
               ctas?:
                 | T
                 | {
@@ -1923,20 +1996,6 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        addToCart?:
-          | T
-          | {
-              published?: T;
-              anchorId?: T;
-              franchise?: T;
-              listType?: T;
-              buttonText?: T;
-              buttonVariant?: T;
-              buttonSize?: T;
-              alignment?: T;
-              id?: T;
-              blockName?: T;
-            };
         contentImage?:
           | T
           | {
@@ -2006,6 +2065,39 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        resourcesGrid?:
+          | T
+          | {
+              published?: T;
+              anchorId?: T;
+              heading?: T;
+              subheading?: T;
+              columns?: T;
+              resources?:
+                | T
+                | {
+                    image?: T;
+                    imageLink?: T;
+                    imageLinkOpenInNewTab?: T;
+                    title?: T;
+                    content?: T;
+                    buttonText?: T;
+                    buttonAction?: T;
+                    buttonUrl?: T;
+                    buttonOpenInNewTab?: T;
+                    popupHeading?: T;
+                    popupSubmitText?: T;
+                    popupSuccessMessage?: T;
+                    popupDownloadUrl?: T;
+                    id?: T;
+                  };
+              backgroundColor?: T;
+              cardBackgroundColor?: T;
+              textColor?: T;
+              buttonStyle?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   seo?:
     | T
@@ -2047,6 +2139,7 @@ export interface FranchisesSelect<T extends boolean = true> {
   logo?: T;
   assignedAgent?: T;
   useMainContact?: T;
+  ccMainContact?: T;
   createdBy?: T;
   updatedBy?: T;
   updatedAt?: T;
@@ -2321,6 +2414,22 @@ export interface SiteSetting {
      * Footer text color (hex code)
      */
     textColor?: string | null;
+    /**
+     * Optional background image for the footer
+     */
+    backgroundImage?: (string | null) | Media;
+    /**
+     * Background image blur amount in pixels (0-20)
+     */
+    backgroundBlur?: number | null;
+    /**
+     * Overlay color on top of background image (hex code)
+     */
+    overlayColor?: string | null;
+    /**
+     * Overlay opacity (0 - 0.95)
+     */
+    overlayOpacity?: number | null;
   };
   /**
    * ✅ Show ticker on all pages | ⬜ Hide ticker
@@ -2511,6 +2620,10 @@ export interface SiteSettingsSelect<T extends boolean = true> {
             };
         backgroundColor?: T;
         textColor?: T;
+        backgroundImage?: T;
+        backgroundBlur?: T;
+        overlayColor?: T;
+        overlayOpacity?: T;
       };
   tickerEnabled?: T;
   ticker?:

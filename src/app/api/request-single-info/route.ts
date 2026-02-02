@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 import { generateAdminEmailHTML, generateUserConfirmationHTML } from '@/lib/email-templates-cart'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -14,10 +16,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Initialize Payload to look up franchise agent
+    const payloadConfig = await config
+    const payload = await getPayload({ config: payloadConfig })
+
+    // Determine recipient email (agent or main contact)
+    let recipientEmail = process.env.MAIN_CONTACT_EMAIL || 'efraimg@n-compass.biz'
+    let shouldCcMain = false
+    const mainContactEmail = recipientEmail
+
+    // Look up the franchise to check for assigned agent
+    if (franchise.id) {
+      try {
+        const franchiseDoc = await payload.findByID({
+          collection: 'franchises',
+          id: franchise.id,
+          depth: 1, // Populate assignedAgent
+        })
+
+        // Check if franchise has an assigned agent and useMainContact is not true
+        if (
+          franchiseDoc?.assignedAgent &&
+          !franchiseDoc.useMainContact &&
+          typeof franchiseDoc.assignedAgent === 'object' &&
+          franchiseDoc.assignedAgent.email &&
+          franchiseDoc.assignedAgent.isActive
+        ) {
+          recipientEmail = franchiseDoc.assignedAgent.email
+          shouldCcMain = franchiseDoc.ccMainContact === true
+        }
+      } catch (lookupError) {
+        console.error(`Failed to look up franchise ${franchise.id}:`, lookupError)
+        // Fall back to main contact
+      }
+    }
+
     // Build franchise info for email
     const franchiseInfo = `${franchise.name}\n   Category: ${franchise.category}\n   Investment: ${franchise.cashRequired}`
 
-    // Email content for admin
+    // Email content for admin/agent
     const adminEmailSubject = `Franchise Information Request from ${name}`
     const adminEmailBody = `
 New franchise information request:
@@ -79,15 +116,22 @@ Request submitted on ${new Date().toLocaleString()}
       franchises: [franchise],
     })
 
-    // Send email to admin/sales team
+    // Send email to agent or main contact
     try {
-      await resend.emails.send({
+      const emailOptions: any = {
         from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
-        to: process.env.MAIN_CONTACT_EMAIL || 'efraimg@n-compass.biz',
+        to: recipientEmail,
         subject: adminEmailSubject,
         html: adminEmailHTML,
         text: adminEmailBody,
-      })
+      }
+
+      // Add CC to main contact if enabled and recipient is not already main contact
+      if (shouldCcMain && recipientEmail !== mainContactEmail) {
+        emailOptions.cc = mainContactEmail
+      }
+
+      await resend.emails.send(emailOptions)
     } catch (emailError) {
       console.error('Failed to send admin email:', emailError)
     }

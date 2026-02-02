@@ -36,6 +36,7 @@ export interface CallToActionBlockProps {
     backgroundImage?: string | Media | null
     overlayColor?: string | null
     overlayOpacity?: number | null
+    backgroundBlur?: number | null
     ctas?: CTAButtonConfig[] | null
     smallPrint?: string | null
     anchorId?: string | null
@@ -111,6 +112,7 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
     backgroundImage,
     overlayColor,
     overlayOpacity,
+    backgroundBlur,
     ctas,
     smallPrint,
   } = block
@@ -144,11 +146,8 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
     sectionStyle.backgroundColor = finalBackgroundColor
   } else if (finalBackgroundStyle === 'gradient') {
     sectionStyle.backgroundImage = finalBackgroundGradient
-  } else if (finalBackgroundStyle === 'image' && backgroundImageUrl) {
-    sectionStyle.backgroundImage = `url(${backgroundImageUrl})`
-    sectionStyle.backgroundSize = 'cover'
-    sectionStyle.backgroundPosition = 'center'
-  } else {
+  } else if (finalBackgroundStyle === 'image' && !backgroundImageUrl) {
+    // Fallback if no image
     sectionStyle.backgroundColor = finalBackgroundColor
   }
 
@@ -158,6 +157,20 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
     backgroundColor: finalOverlayColor,
     opacity: overlayValue,
   }
+
+  // Background image with optional blur
+  const hasBackgroundImage = finalBackgroundStyle === 'image' && backgroundImageUrl
+  const blurAmount = backgroundBlur ?? 0
+  const backgroundImageStyles: React.CSSProperties = hasBackgroundImage
+    ? {
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: blurAmount > 0 ? `blur(${blurAmount}px)` : undefined,
+        // Scale up slightly to prevent blur edge artifacts
+        transform: blurAmount > 0 ? 'scale(1.1)' : undefined,
+      }
+    : {}
 
   const textAlignment =
     finalAlignment === 'left' ? 'text-left items-start' : 'text-center items-center'
@@ -173,6 +186,11 @@ export default function CallToActionBlock({ block }: CallToActionBlockProps) {
       aria-label="Call to action"
       {...(block.anchorId && { id: block.anchorId })}
     >
+      {/* Background image layer with optional blur */}
+      {hasBackgroundImage && (
+        <div className="absolute inset-0" style={backgroundImageStyles} aria-hidden="true" />
+      )}
+
       {showOverlay && <div className="absolute inset-0" style={overlayStyles} aria-hidden="true" />}
 
       <div className="relative z-10">

@@ -116,6 +116,8 @@ const Pages: CollectionConfig = {
       blocks: [
         {
           slug: 'franchiseGrid',
+          imageURL: '/images/blocks/franchise-grid.png',
+          imageAltText: 'Franchise Grid Block',
           fields: [
             {
               name: 'published',
@@ -257,6 +259,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'ribbon',
+          imageURL: '/images/blocks/ribbon.png',
+          imageAltText: 'Ribbon Block',
           fields: [
             {
               name: 'published',
@@ -404,6 +408,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'navbar',
+          imageURL: '/images/blocks/navbar.png',
+          imageAltText: 'Navbar Block',
           fields: [
             {
               name: 'published',
@@ -509,6 +515,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'hero',
+          imageURL: '/images/blocks/hero.png',
+          imageAltText: 'Hero Block',
           fields: [
             {
               name: 'published',
@@ -666,6 +674,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'aboutTeaser',
+          imageURL: '/images/blocks/about-teaser.png',
+          imageAltText: 'About Teaser Block',
           fields: [
             {
               name: 'published',
@@ -831,6 +841,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'callToAction',
+          imageURL: '/images/blocks/call-to-action.png',
+          imageAltText: 'Call To Action Block',
           fields: [
             {
               name: 'published',
@@ -941,9 +953,25 @@ const Pages: CollectionConfig = {
               admin: {
                 description:
                   'Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.',
+                condition: (data, siblingData) =>
+                  siblingData?.backgroundStyle === 'gradient' ||
+                  siblingData?.backgroundStyle === 'image',
               },
               min: 0,
               max: 0.95,
+            },
+            {
+              name: 'backgroundBlur',
+              type: 'number',
+              required: false,
+              defaultValue: 0,
+              min: 0,
+              max: 20,
+              admin: {
+                description:
+                  'Background blur amount in pixels (0-20). Only applies to image backgrounds.',
+                condition: (data, siblingData) => siblingData?.backgroundStyle === 'image',
+              },
             },
             {
               name: 'ctas',
@@ -1008,6 +1036,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'blogHighlights',
+          imageURL: '/images/blocks/blog-highlights.png',
+          imageAltText: 'Blog Highlights Block',
           fields: [
             {
               name: 'published',
@@ -1102,6 +1132,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'map',
+          imageURL: '/images/blocks/map.png',
+          imageAltText: 'Map Block',
           fields: [
             {
               name: 'published',
@@ -1209,6 +1241,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'teamSection',
+          imageURL: '/images/blocks/team-section.png',
+          imageAltText: 'Team Section Block',
           fields: [
             {
               name: 'published',
@@ -1344,6 +1378,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'formBuilder',
+          imageURL: '/images/blocks/form-builder.png',
+          imageAltText: 'Form Builder Block',
           fields: [
             {
               name: 'published',
@@ -1494,6 +1530,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'contactInfo',
+          imageURL: '/images/blocks/contact-info.png',
+          imageAltText: 'Contact Info Block',
           fields: [
             {
               name: 'published',
@@ -1620,95 +1658,11 @@ const Pages: CollectionConfig = {
             },
           ],
         },
-        {
-          slug: 'addToCart',
-          fields: [
-            {
-              name: 'published',
-              type: 'checkbox',
-              defaultValue: true,
-              admin: {
-                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
-                position: 'sidebar',
-              },
-            },
-            anchorIdField,
-            {
-              name: 'franchise',
-              type: 'relationship',
-              relationTo: 'franchises',
-              required: true,
-              admin: {
-                description: 'Select the franchise to add',
-              },
-            },
-            {
-              name: 'listType',
-              type: 'select',
-              required: false,
-              defaultValue: 'wishlist',
-              options: [
-                { label: 'Wishlist (Save for later)', value: 'wishlist' },
-                { label: 'Cart (Ready to pursue)', value: 'cart' },
-              ],
-              admin: {
-                description: 'Choose which list to add the franchise to',
-              },
-            },
-            {
-              name: 'buttonText',
-              type: 'text',
-              required: false,
-              admin: {
-                description: 'Custom button text (optional, auto-generated based on list type)',
-              },
-            },
-            {
-              name: 'buttonVariant',
-              type: 'select',
-              required: false,
-              defaultValue: 'default',
-              options: [
-                { label: 'Default (Solid)', value: 'default' },
-                { label: 'Outline', value: 'outline' },
-                { label: 'Ghost', value: 'ghost' },
-              ],
-              admin: {
-                description: 'Button style',
-              },
-            },
-            {
-              name: 'buttonSize',
-              type: 'select',
-              required: false,
-              defaultValue: 'default',
-              options: [
-                { label: 'Small', value: 'sm' },
-                { label: 'Default', value: 'default' },
-                { label: 'Large', value: 'lg' },
-              ],
-              admin: {
-                description: 'Button size',
-              },
-            },
-            {
-              name: 'alignment',
-              type: 'select',
-              required: false,
-              defaultValue: 'center',
-              options: [
-                { label: 'Left', value: 'left' },
-                { label: 'Center', value: 'center' },
-                { label: 'Right', value: 'right' },
-              ],
-              admin: {
-                description: 'Button alignment',
-              },
-            },
-          ],
-        },
+
         {
           slug: 'contentImage',
+          imageURL: '/images/blocks/content-image.png',
+          imageAltText: 'Content Image Block',
           fields: [
             {
               name: 'published',
@@ -1778,6 +1732,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'gridCards',
+          imageURL: '/images/blocks/grid-cards.png',
+          imageAltText: 'Grid Cards Block',
           fields: [
             {
               name: 'published',
@@ -1861,6 +1817,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'video',
+          imageURL: '/images/blocks/video.png',
+          imageAltText: 'Video Block',
           fields: [
             {
               name: 'published',
@@ -1924,6 +1882,8 @@ const Pages: CollectionConfig = {
         },
         {
           slug: 'imageCard',
+          imageURL: '/images/blocks/image-card.png',
+          imageAltText: 'Image Card Block',
           fields: [
             {
               name: 'published',
@@ -2035,6 +1995,247 @@ const Pages: CollectionConfig = {
               ],
               admin: {
                 description: 'Number of columns in the grid',
+              },
+            },
+          ],
+        },
+        {
+          slug: 'resourcesGrid',
+          imageURL: '/images/blocks/resources-grid.png',
+          imageAltText: 'Resources Grid Block',
+          labels: {
+            singular: 'Resources Grid',
+            plural: 'Resources Grids',
+          },
+          fields: [
+            {
+              name: 'published',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: '✅ Published | ⬜ Unpublished (hidden from visitors)',
+                position: 'sidebar',
+              },
+            },
+            anchorIdField,
+            {
+              name: 'heading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Section heading (e.g., "Free Resources", "Downloads")',
+              },
+            },
+            {
+              name: 'subheading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Optional subheading text below the main heading',
+              },
+            },
+            {
+              name: 'columns',
+              type: 'select',
+              required: false,
+              defaultValue: '3',
+              options: [
+                { label: '2 Columns', value: '2' },
+                { label: '3 Columns', value: '3' },
+                { label: '4 Columns', value: '4' },
+              ],
+              admin: {
+                description: 'Maximum number of columns in the grid',
+              },
+            },
+            {
+              name: 'resources',
+              type: 'array',
+              required: false,
+              minRows: 1,
+              maxRows: 20,
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: false,
+                  admin: {
+                    description: 'Resource image (optional)',
+                  },
+                },
+                {
+                  name: 'imageLink',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'URL to link the image to (optional)',
+                  },
+                },
+                {
+                  name: 'imageLinkOpenInNewTab',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    description: 'Open image link in a new tab',
+                    condition: (data, siblingData) => !!siblingData?.imageLink,
+                  },
+                },
+                {
+                  name: 'title',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Resource title (optional)',
+                  },
+                },
+                {
+                  name: 'content',
+                  type: 'textarea',
+                  required: false,
+                  admin: {
+                    description: 'Resource description (optional)',
+                  },
+                },
+                {
+                  name: 'buttonText',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Button text (optional, e.g., "Download Your PDF")',
+                  },
+                },
+                {
+                  name: 'buttonAction',
+                  type: 'select',
+                  required: false,
+                  defaultValue: 'link',
+                  options: [
+                    { label: 'Open Link', value: 'link' },
+                    { label: 'Open Popup Form', value: 'popup' },
+                  ],
+                  admin: {
+                    description: 'What happens when the button is clicked',
+                    condition: (data, siblingData) => !!siblingData?.buttonText,
+                  },
+                },
+                {
+                  name: 'buttonUrl',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description: 'Button URL (required if action is "Open Link")',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction !== 'popup',
+                  },
+                },
+                {
+                  name: 'buttonOpenInNewTab',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: {
+                    description: 'Open button link in a new tab',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction !== 'popup',
+                  },
+                },
+                {
+                  name: 'popupHeading',
+                  type: 'text',
+                  required: false,
+                  defaultValue: 'Where Shall We Send Your Free PDF?',
+                  admin: {
+                    description: 'Popup heading text',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction === 'popup',
+                  },
+                },
+                {
+                  name: 'popupSubmitText',
+                  type: 'text',
+                  required: false,
+                  defaultValue: 'Send Me The PDF',
+                  admin: {
+                    description: 'Popup submit button text',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction === 'popup',
+                  },
+                },
+                {
+                  name: 'popupSuccessMessage',
+                  type: 'text',
+                  required: false,
+                  defaultValue: 'Thank you! Check your email for the download link.',
+                  admin: {
+                    description: 'Message shown after successful submission',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction === 'popup',
+                  },
+                },
+                {
+                  name: 'popupDownloadUrl',
+                  type: 'text',
+                  required: false,
+                  admin: {
+                    description:
+                      'URL to the downloadable file (sent via email or shown after submission)',
+                    condition: (data, siblingData) =>
+                      !!siblingData?.buttonText && siblingData?.buttonAction === 'popup',
+                  },
+                },
+              ],
+              admin: {
+                description: 'Add resource cards (up to 20)',
+              },
+            },
+            {
+              name: 'backgroundColor',
+              type: 'text',
+              required: false,
+              defaultValue: '#ffffff',
+              admin: {
+                description: 'Section background color (hex code)',
+                components: {
+                  Field: '@/collections/fields/ColorPickerField',
+                },
+              },
+            },
+            {
+              name: 'cardBackgroundColor',
+              type: 'text',
+              required: false,
+              defaultValue: '#ffffff',
+              admin: {
+                description: 'Card background color (hex code)',
+                components: {
+                  Field: '@/collections/fields/ColorPickerField',
+                },
+              },
+            },
+            {
+              name: 'textColor',
+              type: 'text',
+              required: false,
+              defaultValue: '#1f2937',
+              admin: {
+                description: 'Text color (hex code)',
+                components: {
+                  Field: '@/collections/fields/ColorPickerField',
+                },
+              },
+            },
+            {
+              name: 'buttonStyle',
+              type: 'select',
+              required: false,
+              defaultValue: 'primary',
+              options: [
+                { label: 'Primary (Solid)', value: 'primary' },
+                { label: 'Secondary', value: 'secondary' },
+                { label: 'Outline', value: 'outline' },
+              ],
+              admin: {
+                description: 'Button style for all resource cards',
               },
             },
           ],

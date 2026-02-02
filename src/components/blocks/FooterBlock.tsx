@@ -93,6 +93,10 @@ export interface FooterBlockProps {
       | null
     backgroundColor?: string | null
     textColor?: string | null
+    backgroundImage?: { url?: string | null } | string | null
+    backgroundBlur?: number | null
+    overlayColor?: string | null
+    overlayOpacity?: number | null
     id?: string | null
     blockName?: string | null
   }
@@ -132,7 +136,21 @@ export default function FooterBlock({ block }: FooterBlockProps) {
     bottomLinks = [],
     backgroundColor = '#0F172A',
     textColor = '#F1F5F9',
+    backgroundImage,
+    backgroundBlur = 0,
+    overlayColor = '#000000',
+    overlayOpacity = 0.6,
   } = block
+
+  // Extract background image URL
+  let backgroundImageUrl: string | null = null
+  if (typeof backgroundImage === 'string') {
+    backgroundImageUrl = backgroundImage
+  } else if (backgroundImage && typeof backgroundImage === 'object') {
+    backgroundImageUrl = backgroundImage.url ?? null
+  }
+
+  const hasBackgroundImage = !!backgroundImageUrl
 
   /**
    * Check if a link is active based on current pathname
@@ -149,15 +167,51 @@ export default function FooterBlock({ block }: FooterBlockProps) {
   const copyright = copyrightText || `© ${currentYear} ${companyName}. All rights reserved.`
 
   const footerStyle: React.CSSProperties = {
-    backgroundColor: backgroundColor || '#0F172A',
+    backgroundColor: hasBackgroundImage ? 'transparent' : backgroundColor || '#0F172A',
     color: textColor || '#F1F5F9',
     fontFamily: "'Figtree', ui-sans-serif, system-ui, sans-serif",
   }
 
+  // Background image styles with optional blur
+  const blurAmount = backgroundBlur ?? 0
+  const backgroundImageStyles: React.CSSProperties = hasBackgroundImage
+    ? {
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: blurAmount > 0 ? `blur(${blurAmount}px)` : undefined,
+        transform: blurAmount > 0 ? 'scale(1.1)' : undefined,
+      }
+    : {}
+
+  // Overlay styles
+  const overlayStyles: React.CSSProperties = {
+    backgroundColor: overlayColor || '#000000',
+    opacity: Math.min(Math.max(overlayOpacity ?? 0.6, 0), 0.95),
+  }
+
   return (
-    <footer style={footerStyle} className="w-full">
+    <footer style={footerStyle} className="relative w-full overflow-hidden">
+      {/* Background image layer with optional blur */}
+      {hasBackgroundImage && (
+        <div className="absolute inset-0" style={backgroundImageStyles} aria-hidden="true" />
+      )}
+
+      {/* Overlay layer */}
+      {hasBackgroundImage && (
+        <div className="absolute inset-0" style={overlayStyles} aria-hidden="true" />
+      )}
+
+      {/* Solid background color layer when no image */}
+      {!hasBackgroundImage && (
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: backgroundColor || '#0F172A' }}
+          aria-hidden="true"
+        />
+      )}
       {/* Main Footer Content */}
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-4">
@@ -220,7 +274,10 @@ export default function FooterBlock({ block }: FooterBlockProps) {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-white/10" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+      <div
+        className="relative z-10 border-t border-white/10"
+        style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+      >
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
