@@ -153,6 +153,8 @@ export async function generateStaticParams() {
 
 // Enable dynamic rendering for this page
 export const dynamic = 'force-dynamic'
+// Disable client-side router cache
+export const fetchCache = 'force-no-store'
 
 /**
  * Generate metadata for the page

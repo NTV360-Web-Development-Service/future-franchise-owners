@@ -606,7 +606,7 @@ export default function FranchiseFiltersGrid({
                 <div className="flex justify-center pb-8 pt-4">
                   <a
                     href={showAllButtonLink}
-                    className="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white bg-[#004AAD] hover:bg-[#003A8C] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                    className="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white bg-[#2249B7] hover:bg-[#1a3a94] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
                   >
                     {showAllButtonText}
                   </a>
@@ -615,7 +615,7 @@ export default function FranchiseFiltersGrid({
                 <div className="flex justify-center pb-8 pt-4">
                   <Button
                     onClick={handleLoadMore}
-                    className="px-8 py-3 text-base font-semibold bg-[#004AAD] hover:bg-[#003A8C] text-white"
+                    className="px-8 py-3 text-base font-semibold bg-[#2249B7] hover:bg-[#1a3a94] text-white"
                   >
                     Load More Franchises
                   </Button>
