@@ -184,7 +184,7 @@ export interface Page {
   id: string;
   title: string;
   /**
-   * URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title.
+   * URL path for this page (e.g., "franchises" for /franchises, "homepage" for /). Auto-generated from title but can be edited.
    */
   slug: string;
   layout: (
@@ -1122,7 +1122,7 @@ export interface Page {
         /**
          * Maximum number of columns in the grid
          */
-        columns?: ('2' | '3' | '4') | null;
+        columns?: ('2' | '3' | '4' | '5') | null;
         /**
          * Add resource cards (up to 20)
          */
@@ -2353,6 +2353,10 @@ export interface SiteSetting {
   footerPages?: (string | Page)[] | null;
   footer?: {
     /**
+     * Logo image for the footer (optional)
+     */
+    logo?: (string | null) | Media;
+    /**
      * Company name displayed in footer
      */
     companyName?: string | null;
@@ -2430,6 +2434,22 @@ export interface SiteSetting {
      * Footer background color (hex code)
      */
     backgroundColor?: string | null;
+    /**
+     * Use gradient background instead of solid color
+     */
+    useGradient?: boolean | null;
+    /**
+     * Gradient start color (hex code)
+     */
+    gradientFrom?: string | null;
+    /**
+     * Gradient end color (hex code)
+     */
+    gradientTo?: string | null;
+    /**
+     * Gradient direction
+     */
+    gradientDirection?: ('to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl') | null;
     /**
      * Footer text color (hex code)
      */
@@ -2606,6 +2626,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   footer?:
     | T
     | {
+        logo?: T;
         companyName?: T;
         tagline?: T;
         copyrightText?: T;
@@ -2639,6 +2660,10 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               id?: T;
             };
         backgroundColor?: T;
+        useGradient?: T;
+        gradientFrom?: T;
+        gradientTo?: T;
+        gradientDirection?: T;
         textColor?: T;
         backgroundImage?: T;
         backgroundBlur?: T;
