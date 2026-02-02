@@ -47,6 +47,10 @@ export interface AboutTeaserBlockProps {
     highlights?: HighlightItem[] | null
     ctas?: CTAConfig[] | null
     image?: string | Media | null
+    showSideCard?: boolean | null
+    sideCardEyebrow?: string | null
+    sideCardHeading?: string | null
+    sideCardDescription?: string | null
     anchorId?: string | null
     id?: string | null
     blockName?: string | null
@@ -102,6 +106,10 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
     highlights = [],
     ctas = [],
     image,
+    showSideCard = true,
+    sideCardEyebrow,
+    sideCardHeading,
+    sideCardDescription,
   } = block
 
   let imageUrl: string | null = null
@@ -127,7 +135,13 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
 
   return (
     <section className="bg-slate-50 py-16" {...(block.anchorId && { id: block.anchorId })}>
-      <div className="container mx-auto grid gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,_1fr)_minmax(320px,_420px)] lg:items-center lg:gap-16 lg:px-8">
+      <div
+        className={`container mx-auto px-4 sm:px-6 lg:px-8 ${
+          showSideCard
+            ? 'grid gap-12 lg:grid-cols-[minmax(0,_1fr)_minmax(320px,_420px)] lg:items-center lg:gap-16'
+            : ''
+        }`}
+      >
         <div>
           {eyebrow && (
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#004AAD]">
@@ -190,38 +204,41 @@ const AboutTeaserBlock: React.FC<AboutTeaserBlockProps> = ({ block }) => {
           )}
         </div>
 
-        <div className="relative">
-          <div
-            className="absolute -inset-x-6 -inset-y-8 rounded-3xl bg-[#004AAD]/10 blur-3xl"
-            aria-hidden="true"
-          />
-          <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-[#004AAD] via-[#00264D] to-[#001633] p-6 text-white shadow-xl">
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt={altText}
-                width={imageWidth}
-                height={imageHeight}
-                className="aspect-square w-full rounded-2xl object-cover"
-              />
-            ) : (
-              <div className="flex aspect-square w-full flex-col justify-between rounded-2xl bg-white/5 p-6">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/70">
-                    Trusted Advisors
-                  </p>
-                  <p className="mt-4 text-2xl font-semibold">
-                    Dedicated consultants supporting every ownership milestone.
-                  </p>
+        {showSideCard && (
+          <div className="relative">
+            <div
+              className="absolute -inset-x-6 -inset-y-8 rounded-3xl bg-[#004AAD]/10 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-[#004AAD] via-[#00264D] to-[#001633] p-6 text-white shadow-xl">
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={altText}
+                  width={imageWidth}
+                  height={imageHeight}
+                  className="aspect-square w-full rounded-2xl object-cover"
+                />
+              ) : (
+                <div className="flex aspect-square w-full flex-col justify-between rounded-2xl bg-white/5 p-6">
+                  <div>
+                    {sideCardEyebrow && (
+                      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/70">
+                        {sideCardEyebrow}
+                      </p>
+                    )}
+                    {sideCardHeading && (
+                      <p className="mt-4 text-2xl font-semibold">{sideCardHeading}</p>
+                    )}
+                  </div>
+                  {sideCardDescription && (
+                    <p className="text-sm text-white/70">{sideCardDescription}</p>
+                  )}
                 </div>
-                <p className="text-sm text-white/70">
-                  Schedule a discovery call to chart your path from investigation to launch with
-                  guidance tailored to your goals.
-                </p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )

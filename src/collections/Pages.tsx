@@ -834,7 +834,46 @@ const Pages: CollectionConfig = {
               relationTo: 'media',
               required: false,
               admin: {
-                description: 'Optional supporting image or consultant photo',
+                description:
+                  'Optional supporting image or consultant photo (replaces side card text)',
+              },
+            },
+            {
+              name: 'showSideCard',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Show the side card/image container on the right',
+              },
+            },
+            {
+              name: 'sideCardEyebrow',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Side card eyebrow text (e.g., "Trusted Advisors")',
+                condition: (data, siblingData) =>
+                  siblingData?.showSideCard === true && !siblingData?.image,
+              },
+            },
+            {
+              name: 'sideCardHeading',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Side card heading text',
+                condition: (data, siblingData) =>
+                  siblingData?.showSideCard === true && !siblingData?.image,
+              },
+            },
+            {
+              name: 'sideCardDescription',
+              type: 'textarea',
+              required: false,
+              admin: {
+                description: 'Side card description text',
+                condition: (data, siblingData) =>
+                  siblingData?.showSideCard === true && !siblingData?.image,
               },
             },
           ],
