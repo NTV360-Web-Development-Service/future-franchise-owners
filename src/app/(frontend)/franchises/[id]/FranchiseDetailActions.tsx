@@ -115,15 +115,6 @@ export function FranchiseDetailActions({ franchise }: FranchiseDetailActionsProp
         Request Information
       </Button>
 
-      {/* Schedule Call Button */}
-      <Button
-        size="lg"
-        className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-slate-900 transition-colors"
-      >
-        <Calendar className="w-4 h-4 mr-2" />
-        Schedule Call
-      </Button>
-
       {/* Request Info Modal */}
       <RequestInfoModal
         isOpen={showRequestModal}
