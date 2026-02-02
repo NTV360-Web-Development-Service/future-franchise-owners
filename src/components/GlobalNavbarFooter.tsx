@@ -65,13 +65,23 @@ export function GlobalNavbarFooter({ siteSettings, position }: GlobalNavbarFoote
       currentSlug,
     )
 
+  // Extract footer logo URL from Media object or string
+  const footerLogo = siteSettings?.footer?.logo
+  const footerLogoData = footerLogo
+    ? typeof footerLogo === 'string'
+      ? { url: footerLogo }
+      : typeof footerLogo === 'object' && 'url' in footerLogo
+        ? { url: footerLogo.url }
+        : null
+    : null
+
   return (
     <>
       {showFooter && siteSettings?.footer && (
         <FooterBlock
           block={{
             blockType: 'footer',
-            logo: siteSettings.footer.logo || null,
+            logo: footerLogoData,
             companyName: siteSettings.footer.companyName || 'Future Franchise Owners',
             tagline: siteSettings.footer.tagline || 'Your partner in franchise success',
             copyrightText: siteSettings.footer.copyrightText || null,

@@ -11,6 +11,7 @@ interface ResourcePopupProps {
   submitText?: string
   successMessage?: string
   downloadUrl?: string
+  resourceTitle?: string
 }
 
 export function ResourcePopup({
@@ -20,6 +21,7 @@ export function ResourcePopup({
   submitText = 'Send Me The PDF',
   successMessage = 'Thank you! Check your email for the download link.',
   downloadUrl,
+  resourceTitle,
 }: ResourcePopupProps) {
   const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -37,6 +39,7 @@ export function ResourcePopup({
 
     try {
       // Submit to contact API with resource info
+      const resourceName = resourceTitle || downloadUrl || 'Resource download'
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,9 +48,9 @@ export function ResourcePopup({
           email,
           phone: 'N/A',
           subject: 'PDF Download Request',
-          message: `Requested PDF: ${downloadUrl || 'Not specified'}`,
+          message: `Requested PDF: ${resourceName}${downloadUrl ? `\nDownload URL: ${downloadUrl}` : ''}`,
           source: 'resource-download',
-          requestedResource: downloadUrl,
+          requestedResource: downloadUrl || resourceName,
         }),
       })
 

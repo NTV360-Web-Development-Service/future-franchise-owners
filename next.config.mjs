@@ -9,6 +9,13 @@ const dirname = path.dirname(filename)
 const nextConfig = {
   // Fix workspace root warning by setting the correct tracing root
   outputFileTracingRoot: dirname,
+  // Disable router cache to fix stale data during navigation
+  experimental: {
+    staleTimes: {
+      dynamic: 0,
+      static: 30, // Minimum value required by Next.js 16
+    },
+  },
   // Image configuration for external sources (RSS feeds, etc.)
   images: {
     formats: ['image/avif', 'image/webp'], // Use modern image formats for better compression

@@ -76,6 +76,8 @@ export interface Config {
     agents: Agent;
     contactSubmissions: ContactSubmission;
     auditLogs: AuditLog;
+    'mcp-tokens': McpToken;
+    'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +93,8 @@ export interface Config {
     agents: AgentsSelect<false> | AgentsSelect<true>;
     contactSubmissions: ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     auditLogs: AuditLogsSelect<false> | AuditLogsSelect<true>;
+    'mcp-tokens': McpTokensSelect<false> | McpTokensSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -98,6 +102,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale: null;
   globals: {
     'site-settings': SiteSetting;
   };
@@ -586,11 +591,11 @@ export interface Page {
          */
         backgroundImage?: (string | null) | Media;
         /**
-         * Overlay color shown on top of gradient or image backgrounds
+         * Overlay color shown on top of image background
          */
         overlayColor?: string | null;
         /**
-         * Overlay opacity (0 - 0.95). Applies to gradient and image backgrounds.
+         * Overlay opacity (0 - 0.95). Applies to image backgrounds.
          */
         overlayOpacity?: number | null;
         /**
@@ -1614,6 +1619,49 @@ export interface AuditLog {
   createdAt: string;
 }
 /**
+ * MCP API tokens. User-linked tokens impersonate the user; service/admin tokens use scopes only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mcp-tokens".
+ */
+export interface McpToken {
+  id: string;
+  label: string;
+  type: 'user' | 'service' | 'admin';
+  user?: (string | null) | User;
+  /**
+   * Custom scopes for this token. Leave empty to use default scopes based on token type. Format: collections:{collection}:{operation} (e.g., collections:users:read, collections:media:create) or media:upload, mcp:describe. Use collections:*:* for full access.
+   */
+  scopes?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  active?: boolean | null;
+  expiresAt?: string | null;
+  tokenHash: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: string;
+  key: string;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
@@ -1655,6 +1703,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'auditLogs';
         value: string | AuditLog;
+      } | null)
+    | ({
+        relationTo: 'mcp-tokens';
+        value: string | McpToken;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2259,6 +2311,34 @@ export interface AuditLogsSelect<T extends boolean = true> {
   userAgent?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mcp-tokens_select".
+ */
+export interface McpTokensSelect<T extends boolean = true> {
+  label?: T;
+  type?: T;
+  user?: T;
+  scopes?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  active?: T;
+  expiresAt?: T;
+  tokenHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

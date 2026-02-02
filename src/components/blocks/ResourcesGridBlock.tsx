@@ -226,6 +226,7 @@ export default function ResourcesGridBlock({ block }: ResourcesGridBlockProps) {
                 submitText={resource.popupSubmitText || undefined}
                 successMessage={resource.popupSuccessMessage || undefined}
                 downloadUrl={resource.popupDownloadUrl || undefined}
+                resourceTitle={resource.title || undefined}
               />
             ),
         )}

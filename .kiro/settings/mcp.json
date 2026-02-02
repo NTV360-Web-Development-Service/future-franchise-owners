@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "payload-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@latest",
+        "http://localhost:3000/api/plugin/mcp",
+        "--header",
+        "Authorization: Bearer ffo-mcp-dev-key-2026"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

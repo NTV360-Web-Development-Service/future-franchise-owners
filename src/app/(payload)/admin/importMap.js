@@ -24,8 +24,9 @@ import { UploadFeatureClient as UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { default as default_daec8bf8edb106eeb30141438e29810c } from '@/collections/fields/ShortDescriptionField'
-import { default as default_3968ae8660d72cbf5f09c57014c85b20 } from 'app/(payload)/components/AdminImportLink.tsx'
+import { default as default_1a41297e2d0219303c3b062cf99416e4 } from '@/app/(payload)/components/AdminImportLink.tsx'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
+import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
   "@/collections/fields/ColorPickerField#default": default_6543635000ae181d543f40931f03ed78,
@@ -54,6 +55,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/collections/fields/ShortDescriptionField#default": default_daec8bf8edb106eeb30141438e29810c,
-  "app/(payload)/components/AdminImportLink.tsx#default": default_3968ae8660d72cbf5f09c57014c85b20,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
+  "@/app/(payload)/components/AdminImportLink.tsx#default": default_1a41297e2d0219303c3b062cf99416e4,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

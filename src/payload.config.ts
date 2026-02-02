@@ -2,6 +2,7 @@ import { s3Storage } from '@payloadcms/storage-s3'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { PayloadPluginMcp } from 'payload-plugin-mcp'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -38,7 +39,7 @@ export default buildConfig({
     },
     components: {
       /** Add a quick-access link in the admin nav to Import Franchises */
-      afterNavLinks: ['app/(payload)/components/AdminImportLink.tsx'],
+      afterNavLinks: ['@/app/(payload)/components/AdminImportLink.tsx'],
     },
   },
   collections: [
@@ -68,6 +69,22 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    // MCP Plugin for AI agent integration (only in development)
+    ...(process.env.MCP_API_KEY
+      ? [
+          PayloadPluginMcp({
+            apiKey: process.env.MCP_API_KEY,
+            collections: 'all',
+            defaultOperations: {
+              list: true,
+              get: true,
+              create: false,
+              update: false,
+              delete: false,
+            },
+          }),
+        ]
+      : []),
     // Only add S3 storage if all required environment variables are present
     ...(process.env.SUPABASE_STORAGE_BUCKET &&
     process.env.SUPABASE_S3_ACCESS_KEY_ID &&
