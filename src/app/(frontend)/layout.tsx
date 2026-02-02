@@ -16,6 +16,9 @@ import { PageTransition } from '@/components/PageTransition'
 export const metadata: Metadata = {
   title: 'Future Franchise Owners',
   description: 'Discover your next franchise opportunity',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 /**
