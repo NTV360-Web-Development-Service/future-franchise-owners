@@ -1113,14 +1113,27 @@ const Pages: CollectionConfig = {
               },
             },
             {
+              name: 'displayMode',
+              type: 'select',
+              required: false,
+              defaultValue: 'carousel',
+              options: [
+                { label: 'Carousel', value: 'carousel' },
+                { label: 'Grid', value: 'grid' },
+              ],
+              admin: {
+                description: 'Display posts in a carousel slider or a responsive grid',
+              },
+            },
+            {
               name: 'limit',
               type: 'number',
               required: false,
               defaultValue: 6,
               min: 1,
-              max: 12,
+              max: 30,
               admin: {
-                description: 'Maximum number of blog posts to display (1-12)',
+                description: 'Maximum number of blog posts to display (1-30)',
               },
             },
             {

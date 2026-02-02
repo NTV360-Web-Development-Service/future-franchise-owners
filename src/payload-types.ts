@@ -656,7 +656,11 @@ export interface Page {
          */
         feedUrl?: string | null;
         /**
-         * Maximum number of blog posts to display (1-12)
+         * Display posts in a carousel slider or a responsive grid
+         */
+        displayMode?: ('carousel' | 'grid') | null;
+        /**
+         * Maximum number of blog posts to display (1-30)
          */
         limit?: number | null;
         /**
@@ -1970,6 +1974,7 @@ export interface PagesSelect<T extends boolean = true> {
               heading?: T;
               subheading?: T;
               feedUrl?: T;
+              displayMode?: T;
               limit?: T;
               showAuthor?: T;
               showDate?: T;

@@ -67,6 +67,8 @@ interface BlogHighlightsBlockProps {
     subheading?: string | null
     /** RSS feed URL */
     feedUrl?: string | null
+    /** Display mode: carousel or grid */
+    displayMode?: 'carousel' | 'grid' | null
     /** Maximum number of posts to display */
     limit?: number | null
     /** Show author information */
@@ -225,6 +227,7 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
     heading = 'Latest Blog Posts',
     subheading = 'Stay updated with the latest franchise insights and business tips',
     feedUrl = 'https://quantumbc.substack.com/feed',
+    displayMode = 'carousel',
     limit = 6,
     showAuthor = true,
     showDate = true,
@@ -250,6 +253,69 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
     )
   }
 
+  // Shared card component for both views
+  const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => (
+    <Card className="group hover:shadow-xl transition-all duration-300 bg-slate-50 hover:!bg-blue-50 border-0 h-full flex flex-col">
+      {post.image && (
+        <div className="aspect-video overflow-hidden relative">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+
+      <div className="flex flex-col flex-1">
+        <CardHeader className="pb-3">
+          <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#004AAD] transition-colors line-clamp-2">
+            {post.title}
+          </h3>
+
+          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+            {showDate && (
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDate(post.pubDate)}</span>
+              </div>
+            )}
+
+            {showReadTime && (
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>{estimateReadTime(post.description)}</span>
+              </div>
+            )}
+          </div>
+        </CardHeader>
+
+        <CardContent className="pt-0 flex flex-col flex-1">
+          <p className="text-gray-600 line-clamp-3 mb-4 flex-1">{post.description}</p>
+
+          <div className="flex items-center justify-between mt-auto">
+            {showAuthor && (
+              <Badge variant="secondary" className="text-xs">
+                {post.author}
+              </Badge>
+            )}
+
+            <a
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[#004AAD] hover:text-[#003a89] font-medium text-sm transition-colors"
+            >
+              Read More
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </CardContent>
+      </div>
+    </Card>
+  )
+
   return (
     <section {...(block.anchorId && { id: block.anchorId })}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -260,82 +326,34 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
           )}
         </div>
 
-        <Carousel
-          opts={{
-            align: 'start',
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-4">
+        {displayMode === 'grid' ? (
+          // Grid View
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {posts.map((post, index) => (
-              <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                <Card className="group hover:shadow-xl transition-all duration-300 bg-slate-50 hover:!bg-blue-50 border-0 h-full flex flex-col">
-                  {post.image && (
-                    <div className="aspect-video overflow-hidden relative">
-                      <Image
-                        src={post.image}
-                        alt={post.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex flex-col flex-1">
-                    <CardHeader className="pb-3">
-                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#004AAD] transition-colors line-clamp-2">
-                        {post.title}
-                      </h3>
-
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                        {showDate && (
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{formatDate(post.pubDate)}</span>
-                          </div>
-                        )}
-
-                        {showReadTime && (
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            <span>{estimateReadTime(post.description)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="pt-0 flex flex-col flex-1">
-                      <p className="text-gray-600 line-clamp-3 mb-4 flex-1">{post.description}</p>
-
-                      <div className="flex items-center justify-between mt-auto">
-                        {showAuthor && (
-                          <Badge variant="secondary" className="text-xs">
-                            {post.author}
-                          </Badge>
-                        )}
-
-                        <a
-                          href={post.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[#004AAD] hover:text-[#003a89] font-medium text-sm transition-colors"
-                        >
-                          Read More
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    </CardContent>
-                  </div>
-                </Card>
-              </CarouselItem>
+              <BlogCard key={index} post={post} index={index} />
             ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-          <CarouselDots />
-        </Carousel>
+          </div>
+        ) : (
+          // Carousel View (default)
+          <Carousel
+            opts={{
+              align: 'start',
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {posts.map((post, index) => (
+                <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                  <BlogCard post={post} index={index} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselDots />
+          </Carousel>
+        )}
 
         {showViewAllButton && viewAllLink && (
           <div className="text-center mt-12">
