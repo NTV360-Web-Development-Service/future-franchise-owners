@@ -192,6 +192,15 @@ const SiteSettings: GlobalConfig = {
               type: 'group',
               fields: [
                 {
+                  name: 'logo',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: false,
+                  admin: {
+                    description: 'Logo image for the footer (optional)',
+                  },
+                },
+                {
                   name: 'companyName',
                   type: 'text',
                   required: false,
@@ -337,6 +346,52 @@ const SiteSettings: GlobalConfig = {
                   defaultValue: '#0F172A',
                   admin: {
                     description: 'Footer background color (hex code)',
+                  },
+                },
+                {
+                  name: 'useGradient',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  admin: {
+                    description: 'Use gradient background instead of solid color',
+                  },
+                },
+                {
+                  name: 'gradientFrom',
+                  type: 'text',
+                  required: false,
+                  defaultValue: '#0F172A',
+                  admin: {
+                    description: 'Gradient start color (hex code)',
+                    condition: (data, siblingData) => siblingData?.useGradient,
+                  },
+                },
+                {
+                  name: 'gradientTo',
+                  type: 'text',
+                  required: false,
+                  defaultValue: '#1E3A5F',
+                  admin: {
+                    description: 'Gradient end color (hex code)',
+                    condition: (data, siblingData) => siblingData?.useGradient,
+                  },
+                },
+                {
+                  name: 'gradientDirection',
+                  type: 'select',
+                  required: false,
+                  defaultValue: 'to-b',
+                  options: [
+                    { label: 'Top to Bottom', value: 'to-b' },
+                    { label: 'Bottom to Top', value: 'to-t' },
+                    { label: 'Left to Right', value: 'to-r' },
+                    { label: 'Right to Left', value: 'to-l' },
+                    { label: 'Top-Left to Bottom-Right', value: 'to-br' },
+                    { label: 'Top-Right to Bottom-Left', value: 'to-bl' },
+                  ],
+                  admin: {
+                    description: 'Gradient direction',
+                    condition: (data, siblingData) => siblingData?.useGradient,
                   },
                 },
                 {

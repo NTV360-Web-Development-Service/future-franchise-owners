@@ -65,6 +65,7 @@ export interface FooterBlockProps {
   /** Block configuration from Payload CMS */
   block: {
     blockType: 'footer'
+    logo?: { url?: string | null } | string | null
     companyName?: string | null
     tagline?: string | null
     copyrightText?: string | null
@@ -92,6 +93,10 @@ export interface FooterBlockProps {
         }[]
       | null
     backgroundColor?: string | null
+    useGradient?: boolean | null
+    gradientFrom?: string | null
+    gradientTo?: string | null
+    gradientDirection?: string | null
     textColor?: string | null
     backgroundImage?: { url?: string | null } | string | null
     backgroundBlur?: number | null
@@ -127,6 +132,7 @@ export default function FooterBlock({ block }: FooterBlockProps) {
   const pathname = usePathname()
 
   const {
+    logo,
     companyName = 'Future Franchise Owners',
     tagline = 'Your partner in franchise success',
     copyrightText,
@@ -135,12 +141,24 @@ export default function FooterBlock({ block }: FooterBlockProps) {
     footerColumns = [],
     bottomLinks = [],
     backgroundColor = '#0F172A',
+    useGradient = false,
+    gradientFrom = '#0F172A',
+    gradientTo = '#1E3A5F',
+    gradientDirection = 'to-b',
     textColor = '#F1F5F9',
     backgroundImage,
     backgroundBlur = 0,
     overlayColor = '#000000',
     overlayOpacity = 0.6,
   } = block
+
+  // Extract logo URL
+  let logoUrl: string | null = null
+  if (typeof logo === 'string') {
+    logoUrl = logo
+  } else if (logo && typeof logo === 'object') {
+    logoUrl = logo.url ?? null
+  }
 
   // Extract background image URL
   let backgroundImageUrl: string | null = null
@@ -203,10 +221,35 @@ export default function FooterBlock({ block }: FooterBlockProps) {
       )}
 
       {/* Solid background color layer when no image */}
-      {!hasBackgroundImage && (
+      {!hasBackgroundImage && !useGradient && (
         <div
           className="absolute inset-0"
           style={{ backgroundColor: backgroundColor || '#0F172A' }}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Gradient background layer when no image */}
+      {!hasBackgroundImage && useGradient && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(${
+              gradientDirection === 'to-b'
+                ? '180deg'
+                : gradientDirection === 'to-t'
+                  ? '0deg'
+                  : gradientDirection === 'to-r'
+                    ? '90deg'
+                    : gradientDirection === 'to-l'
+                      ? '270deg'
+                      : gradientDirection === 'to-br'
+                        ? '135deg'
+                        : gradientDirection === 'to-bl'
+                          ? '225deg'
+                          : '180deg'
+            }, ${gradientFrom || '#0F172A'}, ${gradientTo || '#1E3A5F'})`,
+          }}
           aria-hidden="true"
         />
       )}
@@ -215,7 +258,15 @@ export default function FooterBlock({ block }: FooterBlockProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-4">
-            <h3 className="text-2xl font-bold mb-3">{companyName}</h3>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={companyName || 'Logo'}
+                className="h-12 w-auto mb-4 object-contain"
+              />
+            ) : (
+              <h3 className="text-2xl font-bold mb-3">{companyName}</h3>
+            )}
             {tagline && <p className="text-sm opacity-80 mb-6 max-w-sm">{tagline}</p>}
 
             {/* Social Links */}

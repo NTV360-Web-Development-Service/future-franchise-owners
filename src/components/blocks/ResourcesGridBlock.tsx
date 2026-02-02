@@ -28,7 +28,7 @@ export interface ResourcesGridBlockProps {
     anchorId?: string | null
     heading?: string | null
     subheading?: string | null
-    columns?: '2' | '3' | '4' | null
+    columns?: '2' | '3' | '4' | '5' | null
     resources?: ResourceCard[] | null
     backgroundColor?: string | null
     cardBackgroundColor?: string | null
@@ -58,6 +58,7 @@ export default function ResourcesGridBlock({ block }: ResourcesGridBlockProps) {
     '2': 'grid-cols-1 sm:grid-cols-2',
     '3': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
     '4': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+    '5': 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5',
   }
 
   const getButtonVariant = () => {
@@ -130,7 +131,7 @@ export default function ResourcesGridBlock({ block }: ResourcesGridBlockProps) {
                 >
                   {/* Image */}
                   {imageUrl && (
-                    <div className="relative aspect-[4/5] w-full">
+                    <div className="relative aspect-[4/3] w-full">
                       {resource.imageLink ? (
                         <a
                           href={resource.imageLink}

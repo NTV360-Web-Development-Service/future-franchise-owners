@@ -2081,6 +2081,7 @@ const Pages: CollectionConfig = {
                 { label: '2 Columns', value: '2' },
                 { label: '3 Columns', value: '3' },
                 { label: '4 Columns', value: '4' },
+                { label: '5 Columns', value: '5' },
               ],
               admin: {
                 description: 'Maximum number of columns in the grid',

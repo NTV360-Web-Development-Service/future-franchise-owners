@@ -36,16 +36,18 @@ export function ResourcePopup({
     setError(null)
 
     try {
-      // Submit to contact API
+      // Submit to contact API with resource info
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim() || 'Unknown',
           email,
-          firstName,
-          lastName,
+          phone: 'N/A',
+          subject: 'PDF Download Request',
+          message: `Requested PDF: ${downloadUrl || 'Not specified'}`,
           source: 'resource-download',
-          downloadUrl,
+          requestedResource: downloadUrl,
         }),
       })
 
@@ -54,13 +56,6 @@ export function ResourcePopup({
       }
 
       setIsSuccess(true)
-
-      // If there's a download URL, open it after a short delay
-      if (downloadUrl) {
-        setTimeout(() => {
-          window.open(downloadUrl, '_blank')
-        }, 1500)
-      }
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
