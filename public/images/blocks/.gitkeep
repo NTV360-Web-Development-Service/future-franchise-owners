@@ -1,0 +1,21 @@
+# Block preview images for Payload CMS
+# 
+# Add PNG images with these exact filenames:
+# - franchise-grid.png
+# - ribbon.png
+# - navbar.png
+# - hero.png
+# - about-teaser.png
+# - call-to-action.png
+# - blog-highlights.png
+# - map.png
+# - team-section.png
+# - form-builder.png
+# - contact-info.png
+# - content-image.png
+# - grid-cards.png
+# - video.png
+# - image-card.png
+# - resources-grid.png
+#
+# Recommended size: 300x200px
