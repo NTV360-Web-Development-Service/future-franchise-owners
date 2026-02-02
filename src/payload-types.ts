@@ -521,9 +521,25 @@ export interface Page {
             }[]
           | null;
         /**
-         * Optional supporting image or consultant photo
+         * Optional supporting image or consultant photo (replaces side card text)
          */
         image?: (string | null) | Media;
+        /**
+         * Show the side card/image container on the right
+         */
+        showSideCard?: boolean | null;
+        /**
+         * Side card eyebrow text (e.g., "Trusted Advisors")
+         */
+        sideCardEyebrow?: string | null;
+        /**
+         * Side card heading text
+         */
+        sideCardHeading?: string | null;
+        /**
+         * Side card description text
+         */
+        sideCardDescription?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'aboutTeaser';
@@ -1858,6 +1874,10 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               image?: T;
+              showSideCard?: T;
+              sideCardEyebrow?: T;
+              sideCardHeading?: T;
+              sideCardDescription?: T;
               id?: T;
               blockName?: T;
             };

@@ -4,6 +4,7 @@ import * as migration_20251024_071255_change_about_teaser_description_to_richtex
 import * as migration_20251029_022654 from './20251029_022654';
 import * as migration_20251110_020002 from './20251110_020002';
 import * as migration_20251205_031318 from './20251205_031318';
+import * as migration_20260202_025225 from './20260202_025225';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20251205_031318.up,
     down: migration_20251205_031318.down,
-    name: '20251205_031318'
+    name: '20251205_031318',
+  },
+  {
+    up: migration_20260202_025225.up,
+    down: migration_20260202_025225.down,
+    name: '20260202_025225'
   },
 ];
