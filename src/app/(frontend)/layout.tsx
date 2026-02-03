@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/react'
 import '../globals.css'
 import { getSiteSettings } from '@/lib/getSiteSettings'
 import { GlobalNavbarFooter } from '@/components/GlobalNavbarFooter'
@@ -94,6 +95,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {/* Floating Cart Button - Fixed bottom right (conditionally rendered) */}
             {siteSettings?.enableCart !== false && <FloatingCartButton />}
           </PageTransition>
+
+          {/* Vercel Analytics */}
+          <Analytics />
         </CartProvider>
       </body>
     </html>
