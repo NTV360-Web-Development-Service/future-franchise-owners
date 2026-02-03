@@ -280,8 +280,9 @@ export default function FranchiseCard({
             <Link
               href={franchise.href}
               className="text-sm text-slate-700 hover:text-slate-900 font-medium ml-1 inline-block"
+              aria-label={`Learn more about ${franchise.name}`}
             >
-              See more
+              Learn more
             </Link>
           )}
         </div>
@@ -440,9 +441,9 @@ function FranchiseCardActions({
       {/* View More Button */}
       {franchise.href && (
         <Button asChild variant="default" size="sm" className="flex-1">
-          <Link href={franchise.href}>
+          <Link href={franchise.href} aria-label={`View details for ${franchise.name}`}>
             <ExternalLink className="w-4 h-4 mr-1" />
-            View
+            Details
           </Link>
         </Button>
       )}

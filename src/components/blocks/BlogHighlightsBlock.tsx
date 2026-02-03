@@ -306,8 +306,9 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[#004AAD] hover:text-[#003a89] font-medium text-sm transition-colors"
+              aria-label={`Read full article: ${post.title}`}
             >
-              Read More
+              Read article
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -362,6 +363,7 @@ export default async function BlogHighlightsBlock({ block }: BlogHighlightsBlock
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#004AAD] text-white px-6 py-3 rounded-lg hover:bg-[#003a89] transition-colors font-medium"
+              aria-label="View all blog posts on Substack"
             >
               View All Posts
               <ExternalLink className="w-4 h-4" />

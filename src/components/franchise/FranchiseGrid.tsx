@@ -144,6 +144,7 @@ export default function FranchiseGrid({
           <a
             href={showAllButtonLink}
             className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+            aria-label={`${showAllButtonText} - View all ${heading.toLowerCase()}`}
           >
             {showAllButtonText}
           </a>
