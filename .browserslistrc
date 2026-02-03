@@ -1,0 +1,18 @@
+# Target modern browsers only to reduce polyfills and bundle size
+# This eliminates legacy JavaScript transforms for features like:
+# - Array.prototype.at, flat, flatMap
+# - Object.fromEntries, hasOwn
+# - String.prototype.trimStart, trimEnd
+
+# Production: Modern browsers with ES2020+ support
+[production]
+chrome >= 90
+firefox >= 90
+safari >= 14
+edge >= 90
+
+# Development: Latest versions for faster builds
+[development]
+last 1 chrome version
+last 1 firefox version
+last 1 safari version

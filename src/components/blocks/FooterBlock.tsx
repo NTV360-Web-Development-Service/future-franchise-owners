@@ -262,6 +262,8 @@ export default function FooterBlock({ block }: FooterBlockProps) {
               <img
                 src={logoUrl}
                 alt={companyName || 'Logo'}
+                width={180}
+                height={48}
                 className="h-12 w-auto mb-4 object-contain"
               />
             )}

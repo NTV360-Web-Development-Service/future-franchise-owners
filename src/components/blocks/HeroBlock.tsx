@@ -125,6 +125,7 @@ export default function HeroBlock({ block }: HeroBlockComponentProps) {
         alt="Hero background"
         fill
         priority
+        fetchPriority="high"
         quality={85}
         sizes="100vw"
         className="object-cover object-center"
