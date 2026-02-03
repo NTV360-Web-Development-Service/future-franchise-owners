@@ -31,6 +31,17 @@ import SiteSettings from './globals/SiteSettings'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Internal admin emails - only these can see system collections like Users and MCP Tokens
+const internalAdminEmails = ['admin@payload.com', 'admin2@payload.com', 'admin@ntv.com']
+const isInternalAdmin = (email: string | undefined) => {
+  if (!email) return false
+  return (
+    internalAdminEmails.includes(email) ||
+    email.endsWith('@payload.com') ||
+    email.endsWith('@ntv.com')
+  )
+}
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -41,6 +52,36 @@ export default buildConfig({
       /** Add a quick-access link in the admin nav to Import Franchises */
       afterNavLinks: ['@/app/(payload)/components/AdminImportLink.tsx'],
     },
+  },
+  // Hide MCP tokens collection from non-internal admins after init
+  onInit: async (payload) => {
+    const mcpTokensCollection = payload.collections['mcp-tokens']
+    if (mcpTokensCollection) {
+      // Override admin.hidden to hide from non-internal admins
+      const originalHidden = mcpTokensCollection.config.admin?.hidden
+      mcpTokensCollection.config.admin = {
+        ...mcpTokensCollection.config.admin,
+        hidden: ({ user }) => {
+          // First check original hidden logic
+          if (typeof originalHidden === 'function') {
+            const result = originalHidden({ user })
+            if (result) return true
+          } else if (originalHidden) {
+            return true
+          }
+          // Then check if user is internal admin
+          return !isInternalAdmin(user?.email)
+        },
+      }
+      // Override access controls
+      mcpTokensCollection.config.access = {
+        ...mcpTokensCollection.config.access,
+        read: ({ req: { user } }) => isInternalAdmin(user?.email),
+        create: ({ req: { user } }) => isInternalAdmin(user?.email),
+        update: ({ req: { user } }) => isInternalAdmin(user?.email),
+        delete: ({ req: { user } }) => isInternalAdmin(user?.email),
+      }
+    }
   },
   collections: [
     Users,

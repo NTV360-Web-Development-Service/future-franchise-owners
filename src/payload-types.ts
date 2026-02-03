@@ -798,6 +798,10 @@ export interface Page {
                 };
                 [k: string]: unknown;
               } | null;
+              /**
+               * URL for the "Work with" button (e.g., "/contact?agent=john", "https://calendly.com/john")
+               */
+              contactUrl?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -1591,6 +1595,10 @@ export interface AuditLog {
    */
   user?: (string | null) | User;
   /**
+   * Name of the user who performed the action
+   */
+  userName?: string | null;
+  /**
    * Detailed changes (before/after values)
    */
   changes?:
@@ -2014,6 +2022,7 @@ export interface PagesSelect<T extends boolean = true> {
                     title?: T;
                     location?: T;
                     biography?: T;
+                    contactUrl?: T;
                     id?: T;
                   };
               id?: T;
@@ -2305,6 +2314,7 @@ export interface AuditLogsSelect<T extends boolean = true> {
   recordId?: T;
   operation?: T;
   user?: T;
+  userName?: T;
   changes?: T;
   changedFields?:
     | T

@@ -32,8 +32,11 @@ const AuditLogs: CollectionConfig = {
   admin: {
     useAsTitle: 'collection',
     description: 'System-wide activity log tracking all changes',
-    defaultColumns: ['collection', 'operation', 'user', 'recordId', 'createdAt'],
+    defaultColumns: ['collection', 'operation', 'userName', 'recordId', 'createdAt'],
     group: 'System',
+    pagination: {
+      defaultLimit: 20,
+    },
   },
   access: {
     // Only admins can read audit logs
@@ -93,6 +96,19 @@ const AuditLogs: CollectionConfig = {
       index: true,
       admin: {
         description: 'User who performed the action',
+        readOnly: true,
+        allowCreate: false,
+        // Hide this field - we'll show userName instead
+        hidden: true,
+      },
+    },
+    {
+      name: 'userName',
+      type: 'text',
+      required: false,
+      index: true,
+      admin: {
+        description: 'Name of the user who performed the action',
         readOnly: true,
       },
     },
