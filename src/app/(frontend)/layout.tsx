@@ -8,6 +8,7 @@ import { CartProvider } from '@/contexts/CartContext'
 import { FloatingCartButton } from '@/components/cart/FloatingCartButton'
 import GlobalTicker from '@/components/GlobalTicker'
 import { PageTransition } from '@/components/PageTransition'
+import { Analytics } from '@vercel/analytics/next'
 
 /**
  * Application metadata configuration
@@ -95,6 +96,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             {siteSettings?.enableCart !== false && <FloatingCartButton />}
           </PageTransition>
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   )
