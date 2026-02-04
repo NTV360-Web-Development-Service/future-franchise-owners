@@ -5,9 +5,42 @@ import config from '@/payload.config'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+/**
+ * Verify Turnstile token
+ */
+async function verifyTurnstile(token: string): Promise<boolean> {
+  const secretKey = process.env.TURNSTILE_SECRET_KEY
+  if (!secretKey) {
+    console.warn('Turnstile secret key not configured, skipping verification')
+    return true // Allow in development if not configured
+  }
+
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret: secretKey, response: token }),
+    })
+    const data = await response.json()
+    return data.success === true
+  } catch (error) {
+    console.error('Turnstile verification failed:', error)
+    return false
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+
+    // Verify Turnstile token
+    const turnstileToken = body.turnstileToken
+    if (turnstileToken) {
+      const isValid = await verifyTurnstile(turnstileToken)
+      if (!isValid) {
+        return NextResponse.json({ error: 'Security verification failed' }, { status: 400 })
+      }
+    }
 
     // Extract common fields (support both 'name' and 'fullName')
     const contactName = body.name || body.fullName || 'Unknown'

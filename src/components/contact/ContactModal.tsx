@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { X, Mail, User, Phone, MessageSquare, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Turnstile } from '@/components/ui/turnstile'
 
 interface ContactModalProps {
   isOpen: boolean
@@ -18,6 +19,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     subject: '',
     message: '',
   })
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -25,6 +27,12 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!turnstileToken) {
+      alert('Please complete the security verification')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -33,7 +41,10 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       })
 
       if (response.ok) {
@@ -187,10 +198,20 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 </div>
               </div>
 
+              {/* Turnstile CAPTCHA */}
+              <div className="flex justify-center">
+                <Turnstile
+                  onVerify={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  theme="light"
+                  size="normal"
+                />
+              </div>
+
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 className="w-full bg-[#004AAD] hover:bg-[#003A8C] text-white"
               >
                 {isSubmitting ? (

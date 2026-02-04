@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { X, Mail, User, Phone, MessageSquare, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Turnstile } from '@/components/ui/turnstile'
 import type { CartItem } from '@/contexts/CartContext'
 
 interface RequestInfoModalProps {
@@ -25,6 +26,7 @@ export function RequestInfoModal({
     phone: '',
     message: '',
   })
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -32,6 +34,12 @@ export function RequestInfoModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!turnstileToken) {
+      alert('Please complete the security verification')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -42,6 +50,7 @@ export function RequestInfoModal({
         },
         body: JSON.stringify({
           ...formData,
+          turnstileToken,
           franchises: franchises.map((f) => ({
             id: f.id,
             name: f.name,
@@ -208,10 +217,20 @@ export function RequestInfoModal({
                 </div>
               </div>
 
+              {/* Turnstile CAPTCHA */}
+              <div className="flex justify-center">
+                <Turnstile
+                  onVerify={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  theme="light"
+                  size="normal"
+                />
+              </div>
+
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 className="w-full bg-[#004AAD] hover:bg-[#003A8C] text-white"
               >
                 {isSubmitting ? (

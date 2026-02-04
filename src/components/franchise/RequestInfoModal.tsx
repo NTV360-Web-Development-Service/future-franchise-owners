@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { X, Mail, User, Phone, MessageSquare, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Turnstile } from '@/components/ui/turnstile'
 
 interface RequestInfoModalProps {
   isOpen: boolean
@@ -23,6 +24,7 @@ export function RequestInfoModal({ isOpen, onClose, franchise }: RequestInfoModa
     phone: '',
     message: '',
   })
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -30,6 +32,12 @@ export function RequestInfoModal({ isOpen, onClose, franchise }: RequestInfoModa
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!turnstileToken) {
+      alert('Please complete the security verification')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -40,6 +48,7 @@ export function RequestInfoModal({ isOpen, onClose, franchise }: RequestInfoModa
         },
         body: JSON.stringify({
           ...formData,
+          turnstileToken,
           franchise: {
             id: franchise.id,
             name: franchise.name,
@@ -196,10 +205,20 @@ export function RequestInfoModal({ isOpen, onClose, franchise }: RequestInfoModa
                 </div>
               </div>
 
+              {/* Turnstile CAPTCHA */}
+              <div className="flex justify-center">
+                <Turnstile
+                  onVerify={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  theme="light"
+                  size="normal"
+                />
+              </div>
+
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 className="w-full bg-[#004AAD] hover:bg-[#003A8C] text-white"
               >
                 {isSubmitting ? (
