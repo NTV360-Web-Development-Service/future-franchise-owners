@@ -141,13 +141,25 @@ export default function FranchiseGrid({
 
       {showAllButton && showAllButtonLink && (
         <div className="flex justify-center mt-8">
-          <a
-            href={showAllButtonLink}
-            className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-            aria-label={`${showAllButtonText} - View all ${heading.toLowerCase()}`}
-          >
-            {showAllButtonText}
-          </a>
+          {(() => {
+            // Generate descriptive button text based on link
+            let buttonText = showAllButtonText
+            if (showAllButtonLink.includes('filter=top-pick')) {
+              buttonText = 'See All Top Picks'
+            } else if (showAllButtonLink.includes('filter=featured')) {
+              buttonText = 'See All Featured'
+            } else if (showAllButtonLink.includes('filter=sponsored')) {
+              buttonText = 'See All Sponsored'
+            }
+            return (
+              <a
+                href={showAllButtonLink}
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-[#395BBF] hover:bg-[#2d4a99] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+              >
+                {buttonText}
+              </a>
+            )
+          })()}
         </div>
       )}
     </section>

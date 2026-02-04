@@ -604,12 +604,25 @@ export default function FranchiseFiltersGrid({
               {/* Show "See All" button or "Load More" button */}
               {showAllButton && hasMore && showAllButtonLink ? (
                 <div className="flex justify-center pb-8 pt-4">
-                  <a
-                    href={showAllButtonLink}
-                    className="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white bg-[#2249B7] hover:bg-[#1a3a94] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-                  >
-                    {showAllButtonText}
-                  </a>
+                  {(() => {
+                    // Generate descriptive button text based on link
+                    let buttonText = showAllButtonText
+                    if (showAllButtonLink.includes('filter=top-pick')) {
+                      buttonText = 'See All Top Picks'
+                    } else if (showAllButtonLink.includes('filter=featured')) {
+                      buttonText = 'See All Featured'
+                    } else if (showAllButtonLink.includes('filter=sponsored')) {
+                      buttonText = 'See All Sponsored'
+                    }
+                    return (
+                      <a
+                        href={showAllButtonLink}
+                        className="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-white bg-[#395BBF] hover:bg-[#2d4a99] rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                      >
+                        {buttonText}
+                      </a>
+                    )
+                  })()}
                 </div>
               ) : hasMore ? (
                 <div className="flex justify-center pb-8 pt-4">
