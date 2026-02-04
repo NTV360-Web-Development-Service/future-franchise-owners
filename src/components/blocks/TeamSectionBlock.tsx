@@ -19,7 +19,6 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  CarouselDots,
 } from '@/components/ui/carousel'
 import { RichTextRenderer } from '@/components/RichTextRenderer'
 
@@ -250,7 +249,6 @@ export default async function TeamSectionBlock({ block }: TeamSectionBlockProps)
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
-            <CarouselDots />
           </Carousel>
         )}
       </div>
