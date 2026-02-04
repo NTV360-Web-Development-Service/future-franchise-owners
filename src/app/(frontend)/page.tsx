@@ -215,10 +215,5 @@ export default async function HomePage() {
     }
   }
 
-  return (
-    <div>
-      <h1 className="sr-only">{page.title}</h1>
-      {page.layout?.map((block, index) => renderBlock(block, index))}
-    </div>
-  )
+  return <div>{page.layout?.map((block, index) => renderBlock(block, index))}</div>
 }

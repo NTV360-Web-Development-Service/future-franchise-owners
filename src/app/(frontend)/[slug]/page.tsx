@@ -123,10 +123,7 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="flex-1">
-        <h1 className="sr-only">{page.title}</h1>
-        {page.layout?.map((block, index) => renderBlock(block, index))}
-      </div>
+      <div className="flex-1">{page.layout?.map((block, index) => renderBlock(block, index))}</div>
     </div>
   )
 }

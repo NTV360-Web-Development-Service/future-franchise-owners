@@ -282,7 +282,7 @@ export default function FranchiseCard({
               className="text-sm text-slate-700 hover:text-slate-900 font-medium ml-1 inline-block"
               aria-label={`Learn more about ${franchise.name}`}
             >
-              Learn more
+              View {franchise.name}
             </Link>
           )}
         </div>
