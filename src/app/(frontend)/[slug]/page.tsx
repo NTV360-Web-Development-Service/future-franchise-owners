@@ -152,6 +152,8 @@ export async function generateStaticParams() {
 export const dynamic = 'force-dynamic'
 // Disable client-side router cache
 export const fetchCache = 'force-no-store'
+// Disable ISR caching
+export const revalidate = 0
 
 /**
  * Generate metadata for the page
