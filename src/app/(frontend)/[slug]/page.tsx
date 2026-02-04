@@ -174,6 +174,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
     },
     draft: isDraftMode,
+    depth: 1, // Ensure nested fields like seo.ogImage are populated
   })
 
   if (!page) {
@@ -181,6 +182,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: 'Page Not Found',
     }
   }
+
+  // Debug: Log SEO data to see what's being returned
+  console.log(`[SEO Debug] Page: ${slug}`, JSON.stringify(page.seo, null, 2))
 
   // Get site settings for defaults
   const siteSettings = await payload.findGlobal({
