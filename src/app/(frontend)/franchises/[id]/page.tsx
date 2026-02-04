@@ -3,6 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { LucideIcon } from '@/components/ui/lucide-icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -54,6 +55,93 @@ function formatCurrency(amount: number | null | undefined): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount)
+}
+
+/**
+ * Generate metadata for franchise detail pages
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+
+  try {
+    const franchise = await payload.findByID({
+      collection: 'franchises',
+      id,
+      depth: 2,
+    })
+
+    if (!franchise) {
+      return {
+        title: 'Franchise Not Found',
+        description: 'The requested franchise could not be found.',
+      }
+    }
+
+    // Extract industry names
+    const industries = Array.isArray(franchise.industry) ? franchise.industry : []
+    const industryNames = industries
+      .map((ind: any) => (typeof ind === 'object' ? ind.name : ''))
+      .filter(Boolean)
+      .join(', ')
+
+    // Extract description text
+    const descriptionText = franchise.description
+      ? extractPlainText(franchise.description).slice(0, 160)
+      : `Explore ${franchise.businessName} franchise opportunity. ${industryNames ? `Industry: ${industryNames}.` : ''} Contact us for investment details.`
+
+    // Investment range for description
+    const minInvestment = franchise.investment?.min
+    const maxInvestment = franchise.investment?.max
+    const investmentText =
+      minInvestment && maxInvestment
+        ? `Investment: ${formatCurrency(minInvestment)} - ${formatCurrency(maxInvestment)}`
+        : minInvestment
+          ? `Starting at ${formatCurrency(minInvestment)}`
+          : ''
+
+    const fullDescription = `${descriptionText}${investmentText ? ` ${investmentText}` : ''}`
+
+    // Get logo for OG image
+    const logo = typeof franchise.logo === 'object' ? franchise.logo : null
+    const ogImage = logo?.url || null
+
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://futurefranchiseowners.com'
+    const canonicalUrl = `${baseUrl}/franchises/${id}`
+
+    return {
+      title: `${franchise.businessName} Franchise | Future Franchise Owners`,
+      description: fullDescription,
+      openGraph: {
+        title: `${franchise.businessName} Franchise Opportunity`,
+        description: fullDescription,
+        url: canonicalUrl,
+        siteName: 'Future Franchise Owners',
+        type: 'website',
+        locale: 'en_US',
+        ...(ogImage && { images: [{ url: ogImage, alt: franchise.businessName }] }),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${franchise.businessName} Franchise`,
+        description: fullDescription,
+        ...(ogImage && { images: [ogImage] }),
+      },
+      alternates: {
+        canonical: canonicalUrl,
+      },
+    }
+  } catch (error) {
+    return {
+      title: 'Franchise Details',
+      description: 'Explore franchise opportunities with expert guidance.',
+    }
+  }
 }
 
 /**
