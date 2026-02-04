@@ -243,7 +243,7 @@ function CarouselDots({ className, ...props }: React.ComponentProps<'div'>) {
 
   return (
     <div
-      className={cn('flex justify-center gap-2 mt-4', className)}
+      className={cn('flex justify-center gap-1 mt-4', className)}
       data-slot="carousel-dots"
       {...props}
     >
@@ -251,13 +251,17 @@ function CarouselDots({ className, ...props }: React.ComponentProps<'div'>) {
         <button
           key={index}
           type="button"
-          className={cn(
-            'w-2 h-2 rounded-full transition-all',
-            index === selectedIndex ? 'bg-[#004AAD] w-8' : 'bg-gray-300 hover:bg-gray-400',
-          )}
+          className={cn('min-w-[44px] min-h-[44px] flex items-center justify-center')}
           onClick={() => api?.scrollTo(index)}
           aria-label={`Go to slide ${index + 1}`}
-        />
+        >
+          <span
+            className={cn(
+              'w-2.5 h-2.5 rounded-full transition-all',
+              index === selectedIndex ? 'bg-[#004AAD] w-8' : 'bg-gray-300 hover:bg-gray-400',
+            )}
+          />
+        </button>
       ))}
     </div>
   )

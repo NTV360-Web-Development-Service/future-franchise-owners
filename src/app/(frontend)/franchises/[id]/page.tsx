@@ -227,7 +227,7 @@ export default async function FranchiseDetailPage({ params }: { params: Promise<
                   </Badge>
                 )}
                 {franchise.isFeatured && (
-                  <Badge className="bg-green-600 text-white border-green-600">
+                  <Badge className="bg-green-700 text-white border-green-700">
                     <Star className="w-3 h-3 mr-1" />
                     Featured
                   </Badge>

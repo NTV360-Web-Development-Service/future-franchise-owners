@@ -216,7 +216,7 @@ export default function FranchiseCard({
               </Badge>
             )}
             {(franchise.isFeatured || variant === 'featured') && (
-              <Badge className="flex items-center gap-1 bg-emerald-600 text-white hover:bg-emerald-700 border-emerald-600">
+              <Badge className="flex items-center gap-1 bg-green-700 text-white hover:bg-green-800 border-green-700">
                 <LucideIcon name="Star" size={12} />
                 Featured
               </Badge>

@@ -412,8 +412,8 @@ export default function FranchiseFiltersGrid({
                       onClick={() => handleTabClick('Featured')}
                       className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg border transition-all ${
                         activeTabFilter === 'Featured'
-                          ? 'bg-green-600 text-white border-green-600 shadow-md'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-green-400 hover:bg-green-50 hover:text-green-600'
+                          ? 'bg-green-700 text-white border-green-700 shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-green-500 hover:bg-green-50 hover:text-green-700'
                       }`}
                     >
                       <Star className="w-3 h-3 sm:w-4 sm:h-4" />

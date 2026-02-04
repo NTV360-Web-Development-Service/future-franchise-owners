@@ -100,11 +100,11 @@ export default function GlobalTicker({
       {dismiss && (
         <button
           onClick={handleDismiss}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:opacity-70 transition-opacity z-10"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:opacity-70 transition-opacity z-10 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           style={{ color: txtColor }}
           aria-label="Dismiss ticker"
         >
-          <X size={16} />
+          <X size={18} />
         </button>
       )}
     </div>
