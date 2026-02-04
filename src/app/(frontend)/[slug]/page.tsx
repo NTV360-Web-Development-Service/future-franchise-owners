@@ -194,14 +194,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://futurefranchiseowners.com'
   const pageUrl = `${baseUrl}/${slug}`
 
+  // Helper to check for non-empty string
+  const hasValue = (val: string | null | undefined): val is string =>
+    typeof val === 'string' && val.trim().length > 0
+
   // Use page-specific SEO fields or fall back to site defaults
-  const metaTitle =
-    page?.seo?.metaTitle || `${page.title} | ${siteSettings?.siteName || 'Future Franchise Owners'}`
-  const metaDescription =
-    page?.seo?.metaDescription ||
-    siteSettings?.seo?.defaultDescription ||
-    'Find your perfect franchise opportunity'
-  const keywords = page?.seo?.keywords || siteSettings?.seo?.keywords || ''
+  const metaTitle = hasValue(page?.seo?.metaTitle)
+    ? page.seo.metaTitle
+    : `${page.title} | ${siteSettings?.siteName || 'Future Franchise Owners'}`
+  const metaDescription = hasValue(page?.seo?.metaDescription)
+    ? page.seo.metaDescription
+    : siteSettings?.seo?.defaultDescription || 'Find your perfect franchise opportunity'
+  const keywords = hasValue(page?.seo?.keywords)
+    ? page.seo.keywords
+    : siteSettings?.seo?.keywords || ''
   const ogImage =
     (typeof page?.seo?.ogImage === 'object' ? page?.seo?.ogImage?.url : null) ||
     (typeof siteSettings?.seo?.ogImage === 'object' ? siteSettings?.seo?.ogImage?.url : null)
