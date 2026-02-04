@@ -387,9 +387,9 @@ export default function FranchiseFiltersGrid({
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-baseline lg:justify-between gap-4">
               <div className="flex flex-wrap items-center gap-4">
-                <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+                <h2 className="text-4xl font-bold tracking-tight text-gray-900">
                   {heading ?? 'Browse Franchises'}
-                </h1>
+                </h2>
 
                 {/* Filter Tabs - Only show if showTabs is true */}
                 {showTabs && (
