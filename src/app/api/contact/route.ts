@@ -33,13 +33,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Verify Turnstile token
+    // Verify Turnstile token (required)
     const turnstileToken = body.turnstileToken
-    if (turnstileToken) {
-      const isValid = await verifyTurnstile(turnstileToken)
-      if (!isValid) {
-        return NextResponse.json({ error: 'Security verification failed' }, { status: 400 })
-      }
+    if (!turnstileToken) {
+      return NextResponse.json({ error: 'Security verification required' }, { status: 400 })
+    }
+
+    const isValid = await verifyTurnstile(turnstileToken)
+    if (!isValid) {
+      return NextResponse.json({ error: 'Security verification failed' }, { status: 400 })
     }
 
     // Extract common fields (support both 'name' and 'fullName')

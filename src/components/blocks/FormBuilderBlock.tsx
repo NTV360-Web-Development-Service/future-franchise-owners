@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Turnstile } from '@/components/ui/turnstile'
 import { Loader2 } from 'lucide-react'
 
 interface FormField {
@@ -53,6 +54,16 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  // Stable callbacks for Turnstile to prevent re-renders
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token)
+  }, [])
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null)
+  }, [])
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -93,6 +104,11 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
       return
     }
 
+    if (!turnstileToken) {
+      setErrorMessage('Please complete the security verification')
+      return
+    }
+
     setIsLoading(true)
     setErrorMessage('')
 
@@ -102,7 +118,10 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       })
 
       if (!response.ok) {
@@ -111,6 +130,7 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
 
       setIsSuccess(true)
       setFormData({})
+      setTurnstileToken(null)
     } catch (error) {
       setErrorMessage('Something went wrong. Please try again later.')
     } finally {
@@ -226,10 +246,20 @@ export const FormBuilderBlock: React.FC<FormBuilderBlockProps> = ({ block }) => 
               </div>
             )}
 
+            {/* Turnstile CAPTCHA */}
+            <div className="flex justify-center mb-6 px-2">
+              <Turnstile
+                onVerify={handleTurnstileVerify}
+                onExpire={handleTurnstileExpire}
+                theme="light"
+                size="normal"
+              />
+            </div>
+
             <div className="px-2">
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !turnstileToken}
                 className="w-full bg-[#004AAD] hover:bg-[#003A8C] text-white py-3 text-lg font-semibold"
               >
                 {isLoading ? (
