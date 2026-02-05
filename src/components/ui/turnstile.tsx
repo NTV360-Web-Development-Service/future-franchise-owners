@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 declare global {
   interface Window {
@@ -43,6 +43,32 @@ export function Turnstile({
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const isRenderedRef = useRef(false)
+
+  // Store callbacks in refs to avoid re-rendering the widget
+  const onVerifyRef = useRef(onVerify)
+  const onErrorRef = useRef(onError)
+  const onExpireRef = useRef(onExpire)
+
+  // Update refs when callbacks change (without triggering re-render)
+  useEffect(() => {
+    onVerifyRef.current = onVerify
+    onErrorRef.current = onError
+    onExpireRef.current = onExpire
+  }, [onVerify, onError, onExpire])
+
+  // Stable callback wrappers
+  const handleVerify = useCallback((token: string) => {
+    onVerifyRef.current(token)
+  }, [])
+
+  const handleError = useCallback(() => {
+    onErrorRef.current?.()
+  }, [])
+
+  const handleExpire = useCallback(() => {
+    onExpireRef.current?.()
+  }, [])
 
   useEffect(() => {
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
@@ -85,34 +111,30 @@ export function Turnstile({
           // Widget might already be removed
         }
       }
+      isRenderedRef.current = false
     }
   }, [])
 
   useEffect(() => {
     if (!isLoaded || !containerRef.current || !window.turnstile) return
 
+    // Only render once
+    if (isRenderedRef.current) return
+
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
     if (!siteKey) return
 
-    // Remove existing widget if any
-    if (widgetIdRef.current) {
-      try {
-        window.turnstile.remove(widgetIdRef.current)
-      } catch (e) {
-        // Widget might already be removed
-      }
-    }
-
-    // Render new widget
+    // Render widget only once
+    isRenderedRef.current = true
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
       sitekey: siteKey,
-      callback: onVerify,
-      'error-callback': onError,
-      'expired-callback': onExpire,
+      callback: handleVerify,
+      'error-callback': handleError,
+      'expired-callback': handleExpire,
       theme,
       size,
     })
-  }, [isLoaded, onVerify, onError, onExpire, theme, size])
+  }, [isLoaded, handleVerify, handleError, handleExpire, theme, size])
 
   return <div ref={containerRef} className={className} />
 }
